@@ -13,7 +13,8 @@
     "clean": "rm -rf dist",
     "setup-db": "tsx scripts/setup-database.ts",
     "create-admin": "tsx scripts/create-admin.ts",
-    "setup-tasks": "tsx scripts/setup-tasks.ts"
+    "setup-tasks": "tsx scripts/setup-tasks.ts",
+    "temp": "tsx scripts/add-score-column.ts"
   },
   "keywords": [
     "hackathon",

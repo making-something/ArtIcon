@@ -288,3 +288,16 @@ CREATE POLICY "Public view of submissions" ON submissions
 CREATE POLICY "Anyone can view winners" ON winners FOR SELECT USING (true);
 CREATE POLICY "Anyone can view notifications" ON notifications FOR SELECT USING (true);
 CREATE POLICY "Anyone can view event settings" ON event_settings FOR SELECT USING (true);
+-- Migration: Add score column if it doesn't exist (for existing databases)
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns
+        WHERE table_name = 'submissions' AND column_name = 'score'
+    ) THEN
+        ALTER TABLE submissions ADD COLUMN score INTEGER CHECK (score >= 0 AND score <= 100);
+        RAISE NOTICE 'Added score column to submissions table';
+    ELSE
+        RAISE NOTICE 'Score column already exists in submissions table';
+    END IF;
+END $$;

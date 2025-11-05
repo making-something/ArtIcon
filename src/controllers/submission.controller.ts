@@ -161,9 +161,10 @@ export class SubmissionController {
         .single();
 
       if (error || !submission) {
+        console.error('Update submission error:', error);
         res.status(404).json({
           success: false,
-          message: 'Submission not found',
+          message: error ? `Database error: ${error.message}` : 'Submission not found',
         });
         return;
       }
