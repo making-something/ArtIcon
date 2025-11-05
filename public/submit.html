@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Your Work - Articon Hackathon 2025</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .drive-link-info {
+            background: #f0f4ff;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+
+        .drive-link-info h3 {
+            color: #667eea;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .drive-link-info ul {
+            margin-left: 20px;
+            color: #555;
+            font-size: 13px;
+        }
+
+        .drive-link-info li {
+            margin-bottom: 5px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .message.show {
+            display: block;
+        }
+
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .loading-spinner.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .submission-preview {
+            display: none;
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .submission-preview.show {
+            display: block;
+        }
+
+        .submission-preview h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .preview-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .preview-item:last-child {
+            border-bottom: none;
+        }
+
+        .preview-label {
+            font-weight: 600;
+            color: #666;
+        }
+
+        .preview-value {
+            color: #333;
+            text-align: right;
+            max-width: 60%;
+            word-break: break-all;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 25px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .preview-item {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .preview-value {
+                text-align: left;
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎨 Submit Your Work</h1>
+            <p>Articon Hackathon 2025 - Submission Portal</p>
+        </div>
+
+        <div id="message" class="message"></div>
+
+        <form id="submissionForm">
+            <div class="form-group">
+                <label for="participant_id">Participant ID *</label>
+                <input
+                    type="text"
+                    id="participant_id"
+                    name="participant_id"
+                    placeholder="Enter your participant ID"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="task_id">Task ID *</label>
+                <input
+                    type="text"
+                    id="task_id"
+                    name="task_id"
+                    placeholder="Enter the task ID"
+                    required
+                >
+            </div>
+
+            <div class="drive-link-info">
+                <h3>📁 Google Drive Link Instructions:</h3>
+                <ul>
+                    <li>Upload your submission (video, image, or design file) to Google Drive</li>
+                    <li>Right-click the file → "Get link" → Set to "Anyone with the link"</li>
+                    <li>Copy the shareable link and paste it below</li>
+                    <li></li>Ensure the link starts with https://drive.google.com/</li>
+                </ul>
+            </div>
+
+            <div class="form-group">
+                <label for="drive_link">Google Drive Link *</label>
+                <input
+                    type="url"
+                    id="drive_link"
+                    name="drive_link"
+                    placeholder="https://drive.google.com/file/d/..."
+                    required
+                >
+            </div>
+
+            <button type="submit" class="submit-btn" id="submitBtn">
+                Submit Your Work
+            </button>
+        </form>
+
+        <div class="loading-spinner" id="loadingSpinner">
+            <div class="spinner"></div>
+            <p style="margin-top: 15px; color: #666;">Submitting your work...</p>
+        </div>
+
+        <div class="submission-preview" id="submissionPreview">
+            <h3>✅ Submission Successful!</h3>
+            <div id="previewContent"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:8000/api';
+
+        const form = document.getElementById('submissionForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const messageDiv = document.getElementById('message');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const submissionPreview = document.getElementById('submissionPreview');
+        const previewContent = document.getElementById('previewContent');
+
+        function showMessage(text, type) {
+            messageDiv.textContent = text;
+            messageDiv.className = `message ${type} show`;
+            setTimeout(() => {
+                messageDiv.classList.remove('show');
+            }, 5000);
+        }
+
+        function validateDriveLink(link) {
+            const drivePattern = /^https:\/\/drive\.google\.com\/(file\/d\/|open\?id=|drive\/folders\/)/;
+            return drivePattern.test(link);
+        }
+
+        function showLoading(show) {
+            if (show) {
+                loadingSpinner.classList.add('show');
+                submitBtn.disabled = true;
+                form.style.opacity = '0.6';
+            } else {
+                loadingSpinner.classList.remove('show');
+                submitBtn.disabled = false;
+                form.style.opacity = '1';
+            }
+        }
+
+        function showSubmissionPreview(data) {
+            const preview = `
+                <div class="preview-item">
+                    <span class="preview-label">Submission ID:</span>
+                    <span class="preview-value">${data.id}</span>
+                </div>
+                <div class="preview-item">
+                    <span class="preview-label">Participant ID:</span>
+                    <span class="preview-value">${data.participant_id}</span>
+                </div>
+                <div class="preview-item">
+                    <span class="preview-label">Task ID:</span>
+                    <span class="preview-value">${data.task_id}</span>
+                </div>
+                <div class="preview-item">
+                    <span class="preview-label">Drive Link:</span>
+                    <span class="preview-value">
+                        <a href="${data.drive_link}" target="_blank" style="color: #667eea;">View File</a>
+                    </span>
+                </div>
+                <div class="preview-item">
+                    <span class="preview-label">Submitted At:</span>
+                    <span class="preview-value">${new Date(data.submitted_at).toLocaleString()}</span>
+                </div>
+            `;
+
+            previewContent.innerHTML = preview;
+            submissionPreview.classList.add('show');
+            form.style.display = 'none';
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = {
+                participant_id: document.getElementById('participant_id').value.trim(),
+                task_id: document.getElementById('task_id').value.trim(),
+                drive_link: document.getElementById('drive_link').value.trim()
+            };
+
+            // Validate Drive link
+            if (!validateDriveLink(formData.drive_link)) {
+                showMessage('Please enter a valid Google Drive link', 'error');
+                return;
+            }
+
+            showLoading(true);
+
+            try {
+                const response = await fetch(`${API_URL}/submissions`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    showMessage(result.message || 'Submission successful!', 'success');
+                    showSubmissionPreview(result.data);
+                } else {
+                    showMessage(result.message || 'Submission failed. Please try again.', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showMessage('Network error. Please check your connection and try again.', 'error');
+            } finally {
+                showLoading(false);
+            }
+        });
+
+        // Auto-fill from URL parameters (for testing/convenience)
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+
+            if (urlParams.has('participant_id')) {
+                document.getElementById('participant_id').value = urlParams.get('participant_id');
+            }
+
+            if (urlParams.has('task_id')) {
+                document.getElementById('task_id').value = urlParams.get('task_id');
+            }
+        });
+    </script>
+</body>
+</html>

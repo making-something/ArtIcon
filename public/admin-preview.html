@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Update Preview URLs - Articon Hackathon</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .filter-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .filter-section h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .filter-controls {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-controls select,
+        .filter-controls button {
+            padding: 10px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .filter-controls select {
+            min-width: 150px;
+        }
+
+        .filter-controls button {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .filter-controls button:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-card h4 {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+
+        .stat-card .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .submissions-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .submission-card {
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .submission-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.1);
+        }
+
+        .submission-card.has-preview {
+            border-color: #28a745;
+            background: #f1f9f4;
+        }
+
+        .submission-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .submission-id {
+            font-size: 12px;
+            color: #666;
+            font-family: monospace;
+        }
+
+        .submission-badge {
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .badge-completed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .submission-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .info-label {
+            font-size: 12px;
+            color: #666;
+            font-weight: 600;
+        }
+
+        .info-value {
+            font-size: 14px;
+            color: #333;
+        }
+
+        .link-section {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .link-item {
+            margin-bottom: 10px;
+        }
+
+        .link-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .link-label {
+            font-size: 12px;
+            color: #666;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .link-display {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .link-display input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 13px;
+            font-family: monospace;
+        }
+
+        .link-display a {
+            padding: 8px 15px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .link-display a:hover {
+            background: #5568d3;
+        }
+
+        .update-form {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .update-form input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .update-form input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .update-form button {
+            padding: 10px 20px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .update-form button:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+
+        .update-form button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .message.show {
+            display: block;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .empty-state h3 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .empty-state p {
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 22px;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .submission-header {
+                flex-direction: column;
+            }
+
+            .update-form {
+                flex-direction: column;
+            }
+
+            .update-form button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Admin - Preview</h1> URL Manager</h1>
+            <p>Update submission preview URLs after copying files to organization Drive</p>
+        </div>
+
+        <div class="content">
+            <div id="message" class="message"></div>
+
+            <div class="filter-section">
+                <h3>🔍 Filter Submissions</h3>
+                <div class="filter-controls">
+                    <select id="categoryFilter">
+                        <option value="">All Categories</option>
+                        <option value="video">Video</option>
+                        <option value="ui_ux">UI/UX</option>
+                        <option value="graphics">Graphics</option>
+                    </select>
+                    <select id="statusFilter">
+                        <option value="pending">Pending Preview URL</option>
+                        <option value="completed">Has Preview URL</option>
+                        <option value="all">All Submissions</option>
+                    </select>
+                    <button onclick="loadSubmissions()">🔄 Refresh</button>
+                </div>
+            </div>
+
+            <div class="stats">
+                <div class="stat-card">
+                    <h4>Total Submissions</h4>
+                    <div class="stat-value" id="totalCount">0</div>
+                </div>
+                <div class="stat-card">
+                    <h4>Pending Preview</h4>
+                    <div class="stat-value" id="pendingCount">0</div>
+                </div>
+                <div class="stat-card">
+                    <h4>Completed</h4>
+                    <div class="stat-value" id="completedCount">0</div>
+                </div>
+            </div>
+
+            <div id="loadingState" class="loading" style="display: none;">
+                <div class="spinner"></div>
+                <p>Loading submissions...</p>
+            </div>
+
+            <div id="submissionsList" class="submissions-list"></div>
+
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <h3>📭 No Submissions Found</h3>
+                <p>Try changing the filters or refresh the page</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:8000/api';
+        let allSubmissions = [];
+
+        function showMessage(text, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = text;
+            messageDiv.className = `message ${type} show`;
+            setTimeout(() => {
+                messageDiv.classList.remove('show');
+            }, 5000);
+        }
+
+        function showLoading(show) {
+            document.getElementById('loadingState').style.display = show ? 'block' : 'none';
+            document.getElementById('submissionsList').style.display = show ? 'none' : 'block';
+        }
+
+        function updateStats() {
+            const total = allSubmissions.length;
+            const pending = allSubmissions.filter(s => !s.preview_url).length;
+            const completed = allSubmissions.filter(s => s.preview_url).length;
+
+            document.getElementById('totalCount').textContent = total;
+            document.getElementById('pendingCount').textContent = pending;
+            document.getElementById('completedCount').textContent = completed;
+        }
+
+        function renderSubmissions(submissions) {
+            const listDiv = document.getElementById('submissionsList');
+            const emptyDiv = document.getElementById('emptyState');
+
+            if (submissions.length === 0) {
+                listDiv.style.display = 'none';
+                emptyDiv.style.display = 'block';
+                return;
+            }
+
+            emptyDiv.style.display = 'none';
+            listDiv.style.display = 'block';
+
+            listDiv.innerHTML = submissions.map(submission => `
+                <div class="submission-card ${submission.preview_url ? 'has-preview' : ''}" data-id="${submission.id}">
+                    <div class="submission-header">
+                        <div>
+                            <div class="submission-id">ID: ${submission.id}</div>
+                        </div>
+                        <span class="submission-badge ${submission.preview_url ? 'badge-completed' : 'badge-pending'}">
+                            ${submission.preview_url ? '✅ Has Preview URL' : '⏳ Pending'}
+                        </span>
+                    </div>
+
+                    <div class="submission-info">
+                        <div class="info-item">
+                            <span class="info-label">Participant</span>
+                            <span class="info-value">${submission.participant?.name || 'N/A'}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Email</span>
+                            <span class="info-value">${submission.participant?.email || 'N/A'}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Category</span>
+                            <span class="info-value">${submission.participant?.category || 'N/A'}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Task</span>
+                            <span class="info-value">${submission.task?.title || 'N/A'}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Submitted At</span>
+                            <span class="info-value">${new Date(submission.submitted_at).toLocaleString()}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Assigned Judge</span>
+                            <span class="info-value">${submission.judge?.name || 'Unassigned'}</span>
+                        </div>
+                    </div>
+
+                    <div class="link-section">
+                        <div class="link-item">
+                            <div class="link-label">📎 Original Drive Link (Participant's):</div>
+                            <div class="link-display">
+                                <input type="text" value="${submission.drive_link}" readonly>
+                                <a href="${submission.drive_link}" target="_blank">Open</a>
+                            </div>
+                        </div>
+
+                        ${submission.preview_url ? `
+                            <div class="link-item">
+                                <div class="link-label">🎯 Preview URL (Organization's):</div>
+                                <div class="link-display">
+                                    <input type="text" value="${submission.preview_url}" readonly>
+                                    <a href="${submission.preview_url}" target="_blank">Open</a>
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+
+                    ${!submission.preview_url ? `
+                        <div class="update-form">
+                            <input
+                                type="url"
+                                id="preview-${submission.id}"
+                                placeholder="Paste organization's Drive link here..."
+                                required
+                            >
+                            <button onclick="updatePreviewUrl('${submission.id}')">
+                                💾 Save Preview URL
+                            </button>
+                        </div>
+                    ` : `
+                        <div class="update-form">
+                            <input
+                                type="url"
+                                id="preview-${submission.id}"
+                                placeholder="Update preview URL..."
+                                value="${submission.preview_url}"
+                            >
+                            <button onclick="updatePreviewUrl('${submission.id}')">
+                                🔄 Update Preview URL
+                            </button>
+                        </div>
+                    `}
+                </div>
+            `).join('');
+        }
+
+        async function loadSubmissions() {
+            showLoading(true);
+
+            try {
+                const response = await fetch(`${API_URL}/submissions`);
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    allSubmissions = result.data;
+                    updateStats();
+                    filterAndRender();
+                } else {
+                    showMessage(result.message || 'Failed to load submissions', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showMessage('Network error. Please check your connection.', 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function filterAndRender() {
+            const categoryFilter = document.getElementById('categoryFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+
+            let filtered = allSubmissions;
+
+            // Filter by category
+            if (categoryFilter) {
+                filtered = filtered.filter(s => s.participant?.category === categoryFilter);
+            }
+
+            // Filter by status
+            if (statusFilter === 'pending') {
+                filtered = filtered.filter(s => !s.preview_url);
+            } else if (statusFilter === 'completed') {
+                filtered = filtered.filter(s => s.preview_url);
+            }
+
+            renderSubmissions(filtered);
+        }
+
+        async function updatePreviewUrl(submissionId) {
+            const input = document.getElementById(`preview-${submissionId}`);
+            const previewUrl = input.value.trim();
+
+            if (!previewUrl) {
+                showMessage('Please enter a preview URL', 'error');
+                return;
+            }
+
+            if (!previewUrl.startsWith('https://drive.google.com/')) {
+                showMessage('Please enter a valid Google Drive link', 'error');
+                return;
+            }
+
+            const button = event.target;
+            button.disabled = true;
+            button.textContent = '⏳ Updating...';
+
+            try {
+                const response = await fetch(`${API_URL}/submissions/${submissionId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        drive_link: allSubmissions.find(s => s.id === submissionId).drive_link,
+                        preview_url: previewUrl
+                    })
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    showMessage('Preview URL updated successfully! ✅', 'success');
+                    await loadSubmissions();
+                } else {
+                    showMessage(result.message || 'Failed to update preview URL', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showMessage('Network error. Please try again.', 'error');
+            } finally {
+                button.disabled = false;
+                button.textContent = '💾 Save Preview URL';
+            }
+        }
+
+        // Event listeners
+        document.getElementById('categoryFilter').addEventListener('change', filterAndRender);
+        document.getElementById('statusFilter').addEventListener('change', filterAndRender);
+
+        // Load submissions on page load
+        window.addEventListener('DOMContentLoaded', loadSubmissions);
+    </script>
+</body>
+</html>
