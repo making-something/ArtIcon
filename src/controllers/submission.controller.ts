@@ -130,7 +130,7 @@ export class SubmissionController {
   async update(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;
-      const { drive_link, preview_url } = req.body;
+      const { drive_link, preview_url, score } = req.body;
 
       if (!drive_link) {
         res.status(400).json({
@@ -147,6 +147,10 @@ export class SubmissionController {
 
       if (preview_url) {
         updateData.preview_url = preview_url;
+      }
+
+      if (score !== undefined) {
+        updateData.score = score;
       }
 
       const { data: submission, error } = await supabaseAdmin

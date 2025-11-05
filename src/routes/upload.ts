@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import supabaseAdmin from '@/config/supabase';
 import googleDriveService from '@/services/google-drive.service';
 
-const router = Router();
+const router: Router = Router();
 
 // Configure multer for file uploads
 const uploadsDir = path.join(process.cwd(), 'uploads');
@@ -15,10 +15,10 @@ if (!fs.existsSync(uploadsDir)) {
 }
 
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
+  destination: (_req, _file, cb) => {
     cb(null, uploadsDir);
   },
-  filename: (req, file, cb) => {
+  filename: (_req, file, cb) => {
     const uniqueName = `${uuidv4()}-${Date.now()}${path.extname(file.originalname)}`;
     cb(null, uniqueName);
   },
@@ -29,11 +29,11 @@ const upload = multer({
   limits: {
     fileSize: 100 * 1024 * 1024, // 100MB
   },
-  fileFilter: (req, file, cb) => {
+  fileFilter: (_req, file, cb) => {
     // Validate file type
     const validation = googleDriveService.validateFile(file);
     if (!validation.isValid) {
-      return cb(new Error(validation.error), false);
+      return cb(new Error(validation.error || 'Invalid file type'));
     }
     cb(null, true);
   },
@@ -161,7 +161,7 @@ router.post('/submit', upload.single('file'), async (req, res) => {
     // Auto-assign to judge with least assignments
     await autoAssignJudge(submission.id);
 
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
       message: 'File uploaded and submission created successfully',
       data: {
@@ -185,7 +185,7 @@ router.post('/submit', upload.single('file'), async (req, res) => {
       }
     }
 
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: error instanceof Error ? error.message : 'Internal server error',
     });
@@ -208,13 +208,13 @@ router.post('/validate-link', async (req, res) => {
 
     const validation = await googleDriveService.validateAndGeneratePreview(drive_link);
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       data: validation,
     });
   } catch (error) {
     console.error('Error validating link:', error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: 'Internal server error',
     });
