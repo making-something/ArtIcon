@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import supabaseAdmin from '@/config/supabase';
 import emailService from '@/services/email.service';
-import whatsappService from '@/services/whatsapp.service';
 import { ParticipantInsert } from '@/types/database';
 
 export class ParticipantController {
@@ -82,7 +81,11 @@ export class ParticipantController {
       // Send notifications asynchronously
       Promise.all([
         emailService.sendRegistrationEmail(participant),
-        whatsappService.sendRegistrationMessage(participant),
+        // Send WhatsApp registration message
+        (async () => {
+          const whatsappService = await import('@/services/whatsapp.service');
+          await whatsappService.default.sendRegistrationMessage(participant);
+        })(),
       ]).catch((error) => {
         console.error('Error sending notifications:', error);
       });
@@ -219,6 +222,43 @@ export class ParticipantController {
   }
 
   /**
+   * Send WhatsApp opt-in message to participant
+   */
+  async sendOptInMessage(req: Request, res: Response): Promise<void> {
+    try {
+      const { id } = req.params;
+
+      const { data: participant, error } = await supabaseAdmin
+        .from('participants')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (error || !participant) {
+        res.status(404).json({
+          success: false,
+          message: 'Participant not found',
+        });
+        return;
+      }
+
+      const whatsappService = await import('@/services/whatsapp.service');
+      await whatsappService.default.sendRegistrationMessage(participant);
+
+      res.status(200).json({
+        success: true,
+        message: 'WhatsApp opt-in message sent successfully',
+      });
+    } catch (error) {
+      console.error('Error in sendOptInMessage:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Internal server error',
+      });
+    }
+  }
+
+  /**
    * Update participant presence status
    */
   async updatePresence(req: Request, res: Response): Promise<void> {
@@ -338,6 +378,61 @@ export class ParticipantController {
       });
     } catch (error) {
       console.error('Error in getStatistics:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Internal server error',
+      });
+    }
+  }
+
+  /**
+   * Login participant (simple verification)
+   */
+  async login(req: Request, res: Response): Promise<void> {
+    try {
+      const { email, whatsapp_no } = req.body;
+
+      if (!email || !whatsapp_no) {
+        res.status(400).json({
+          success: false,
+          message: 'Email and WhatsApp number are required',
+        });
+        return;
+      }
+
+      // Find participant by email and WhatsApp number
+      const { data: participant, error } = await supabaseAdmin
+        .from('participants')
+        .select('*')
+        .eq('email', email)
+        .eq('whatsapp_no', whatsapp_no)
+        .single();
+
+      if (error || !participant) {
+        res.status(401).json({
+          success: false,
+          message: 'Invalid credentials',
+        });
+        return;
+      }
+
+      // Generate a simple token (in production, use JWT)
+      const token = Buffer.from(`${participant.id}:${Date.now()}`).toString('base64');
+
+      res.status(200).json({
+        success: true,
+        message: 'Login successful',
+        token,
+        participant: {
+          id: participant.id,
+          name: participant.name,
+          email: participant.email,
+          category: participant.category,
+          city: participant.city,
+        },
+      });
+    } catch (error) {
+      console.error('Error in participant login:', error);
       res.status(500).json({
         success: false,
         message: 'Internal server error',

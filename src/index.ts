@@ -11,6 +11,7 @@ import adminRoutes from "@/routes/admin.routes";
 import judgeRoutes from "@/routes/judge.routes";
 import notificationRoutes from "@/routes/notification.routes";
 import uploadRoutes from "@/routes/upload";
+import whatsappSimpleRoutes from "@/routes/whatsappSimple.routes";
 
 // Import cron jobs
 import { initializeCronJobs, stopCronJobs } from "@/utils/cron";
@@ -109,6 +110,7 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/judge", judgeRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/upload", uploadRoutes);
+app.use("/api/whatsapp-simple", whatsappSimpleRoutes);
 
 // 404 handler
 app.use((req: Request, res: Response) => {

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { supabaseAdmin } from '@/config/supabase';
 import { Participant } from '@/types/database';
 
 interface WhatsAppMessage {
@@ -15,45 +16,123 @@ interface WhatsAppMessage {
     };
     components?: any[];
   };
+  interactive?: {
+    type: 'button' | 'list';
+    header?: {
+      type: 'text' | 'image' | 'video' | 'document';
+      text?: string;
+    };
+    body: {
+      text: string;
+    };
+    footer?: {
+      text: string;
+    };
+    action: {
+      button?: string;
+      buttons?: any[];
+      sections?: any[];
+    };
+  };
 }
 
 export class WhatsAppService {
   private phoneNumberId: string;
   private accessToken: string;
   private apiUrl: string;
+  private businessAccountId: string;
   private isConfigured: boolean;
 
   constructor() {
     this.phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID || '';
     this.accessToken = process.env.WHATSAPP_ACCESS_TOKEN || '';
+    this.businessAccountId = process.env.WHATSAPP_BUSINESS_ACCOUNT_ID || '';
     this.apiUrl = `https://graph.facebook.com/v18.0/${this.phoneNumberId}/messages`;
     this.isConfigured = !!(this.phoneNumberId && this.accessToken);
 
     if (!this.isConfigured) {
-      console.warn('⚠️  WhatsApp credentials not configured. WhatsApp notifications will be logged only.');
+      console.warn('⚠️  WhatsApp credentials not configured. Messages will be logged only.');
     } else {
       console.log('✅ WhatsApp service configured');
     }
   }
 
   /**
-   * Send a WhatsApp message to a single recipient
+   * Send a simple text message
    */
-  async sendMessage(to: string, message: string): Promise<void> {
+  async sendMessage(phoneNumber: string, message: string): Promise<boolean> {
     try {
+      const formattedNumber = this.formatPhoneNumber(phoneNumber);
+
       if (!this.isConfigured) {
-        console.log(`📱 [WHATSAPP LOG] To: ${to}`);
-        console.log(`   Message: ${message.substring(0, 100)}...`);
-        return;
+        console.log(`📱 [WHATSAPP LOG] To: ${formattedNumber}`);
+        console.log(`   Message: ${message}`);
+        console.log(`   Phone Number ID (sender): ${this.phoneNumberId}`);
+        return true;
       }
 
       const payload: WhatsAppMessage = {
         messaging_product: 'whatsapp',
-        to: this.formatPhoneNumber(to),
+        to: formattedNumber,
         type: 'text',
         text: {
           body: message,
         },
+      };
+
+      console.log(`📱 [WHATSAPP API CALL]`);
+      console.log(`   Original input: ${phoneNumber}`);
+      console.log(`   Formatted recipient: ${formattedNumber}`);
+      console.log(`   Sender Phone ID: ${this.phoneNumberId}`);
+
+      const response = await axios.post(this.apiUrl, payload, {
+        headers: {
+          'Authorization': `Bearer ${this.accessToken}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      console.log(`✅ WhatsApp message sent to ${phoneNumber}:`, response.data);
+      return true;
+    } catch (error: any) {
+      console.error('❌ Error sending WhatsApp message:', error.response?.data || error.message);
+      return false;
+    }
+  }
+
+  /**
+   * Send a template message (for users who haven't opted in yet)
+   */
+  async sendTemplateMessage(phoneNumber: string, templateName: string, variables: string[] = []): Promise<boolean> {
+    try {
+      const formattedNumber = this.formatPhoneNumber(phoneNumber);
+
+      if (!this.isConfigured) {
+        console.log(`📱 [WHATSAPP LOG - TEMPLATE] To: ${formattedNumber}`);
+        console.log(`   Template: ${templateName}`);
+        console.log(`   Variables:`, variables);
+        return true;
+      }
+
+      const payload: WhatsAppMessage = {
+        messaging_product: 'whatsapp',
+        to: formattedNumber,
+        type: 'template',
+        template: {
+          name: templateName,
+          language: {
+            code: 'en'
+          },
+          components: variables.length > 0 ? [
+            {
+              type: 'body',
+              parameters: variables.map(variable => ({
+                type: 'text',
+                text: variable
+              }))
+            }
+          ] : []
+        }
       };
 
       const response = await axios.post(this.apiUrl, payload, {
@@ -63,33 +142,120 @@ export class WhatsAppService {
         },
       });
 
-      console.log(`✅ WhatsApp message sent successfully to ${to}:`, response.data);
+      console.log(`✅ Template message sent to ${phoneNumber}:`, response.data);
+      return true;
     } catch (error: any) {
-      console.error('❌ Error sending WhatsApp message:', error.response?.data || error.message);
-      // Don't throw error to prevent server crash
-      console.error('   Message delivery failed but continuing...');
+      console.error('❌ Error sending template message:', error.response?.data || error.message);
+      return false;
     }
   }
 
   /**
-   * Send bulk WhatsApp messages
+   * Send message to participant by email (find their WhatsApp number)
    */
-  async sendBulkMessages(recipients: { phone: string; message: string }[]): Promise<void> {
+  async sendMessageToParticipant(email: string, message: string): Promise<boolean> {
     try {
-      const promises = recipients.map((recipient) =>
-        this.sendMessage(recipient.phone, recipient.message)
-      );
+      const { data: participant, error } = await supabaseAdmin
+        .from('participants')
+        .select('whatsapp_no, name')
+        .eq('email', email)
+        .single();
 
-      await Promise.allSettled(promises);
-      console.log(`Bulk WhatsApp messages sent: ${recipients.length} messages`);
+      if (error || !participant) {
+        console.error(`❌ Participant not found with email: ${email}`);
+        return false;
+      }
+
+      return await this.sendMessage(participant.whatsapp_no, message);
     } catch (error) {
-      console.error('Error sending bulk WhatsApp messages:', error);
-      throw new Error('Failed to send bulk WhatsApp messages');
+      console.error('❌ Error sending message to participant:', error);
+      return false;
     }
   }
 
   /**
-   * Send registration confirmation WhatsApp message
+   * Send message to all participants in a category
+   */
+  async sendMessageToCategory(category: string, message: string): Promise<number> {
+    try {
+      const { data: participants, error } = await supabaseAdmin
+        .from('participants')
+        .select('whatsapp_no, name')
+        .eq('category', category);
+
+      if (error) {
+        console.error('❌ Error fetching participants:', error);
+        return 0;
+      }
+
+      let successCount = 0;
+      for (const participant of participants || []) {
+        const success = await this.sendMessage(participant.whatsapp_no, message);
+        if (success) successCount++;
+
+        // Add small delay to avoid rate limiting
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+
+      console.log(`✅ Sent ${successCount}/${participants?.length} messages to ${category} category`);
+      return successCount;
+    } catch (error) {
+      console.error('❌ Error sending category messages:', error);
+      return 0;
+    }
+  }
+
+  /**
+   * Send message to all participants
+   */
+  async sendMessageToAll(message: string): Promise<number> {
+    try {
+      const { data: participants, error } = await supabaseAdmin
+        .from('participants')
+        .select('whatsapp_no, name');
+
+      if (error) {
+        console.error('❌ Error fetching participants:', error);
+        return 0;
+      }
+
+      let successCount = 0;
+      for (const participant of participants || []) {
+        const success = await this.sendMessage(participant.whatsapp_no, message);
+        if (success) successCount++;
+
+        // Add delay to avoid rate limiting
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+
+      console.log(`✅ Sent ${successCount}/${participants?.length} messages to all participants`);
+      return successCount;
+    } catch (error) {
+      console.error('❌ Error sending bulk messages:', error);
+      return 0;
+    }
+  }
+
+  /**
+   * Send bulk messages to specific phone numbers
+   */
+  async sendBulkMessages(recipients: { phone: string; message: string }[]): Promise<number> {
+    let successCount = 0;
+
+    for (const recipient of recipients) {
+      const success = await this.sendMessage(recipient.phone, recipient.message);
+      if (success) successCount++;
+
+      // Add delay to avoid rate limiting
+      await new Promise(resolve => setTimeout(resolve, 100));
+    }
+
+    console.log(`✅ Sent ${successCount}/${recipients.length} bulk messages`);
+    return successCount;
+  }
+
+  /**
+   * Legacy methods for backward compatibility
    */
   async sendRegistrationMessage(participant: Participant): Promise<void> {
     const message = `🎉 *Registration Confirmed!*
@@ -115,9 +281,6 @@ Good luck! 💪`;
     await this.sendMessage(participant.whatsapp_no, message);
   }
 
-  /**
-   * Send event start notification WhatsApp message
-   */
   async sendEventStartMessage(participant: Participant): Promise<void> {
     const message = `🚀 *Event Started!*
 
@@ -142,9 +305,6 @@ Good luck! 🏆`;
     await this.sendMessage(participant.whatsapp_no, message);
   }
 
-  /**
-   * Send custom notification WhatsApp message
-   */
   async sendNotificationMessage(participants: Participant[], message: string): Promise<void> {
     const recipients = participants.map((participant) => ({
       phone: participant.whatsapp_no,
@@ -160,14 +320,7 @@ Stay tuned for more updates! 🚀`,
     await this.sendBulkMessages(recipients);
   }
 
-  /**
-   * Send winner announcement WhatsApp message
-   */
-  async sendWinnerMessage(
-    participant: Participant,
-    position: number,
-    category: string
-  ): Promise<void> {
+  async sendWinnerMessage(participant: Participant, position: number, category: string): Promise<void> {
     const medals = ['🥇', '🥈', '🥉'];
     const medal = medals[position - 1] || '🏆';
 
@@ -191,9 +344,6 @@ Congratulations once again! 🌟`;
     await this.sendMessage(participant.whatsapp_no, message);
   }
 
-  /**
-   * Send submission confirmation WhatsApp message
-   */
   async sendSubmissionConfirmationMessage(participant: Participant): Promise<void> {
     const message = `✅ *Submission Received!*
 
@@ -215,9 +365,6 @@ Good luck! 🍀`;
     await this.sendMessage(participant.whatsapp_no, message);
   }
 
-  /**
-   * Send reminder message
-   */
   async sendReminderMessage(participant: Participant, reminderText: string): Promise<void> {
     const message = `⏰ *Reminder*
 
@@ -232,9 +379,6 @@ Don't forget to submit your work! ⚡`;
     await this.sendMessage(participant.whatsapp_no, message);
   }
 
-  /**
-   * Send task assigned message
-   */
   async sendTaskAssignedMessage(participant: Participant, taskTitle: string): Promise<void> {
     const message = `📝 *New Task Assigned!*
 
@@ -253,18 +397,60 @@ Good luck! 💪`;
   }
 
   /**
-   * Format phone number for WhatsApp (must include country code without + or 00)
+   * Handle webhook events
+   */
+  async handleWebhook(body: any): Promise<void> {
+    try {
+      if (body.object !== 'whatsapp_business_account') return;
+
+      const entry = body.entry?.[0];
+      const changes = entry?.changes?.[0];
+      const value = changes?.value;
+
+      if (!value) return;
+
+      // Log incoming messages for monitoring
+      if (value.messages) {
+        const message = value.messages[0];
+        console.log(`📱 Incoming message from ${message.from}: ${message.type}`);
+      }
+
+      // Log status updates
+      if (value.statuses) {
+        value.statuses.forEach((status: any) => {
+          console.log(`📊 Message status: ${status.id} - ${status.status}`);
+        });
+      }
+    } catch (error) {
+      console.error('❌ Error handling webhook:', error);
+    }
+  }
+
+  /**
+   * Verify webhook
+   */
+  verifyWebhook(mode: string, token: string, challenge: string): string | null {
+    const verifyToken = process.env.WHATSAPP_VERIFY_TOKEN;
+
+    if (mode === 'subscribe' && token === verifyToken) {
+      console.log('✅ Webhook verified successfully');
+      return challenge;
+    }
+
+    console.log('❌ Webhook verification failed');
+    return null;
+  }
+
+  /**
+   * Format phone number for WhatsApp
    */
   private formatPhoneNumber(phone: string): string {
-    // Remove all non-digit characters
     let cleaned = phone.replace(/\D/g, '');
 
-    // If number starts with 0, remove it (assuming Indian number)
     if (cleaned.startsWith('0')) {
       cleaned = cleaned.substring(1);
     }
 
-    // If number doesn't start with country code, add 91 (India)
     if (!cleaned.startsWith('91') && cleaned.length === 10) {
       cleaned = '91' + cleaned;
     }
@@ -285,51 +471,46 @@ Good luck! 💪`;
   }
 
   /**
-   * Verify webhook (for Meta webhook setup)
+   * Get participant list for admin
    */
-  verifyWebhook(mode: string, token: string, challenge: string): string | null {
-    const verifyToken = process.env.WHATSAPP_VERIFY_TOKEN;
+  async getParticipants(category?: string): Promise<any[]> {
+    try {
+      let query = supabaseAdmin
+        .from('participants')
+        .select('id, name, email, whatsapp_no, category, city, created_at');
 
-    if (mode === 'subscribe' && token === verifyToken) {
-      console.log('Webhook verified successfully');
-      return challenge;
+      if (category) {
+        query = query.eq('category', category);
+      }
+
+      const { data, error } = await query;
+
+      if (error) throw error;
+      return data || [];
+    } catch (error) {
+      console.error('❌ Error fetching participants:', error);
+      return [];
     }
-
-    console.log('Webhook verification failed');
-    return null;
   }
 
   /**
-   * Handle incoming webhook messages
+   * Check if service is ready
    */
-  async handleWebhook(body: any): Promise<void> {
-    try {
-      if (body.object !== 'whatsapp_business_account') {
-        return;
-      }
+  isServiceReady(): boolean {
+    return this.isConfigured;
+  }
 
-      const entry = body.entry?.[0];
-      const changes = entry?.changes?.[0];
-      const value = changes?.value;
-
-      if (!value) {
-        return;
-      }
-
-      // Handle status updates
-      if (value.statuses) {
-        console.log('Message status update:', value.statuses);
-      }
-
-      // Handle incoming messages
-      if (value.messages) {
-        const message = value.messages[0];
-        console.log('Received message:', message);
-        // You can add logic here to handle incoming messages if needed
-      }
-    } catch (error) {
-      console.error('Error handling webhook:', error);
-    }
+  /**
+   * Get service status
+   */
+  getServiceStatus(): any {
+    return {
+      configured: this.isConfigured,
+      phoneNumberId: this.phoneNumberId ? 'Set' : 'Not set',
+      hasAccessToken: !!this.accessToken,
+      businessAccountId: this.businessAccountId ? 'Set' : 'Not set',
+      apiUrl: this.apiUrl
+    };
   }
 }
 

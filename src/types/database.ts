@@ -20,6 +20,10 @@ export interface Database {
           city: string
           portfolio_url: string
           is_present: boolean
+          whatsapp_opt_in: boolean | null
+          whatsapp_opt_in_at: string | null
+          whatsapp_opt_in_source: string | null
+          whatsapp_opt_out_at: string | null
           created_at: string
           updated_at: string
         }
@@ -32,6 +36,10 @@ export interface Database {
           city: string
           portfolio_url: string
           is_present?: boolean
+          whatsapp_opt_in?: boolean | null
+          whatsapp_opt_in_at?: string | null
+          whatsapp_opt_in_source?: string | null
+          whatsapp_opt_out_at?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -44,6 +52,10 @@ export interface Database {
           city?: string
           portfolio_url?: string
           is_present?: boolean
+          whatsapp_opt_in?: boolean | null
+          whatsapp_opt_in_at?: string | null
+          whatsapp_opt_in_source?: string | null
+          whatsapp_opt_out_at?: string | null
           created_at?: string
           updated_at?: string
         }
