@@ -144,7 +144,10 @@ export class NotificationController {
       // Send notifications
       await Promise.allSettled([
         emailService.sendNotificationEmail(participants, message),
-        whatsappService.sendNotificationMessage(participants, message),
+        // Send WhatsApp messages to all participants
+        (async () => {
+          await whatsappService.sendNotificationMessage(participants, message);
+        })(),
       ]);
 
       // Log notification

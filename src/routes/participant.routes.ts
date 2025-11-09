@@ -1,5 +1,6 @@
 import { Router, IRouter } from 'express';
 import participantController from '@/controllers/participant.controller';
+import { authenticateAdmin } from '@/middleware/auth.middleware';
 
 const router: IRouter = Router();
 
@@ -9,6 +10,13 @@ const router: IRouter = Router();
  * @access  Public
  */
 router.post('/register', participantController.register.bind(participantController));
+
+/**
+ * @route   POST /api/participants/login
+ * @desc    Login participant
+ * @access  Public
+ */
+router.post('/login', participantController.login.bind(participantController));
 
 /**
  * @route   GET /api/participants/event-status
@@ -58,5 +66,12 @@ router.get('/stats/all', participantController.getStatistics.bind(participantCon
  * @access  Admin only (should be protected in production)
  */
 router.patch('/:id/presence', participantController.updatePresence.bind(participantController));
+
+/**
+ * @route   POST /api/participants/:id/send-optin
+ * @desc    Send WhatsApp opt-in message to participant
+ * @access  Admin
+ */
+router.post('/:id/send-optin', authenticateAdmin, participantController.sendOptInMessage.bind(participantController));
 
 export default router;

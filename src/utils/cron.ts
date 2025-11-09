@@ -75,6 +75,10 @@ export const initializeCronJobs = () => {
     }
   });
 
+  // Initialize WhatsApp scheduled messages
+  // console.log('Initializing WhatsApp scheduler...');
+  // whatsappSchedulerService;
+
   console.log('Cron jobs initialized successfully');
 };
 
