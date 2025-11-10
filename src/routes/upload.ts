@@ -42,7 +42,9 @@ const upload = multer({
 /**
  * Upload file and create submission
  */
-router.post('/submit', upload.single('file'), async (req, res) => {
+import { authenticateParticipant } from '@/middleware/auth.middleware';
+
+router.post('/submit', authenticateParticipant, upload.single('file'), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({
@@ -51,7 +53,17 @@ router.post('/submit', upload.single('file'), async (req, res) => {
       });
     }
 
-    const { participant_id, task_id } = req.body;
+    const { task_id } = req.body;
+
+    const participant_id = req.user?.id;
+
+    if (!participant_id) {
+      fs.unlinkSync(req.file.path);
+      return res.status(401).json({
+        success: false,
+        message: 'Unauthorized: participant token required',
+      });
+    }
 
     if (!participant_id || !task_id) {
       // Clean up uploaded file

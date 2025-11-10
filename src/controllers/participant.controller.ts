@@ -416,8 +416,12 @@ export class ParticipantController {
         return;
       }
 
-      // Generate a simple token (in production, use JWT)
-      const token = Buffer.from(`${participant.id}:${Date.now()}`).toString('base64');
+      const { signToken } = await import('@/utils/jwt');
+      const token = signToken({
+        id: participant.id,
+        email: participant.email,
+        role: 'participant',
+      });
 
       res.status(200).json({
         success: true,

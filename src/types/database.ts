@@ -262,10 +262,29 @@ export interface Database {
       }
     }
     Views: {
-      [_ in never]: never
+      participant_statistics: {
+        Row: {
+          category: 'video' | 'ui_ux' | 'graphics'
+          total_participants: number
+          present_participants: number
+        }
+      }
+      submission_statistics: {
+        Row: {
+          category: 'video' | 'ui_ux' | 'graphics'
+          total_submissions: number
+        }
+      }
     }
     Functions: {
-      [_ in never]: never
+      increment_judge_count: {
+        Args: { judge_id: string }
+        Returns: void
+      }
+      decrement_judge_count: {
+        Args: { judge_id: string }
+        Returns: void
+      }
     }
     Enums: {
       category_enum: 'video' | 'ui_ux' | 'graphics'

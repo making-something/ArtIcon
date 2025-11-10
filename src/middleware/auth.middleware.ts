@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 interface JwtPayload {
   id: string;
   email: string;
-  role: 'admin' | 'judge';
+  role: 'admin' | 'judge' | 'participant';
 }
 
 declare global {
@@ -28,7 +28,16 @@ export const authenticateToken = (req: Request, res: Response, next: NextFunctio
       return;
     }
 
-    const secret = process.env.JWT_SECRET || 'your-secret-key';
+    const secret = process.env.JWT_SECRET;
+
+    if (!secret) {
+      console.error('JWT_SECRET is not configured');
+      res.status(500).json({
+        success: false,
+        message: 'Server configuration error',
+      });
+      return;
+    }
 
     jwt.verify(token, secret, (err, decoded) => {
       if (err) {
@@ -70,6 +79,19 @@ export const authenticateJudge = (req: Request, res: Response, next: NextFunctio
       res.status(403).json({
         success: false,
         message: 'Judge access required',
+      });
+      return;
+    }
+    next();
+  });
+};
+
+export const authenticateParticipant = (req: Request, res: Response, next: NextFunction): void => {
+  authenticateToken(req, res, () => {
+    if (req.user?.role !== 'participant') {
+      res.status(403).json({
+        success: false,
+        message: 'Participant access required',
       });
       return;
     }

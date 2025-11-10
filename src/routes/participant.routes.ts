@@ -65,7 +65,7 @@ router.get('/stats/all', participantController.getStatistics.bind(participantCon
  * @desc    Update participant presence status
  * @access  Admin only (should be protected in production)
  */
-router.patch('/:id/presence', participantController.updatePresence.bind(participantController));
+router.patch('/:id/presence', authenticateAdmin, participantController.updatePresence.bind(participantController));
 
 /**
  * @route   POST /api/participants/:id/send-optin

@@ -1,0 +1,346 @@
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Articon Backend Test Harness</title>
+    <style>
+      body {
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+        background: #111;
+        color: #eee;
+        margin: 0;
+        padding: 20px;
+      }
+      h1, h2, h3 {
+        margin: 0 0 8px;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 16px;
+        margin-top: 16px;
+      }
+      .card {
+        background: #1b1b1b;
+        border: 1px solid #333;
+        border-radius: 8px;
+        padding: 12px;
+        font-size: 13px;
+      }
+      label {
+        display: block;
+        margin: 4px 0 2px;
+        font-size: 11px;
+        color: #aaa;
+      }
+      input, select, textarea {
+        width: 100%;
+        padding: 4px 6px;
+        margin-bottom: 4px;
+        font-size: 12px;
+        border-radius: 4px;
+        border: 1px solid #333;
+        background: #111;
+        color: #eee;
+        box-sizing: border-box;
+      }
+      button {
+        margin-top: 4px;
+        padding: 4px 8px;
+        font-size: 12px;
+        border-radius: 4px;
+        border: 1px solid #444;
+        background: #222;
+        color: #eee;
+        cursor: pointer;
+      }
+      button:hover {
+        background: #333;
+      }
+      .row {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      pre {
+        background: #050505;
+        padding: 8px;
+        border-radius: 4px;
+        border: 1px solid #222;
+        max-height: 220px;
+        overflow: auto;
+        font-size: 11px;
+        margin-top: 4px;
+      }
+      .small {
+        font-size: 10px;
+        color: #777;
+      }
+      .token {
+        font-size: 10px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        border: 1px solid #333;
+        padding: 3px 5px;
+        border-radius: 4px;
+        background: #050505;
+        margin-top: 2px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Articon Backend Test Harness</h1>
+    <div class="small">
+      Adjust BASE_URL in the script if your API isn’t on http://localhost:8000.
+      This page runs in the browser and calls your real backend.
+    </div>
+
+    <div class="grid">
+
+      <!-- Health + Config -->
+      <div class="card">
+        <h2>Health / Info</h2>
+        <button onclick="callGet('/health', 'healthOut')">GET /health</button>
+        <button onclick="callGet('/', 'healthOut')">GET /</button>
+        <pre id="healthOut"></pre>
+      </div>
+
+      <!-- Participant Registration / Login -->
+      <div class="card">
+        <h2>Participant</h2>
+        <label>Name</label>
+        <input id="p_name" value="Test Participant">
+        <label>Email</label>
+        <input id="p_email" value="test@example.com">
+        <label>WhatsApp</label>
+        <input id="p_whatsapp" value="+1234567890">
+        <label>Category</label>
+        <select id="p_category">
+          <option value="video">video</option>
+          <option value="ui_ux">ui_ux</option>
+          <option value="graphics">graphics</option>
+        </select>
+        <label>City</label>
+        <input id="p_city" value="Test City">
+        <label>Portfolio URL</label>
+        <input id="p_portfolio" value="https://example.com">
+        <div class="row">
+          <button onclick="registerParticipant()">Register</button>
+          <button onclick="loginParticipant()">Login</button>
+        </div>
+        <div class="small">Participant JWT</div>
+        <div class="token" id="participantToken"></div>
+        <pre id="participantOut"></pre>
+      </div>
+
+      <!-- Participant Upload -->
+      <div class="card">
+        <h2>Upload Submission</h2>
+        <div class="small">Requires participant JWT and a valid task_id.</div>
+        <label>task_id</label>
+        <input id="u_task_id" placeholder="Paste existing task id">
+        <label>File</label>
+        <input id="u_file" type="file">
+        <button onclick="uploadSubmission()">POST /api/upload/submit</button>
+        <pre id="uploadOut"></pre>
+      </div>
+
+      <!-- Admin Login / Protected -->
+      <div class="card">
+        <h2>Admin</h2>
+        <label>Email</label>
+        <input id="a_email" value="admin@multiicon.in">
+        <label>Password</label>
+        <input id="a_password" type="password" value="admin123">
+        <div class="row">
+          <button onclick="loginAdmin()">Login</button>
+          <button onclick="getAdminStats()">GET /api/admin/dashboard/stats</button>
+        </div>
+        <div class="small">Admin JWT</div>
+        <div class="token" id="adminToken"></div>
+        <pre id="adminOut"></pre>
+      </div>
+
+      <!-- WhatsApp Simple (admin-protected) -->
+      <div class="card">
+        <h2>WhatsApp Simple</h2>
+        <div class="small">Uses Admin JWT</div>
+        <button onclick="callGet('/api/whatsapp-simple/status', 'waOut', true)">GET /api/whatsapp-simple/status</button>
+        <button onclick="callGet('/api/whatsapp-simple/participants', 'waOut', true)">GET /api/whatsapp-simple/participants</button>
+        <pre id="waOut"></pre>
+      </div>
+
+      <!-- Stats -->
+      <div class="card">
+        <h2>Stats</h2>
+        <button onclick="callGet('/api/participants/stats/all', 'statsOut')">GET /api/participants/stats/all</button>
+        <button onclick="callGet('/api/submissions/stats', 'statsOut')">GET /api/submissions/stats</button>
+        <pre id="statsOut"></pre>
+      </div>
+
+    </div>
+
+    <script>
+      // Adjust this if your API is elsewhere
+      const BASE_URL = 'http://localhost:8000';
+
+      let participantToken = '';
+      let adminToken = '';
+
+      function setText(id, text) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = typeof text === 'string'
+          ? text
+          : JSON.stringify(text, null, 2);
+      }
+
+      async function callGet(path, outId, useAdmin = false) {
+        try {
+          const headers = { 'Accept': 'application/json' };
+          if (useAdmin && adminToken) {
+            headers['Authorization'] = 'Bearer ' + adminToken;
+          }
+          const res = await fetch(BASE_URL + path, { headers });
+          const text = await res.text();
+          setText(outId, safeParse(text));
+        } catch (e) {
+          setText(outId, String(e));
+        }
+      }
+
+      function safeParse(text) {
+        try {
+          return JSON.parse(text);
+        } catch {
+          return text;
+        }
+      }
+
+      // Participant
+
+      async function registerParticipant() {
+        const body = {
+          name: document.getElementById('p_name').value,
+          email: document.getElementById('p_email').value,
+          whatsapp_no: document.getElementById('p_whatsapp').value,
+          category: document.getElementById('p_category').value,
+          city: document.getElementById('p_city').value,
+          portfolio_url: document.getElementById('p_portfolio').value,
+        };
+        try {
+          const res = await fetch(BASE_URL + '/api/participants/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body),
+          });
+          const data = await res.json();
+          setText('participantOut', data);
+        } catch (e) {
+          setText('participantOut', String(e));
+        }
+      }
+
+      async function loginParticipant() {
+        const body = {
+          email: document.getElementById('p_email').value,
+          whatsapp_no: document.getElementById('p_whatsapp').value,
+        };
+        try {
+          const res = await fetch(BASE_URL + '/api/participants/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body),
+          });
+          const data = await res.json();
+          setText('participantOut', data);
+          if (data && data.token) {
+            participantToken = data.token;
+            document.getElementById('participantToken').textContent = data.token;
+          }
+        } catch (e) {
+          setText('participantOut', String(e));
+        }
+      }
+
+      // Upload (participant)
+
+      async function uploadSubmission() {
+        const outId = 'uploadOut';
+        setText(outId, '');
+        if (!participantToken) {
+          setText(outId, 'Login as participant first.');
+          return;
+        }
+        const taskId = document.getElementById('u_task_id').value.trim();
+        const fileInput = document.getElementById('u_file');
+        if (!taskId) {
+          setText(outId, 'Provide task_id.');
+          return;
+        }
+        if (!fileInput.files[0]) {
+          setText(outId, 'Choose a file.');
+          return;
+        }
+        const form = new FormData();
+        form.append('task_id', taskId);
+        form.append('file', fileInput.files[0]);
+        try {
+          const res = await fetch(BASE_URL + '/api/upload/submit', {
+            method: 'POST',
+            headers: {
+              'Authorization': 'Bearer ' + participantToken,
+            },
+            body: form,
+          });
+          const text = await res.text();
+          setText(outId, safeParse(text));
+        } catch (e) {
+          setText(outId, String(e));
+        }
+      }
+
+      // Admin
+
+      async function loginAdmin() {
+        const body = {
+          email: document.getElementById('a_email').value,
+          password: document.getElementById('a_password').value,
+        };
+        try {
+          const res = await fetch(BASE_URL + '/api/admin/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body),
+          });
+          const data = await res.json();
+          setText('adminOut', data);
+          if (data && data.token) {
+            adminToken = data.token;
+            document.getElementById('adminToken').textContent = data.token;
+          }
+        } catch (e) {
+          setText('adminOut', String(e));
+        }
+      }
+
+      async function getAdminStats() {
+        const outId = 'adminOut';
+        if (!adminToken) {
+          setText(outId, 'Login as admin first.');
+          return;
+        }
+        try {
+          const res = await fetch(BASE_URL + '/api/admin/dashboard/stats', {
+            headers: { 'Authorization': 'Bearer ' + adminToken },
+          });
+          const text = await res.text();
+          setText(outId, safeParse(text));
+        } catch (e) {
+          setText(outId, String(e));
+        }
+      }
+    </script>
+  </body>
+  </html>

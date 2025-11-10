@@ -18,11 +18,15 @@ interface FileValidationResult {
 }
 
 export class GoogleDriveService {
-  private drive: any;
-  private auth: GoogleAuth;
+  private drive: any | null = null;
+  private auth: GoogleAuth | null = null;
 
   constructor() {
-    // Initialize Google Auth with service account
+    if (!this.isConfigured()) {
+      console.warn('[GoogleDriveService] Not configured. Uploads will be disabled.');
+      return;
+    }
+
     this.auth = new GoogleAuth({
       credentials: {
         client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
@@ -164,7 +168,8 @@ export class GoogleDriveService {
       }
 
       // Create folder structure: Hackathon/Category/ParticipantName/TaskTitle
-      const hackathonFolderId = await this.getOrCreateFolder('Articon Hackathon 2024');
+      const rootFolderName = process.env.DRIVE_ROOT_FOLDER_NAME || 'Articon Hackathon 2025';
+      const hackathonFolderId = await this.getOrCreateFolder(rootFolderName);
       const categoryFolderId = await this.getOrCreateFolder(category, hackathonFolderId);
       const participantFolderId = await this.getOrCreateFolder(
         participantName.replace(/[^a-zA-Z0-9]/g, '_'),

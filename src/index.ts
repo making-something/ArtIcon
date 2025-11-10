@@ -15,9 +15,13 @@ import whatsappSimpleRoutes from "@/routes/whatsappSimple.routes";
 
 // Import cron jobs
 import { initializeCronJobs, stopCronJobs } from "@/utils/cron";
+import { validateEnv } from "@/config/validateEnv";
 
 // Import WhatsApp service for webhook
 import whatsappService from "@/services/whatsapp.service";
+
+// Validate required environment variables
+validateEnv();
 
 // Initialize Express app
 const app: Application = express();
@@ -27,9 +31,16 @@ const PORT = process.env.PORT || 8000;
 const httpServer = createServer(app);
 
 // Initialize Socket.IO for real-time updates
+const allowedOrigins = [
+  process.env.FRONTEND_URL || "http://localhost:3000",
+  "http://localhost:3000",
+  "http://localhost:5500",
+  "http://127.0.0.1:5500",
+];
+
 const io = new SocketServer(httpServer, {
   cors: {
-    origin: process.env.FRONTEND_URL || "http://localhost:3000",
+    origin: allowedOrigins,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     credentials: true,
   },
@@ -38,7 +49,7 @@ const io = new SocketServer(httpServer, {
 // Middleware
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:3000",
+    origin: allowedOrigins,
     credentials: true,
   }),
 );
@@ -159,13 +170,16 @@ export { io };
 
 // Initialize cron jobs
 if (process.env.NODE_ENV !== "test") {
+  if (!process.env.CRON_BASE_URL && !process.env.API_URL) {
+    console.warn('[Cron] Using inferred base URL from PORT. Set CRON_BASE_URL for production.');
+  }
   initializeCronJobs();
 }
 
 // Start server
 httpServer.listen(PORT, () => {
   console.log("=".repeat(50));
-  console.log("🚀 Articon Hackathon API Server");
+  console.log("Articon Hackathon API Server");
   console.log("=".repeat(50));
   console.log(`Environment: ${process.env.NODE_ENV || "development"}`);
   console.log(`Server running on port: ${PORT}`);

@@ -16,7 +16,7 @@ router.post("/login", adminController.login.bind(adminController));
  * @desc    Create admin account
  * @access  Public (should be restricted in production)
  */
-router.post("/create", adminController.createAdmin.bind(adminController));
+router.post("/create", authenticateAdmin, adminController.createAdmin.bind(adminController));
 
 /**
  * @route   POST /api/admin/judges
