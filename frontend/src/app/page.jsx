@@ -33,10 +33,10 @@ const Page = () => {
     <>
       <Preloader />
       <JunoLanding />
-      {/* <EventOverview /> */}\
+      <EventOverview />
+      <Timeline />
       <ClientReviews />
       <Spotlight />
-      <Timeline />
       <CTACard />
       <Footer />
     </>

@@ -21,7 +21,7 @@ const Timeline = () => {
 
 			const sectionHeights = [];
 			const accumulatedHeights = [];
-			const RATIO = 0.5;
+			const RATIO = 0.8;
 			let accumulatedHeight = 0;
 
 			sections.forEach((section) => {
@@ -34,30 +34,29 @@ const Timeline = () => {
 			let lastActiveIndex = -1;
 
 			function updateMapHeights(relativeScrollPos) {
+				// Calculate which section should be active based on scroll position
+				let activeIndex = 0;
+
 				for (let i = 0; i < accumulatedHeights.length; i++) {
-					if (i === 0 && relativeScrollPos < accumulatedHeights[i]) {
-						if (lastActiveIndex !== i) {
-							if (lastActiveIndex >= 0) {
-								mapDivs[lastActiveIndex].style.height = "100px";
-							}
-							mapDivs[i].style.height = `${sectionHeights[i]}px`;
-							lastActiveIndex = i;
-						}
-						break;
-					} else if (
-						i > 0 &&
-						relativeScrollPos >= accumulatedHeights[i - 1] &&
-						relativeScrollPos < accumulatedHeights[i]
-					) {
-						if (lastActiveIndex !== i) {
-							if (lastActiveIndex >= 0) {
-								mapDivs[lastActiveIndex].style.height = "100px";
-							}
-							mapDivs[i].style.height = `${sectionHeights[i]}px`;
-							lastActiveIndex = i;
-						}
+					if (relativeScrollPos < accumulatedHeights[i]) {
+						activeIndex = i;
 						break;
 					}
+					// If we're past the last accumulated height, show the last section
+					if (i === accumulatedHeights.length - 1) {
+						activeIndex = i;
+					}
+				}
+
+				// Update the active section's height
+				if (lastActiveIndex !== activeIndex) {
+					if (lastActiveIndex >= 0 && mapDivs[lastActiveIndex]) {
+						mapDivs[lastActiveIndex].style.height = "100px";
+					}
+					if (mapDivs[activeIndex]) {
+						mapDivs[activeIndex].style.height = `${sectionHeights[activeIndex]}px`;
+					}
+					lastActiveIndex = activeIndex;
 				}
 			}
 
@@ -78,7 +77,28 @@ const Timeline = () => {
 
 				if (!mapElement || !sectionsElement) return;
 
-				// Get the sections container position
+				// Get each section's position relative to viewport
+				let currentSectionIndex = 0;
+				sections.forEach((section, index) => {
+					const rect = section.getBoundingClientRect();
+					// Check if section is in the viewport (top half)
+					if (rect.top <= window.innerHeight / 2 && rect.bottom >= 0) {
+						currentSectionIndex = index;
+					}
+				});
+
+				// Update the sidebar based on current section
+				if (lastActiveIndex !== currentSectionIndex) {
+					if (lastActiveIndex >= 0 && mapDivs[lastActiveIndex]) {
+						mapDivs[lastActiveIndex].style.height = "100px";
+					}
+					if (mapDivs[currentSectionIndex]) {
+						mapDivs[currentSectionIndex].style.height = `${sectionHeights[currentSectionIndex]}px`;
+					}
+					lastActiveIndex = currentSectionIndex;
+				}
+
+				// Get the sections container position for map translation
 				const sectionsRect = sectionsElement.getBoundingClientRect();
 				const sectionsTop = sectionsRect.top;
 
@@ -93,7 +113,6 @@ const Timeline = () => {
 
 				const mapTranslateY = clampedScroll * scrollRatio;
 				mapElement.style.transform = `translateY(-${mapTranslateY}px)`;
-				updateMapHeights(clampedScroll);
 			};
 
 			window.addEventListener("scroll", handleScroll);
@@ -111,138 +130,133 @@ const Timeline = () => {
 		<div className="timeline" ref={timelineRef}>
 			<div className="map">
 				<div>
-					<p>Section 1</p>
+					<p>Registration</p>
 					<p>01</p>
 				</div>
 				<div>
-					<p>Section 2</p>
+					<p>Opening</p>
 					<p>02</p>
 				</div>
 				<div>
-					<p>Section 3</p>
+					<p>Task Reveal</p>
 					<p>03</p>
 				</div>
 				<div>
-					<p>Section 4</p>
+					<p>Phase 1</p>
 					<p>04</p>
 				</div>
 				<div>
-					<p>Section 5</p>
+					<p>Lunch</p>
 					<p>05</p>
 				</div>
 				<div>
-					<p>Section 6</p>
+					<p>Phase 2</p>
 					<p>06</p>
 				</div>
 				<div>
-					<p>Section 7</p>
+					<p>Evaluation</p>
 					<p>07</p>
 				</div>
 				<div>
-					<p>Section 8</p>
+					<p>Winners</p>
 					<p>08</p>
 				</div>
 			</div>
 			<div className="sections">
 				<div className="section-1">
 					<div className="header">
-						<p>Section 1</p>
+						<p>9:00 AM</p>
 						<p>01</p>
 					</div>
 					<div className="copy">
-						<h1>Section 1</h1>
-						<div className="whitespace"></div>
+						<h1>Registration & Entry</h1>
 						<p>
-							Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed nonne
-							merninisti licere mihi ista probare, quae sunt a te dicta? Refert
-							tamen, quo modo.
+							Check in at the welcome desk, verify ID, and collect your event badge to gear up for the day.
 						</p>
 					</div>
-					<div className="whitespace"></div>
-					<div className="whitespace"></div>
-					<div className="whitespace"></div>
-					<div className="whitespace"></div>
-					<div className="whitespace"></div>
-					<div className="whitespace"></div>
 				</div>
 				<div className="section-2">
 					<div className="header">
-						<p>Section 2</p>
+						<p>10:00 to 10:20 AM</p>
 						<p>02</p>
 					</div>
 					<div className="copy">
-						<h1>Section 2</h1>
-						<div className="whitespace"></div>
+						<h1>Opening Ceremony</h1>
 						<p>
-							Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed nonne
-							merninisti licere mihi ista probare, quae sunt a te dicta? Refert
-							tamen, quo modo.
+							Lamp lighting, host welcome, and sponsor shout-outs to kick off the creative madness.
 						</p>
 					</div>
 				</div>
 				<div className="section-3">
 					<div className="header">
-						<p>Section 3</p>
+						<p>10:20 to 10:40 AM</p>
 						<p>03</p>
 					</div>
 					<div className="copy">
-						<h1>Section 3</h1>
+						<h1>Task Reveal & Rules</h1>
+						<p>
+							Meet the jury, understand the brief, and get your doubts cleared before the battle begins.
+						</p>
 					</div>
 				</div>
 				<div className="section-4">
 					<div className="header">
-						<p>Section 4</p>
+						<p>10:40 AM to 2:00 PM</p>
 						<p>04</p>
 					</div>
 					<div className="copy">
-						<h1>Section 4</h1>
+						<h1>Creation Round (Phase 1)</h1>
+						<p>
+							Participants start crafting their masterpieces! Focus mode on, distractions off.
+						</p>
 					</div>
 				</div>
 				<div className="section-5">
 					<div className="header">
-						<p>Section 5</p>
+						<p>2:00 to 2:30 PM</p>
 						<p>05</p>
 					</div>
 					<div className="copy">
-						<h1>Section 5</h1>
+						<h1>Lunch Break</h1>
+						<p>
+							Quick recharge with snacks and tea before diving back into the hustle.
+						</p>
 					</div>
 				</div>
 				<div className="section-6">
 					<div className="header">
-						<p>Section 6</p>
+						<p>2:30 to 5:00 PM</p>
 						<p>06</p>
 					</div>
 					<div className="copy">
-						<h1>Section 6</h1>
+						<h1>Creation Round (Phase 2)</h1>
+						<p>
+							Resume building your project with a mid-day check-in to track progress and refine.
+						</p>
 					</div>
 				</div>
 				<div className="section-7">
 					<div className="header">
-						<p>Section 7</p>
+						<p>5:00 to 6:30 PM</p>
 						<p>07</p>
 					</div>
 					<div className="copy">
-						<h1>Section 7</h1>
-						<div className="whitespace"></div>
-						<div className="whitespace"></div>
-						<div className="whitespace"></div>
-						<div className="whitespace"></div>
-						<div className="whitespace"></div>
-						<div className="whitespace"></div>
-						<div className="whitespace"></div>
-						<div className="whitespace"></div>
+						<h1>Jury Evaluation</h1>
+						<p>
+							Judges review entries, score performances, and pick the finest creators of the day.
+						</p>
 					</div>
 				</div>
 				<div className="section-8">
 					<div className="header">
-						<p>Section 8</p>
-
+						<p>7:00 to 7:30 PM</p>
 						<p>08</p>
 					</div>
 					<div className="copy">
-						<h1>Section 8</h1>
-						<div className="whitespace"></div>
-						<div className="whitespace"></div>
+						<h1>Winner Announcement</h1>
+						<p>
+							Results, certificates, prizes…your deserving spotlight moment.
+						</p>
 					</div>
 				</div>
 			</div>

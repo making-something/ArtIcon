@@ -1,0 +1,129 @@
+/* Animated Text Section */
+.event-overview-anime-text-container {
+  position: relative;
+  width: 100vw;
+  height: 100svh;
+  overflow: hidden;
+  background-color: var(--base-100);
+}
+
+.event-overview-container {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  height: 100%;
+}
+
+.event-overview-anime-text-container .event-overview-copy-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.event-overview-anime-text-container .event-overview-anime-text {
+  width: 60%;
+}
+
+.event-overview-anime-text-container .event-overview-anime-text p {
+  color: var(--base-300);
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 2rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.event-overview-anime-text-container .event-overview-anime-text .event-overview-word {
+  display: inline-block;
+  position: relative;
+  margin-right: 0.2rem;
+  margin-bottom: 0.2rem;
+  padding: 0.1rem 0.2rem;
+  border-radius: 8px;
+  will-change: background-color, opacity;
+}
+
+.event-overview-anime-text-container .event-overview-anime-text .event-overview-word.event-overview-keyword-wrapper {
+  margin: 0 0.4rem 0.2rem 0.2rem;
+}
+
+.event-overview-anime-text-container .event-overview-anime-text .event-overview-word span {
+  position: relative;
+}
+
+.event-overview-anime-text-container .event-overview-anime-text .event-overview-word span.event-overview-keyword {
+  border-radius: 2rem;
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+  padding: 0.1rem 0;
+  color: var(--base-300);
+}
+
+.event-overview-anime-text-container .event-overview-anime-text .event-overview-word span.event-overview-keyword::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: calc(100% + 1rem);
+  height: calc(100% + 0.1rem);
+  background-color: var(--base-300);
+  border-radius: 8px;
+  z-index: -1;
+  border: 1px dashed var(--base-300);
+}
+
+/* Keyword colors */
+.event-overview-anime-text-container .event-overview-anime-text .event-overview-word span.event-overview-keyword.innovation::before,
+.event-overview-anime-text-container .event-overview-anime-text .event-overview-word span.event-overview-keyword.journey::before,
+.event-overview-anime-text-container .event-overview-anime-text .event-overview-word span.event-overview-keyword.connect::before {
+  background-color: var(--accent-1);
+}
+
+.event-overview-anime-text-container .event-overview-anime-text .event-overview-word span.event-overview-keyword.creativity::before,
+.event-overview-anime-text-container .event-overview-anime-text .event-overview-word span.event-overview-keyword.experience::before,
+.event-overview-anime-text-container .event-overview-anime-text .event-overview-word span.event-overview-keyword.inspire::before {
+  background-color: var(--accent-2);
+}
+
+.event-overview-anime-text-container .event-overview-anime-text .event-overview-word span.event-overview-keyword.collaboration::before,
+.event-overview-anime-text-container .event-overview-anime-text .event-overview-word span.event-overview-keyword.community::before,
+.event-overview-anime-text-container .event-overview-anime-text .event-overview-word span.event-overview-keyword.transform::before {
+  background-color: var(--accent-3);
+}
+
+.event-overview-anime-text-container .event-overview-anime-text .event-overview-word,
+.event-overview-anime-text-container .event-overview-anime-text .event-overview-word span {
+  opacity: 0;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 1000px) {
+  .event-overview-anime-text-container .event-overview-anime-text {
+    width: 100%;
+  }
+
+  .event-overview-anime-text-container .event-overview-anime-text p {
+    font-size: 1.3rem;
+  }
+
+  .event-overview-anime-text-container .event-overview-anime-text .event-overview-word {
+    margin-right: 0.1rem;
+    margin-bottom: 0.15rem;
+    padding: 0.05rem 0.125rem;
+  }
+
+  .event-overview-anime-text-container .event-overview-anime-text .event-overview-word.event-overview-keyword-wrapper {
+    margin: 0 0.2rem 0.1rem 0.1rem;
+  }
+
+  .event-overview-anime-text-container .event-overview-anime-text .event-overview-word span.event-overview-keyword::before {
+    width: calc(100% + 0.35rem);
+    height: calc(100% + 0.075rem);
+  }
+}

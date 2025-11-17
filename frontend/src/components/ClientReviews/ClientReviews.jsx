@@ -134,12 +134,14 @@ const ClientReviews = () => {
           >
             <div className="review-card-content">
               <div className="review-card-content-wrapper">
-                <h3 className="review-card-text lg">{item.review}</h3>
-                <div className="review-card-client-info">
-                  <p className="review-card-client cap">{item.clientName}</p>
-                  <p className="review-card-client-company sm">
-                    {item.clientCompany}
-                  </p>
+                <img
+                  src={item.image}
+                  alt={item.title}
+                  className="review-card-image"
+                />
+                <div className="review-card-text-content">
+                  <h3 className="review-card-title">{item.title}</h3>
+                  <p className="review-card-university">{item.university}</p>
                 </div>
               </div>
             </div>
