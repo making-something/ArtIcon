@@ -14,15 +14,17 @@ const EventOverview = () => {
 
     const wordHighlightBgColor = "191, 188, 180";
     const keywords = [
-      "innovation",
-      "creativity",
-      "collaboration",
-      "experience",
-      "community",
-      "journey",
-      "transform",
-      "inspire",
-      "connect",
+      "ai",
+      "tools",
+      "hackathon",
+      "art",
+      "ui/ux",
+      "video",
+      "design",
+      "ideas",
+      "articon",
+      "fusion",
+      "festival",
     ];
 
     // Process text and create word elements
@@ -168,15 +170,13 @@ const EventOverview = () => {
         <div className="event-overview-copy-container">
           <div className="event-overview-anime-text">
             <p>
-              Welcome to a world where innovation meets creativity and
-              collaboration drives unforgettable experiences. This is where
-              communities come together to embark on a transformative journey.
+              So, Creators… Get your AI tools, Devices & imagination ready!
             </p>
             <p>
-              We are building something extraordinary. Through shared passion
-              and collective vision, we inspire change and connect dreamers to
-              their aspirations. Every moment here is designed to transform
-              possibilities into reality.
+              Yeh koi simple competition nahi!! Yeh hai Hackathon of Creativity jaha art, design aur AI milke future banate hain! Har UI/UX master, video magician aur design genius yaha apne ideas ko life dene wala hai.
+            </p>
+            <p>
+              ArtIcon 2025, Gujarat's fusion festival of design, logic & futuristic art!
             </p>
           </div>
         </div>

@@ -79,21 +79,23 @@
 }
 
 /* Keyword colors */
-.event-overview-anime-text-container .event-overview-anime-text .event-overview-word span.event-overview-keyword.innovation::before,
-.event-overview-anime-text-container .event-overview-anime-text .event-overview-word span.event-overview-keyword.journey::before,
-.event-overview-anime-text-container .event-overview-anime-text .event-overview-word span.event-overview-keyword.connect::before {
+.event-overview-anime-text-container .event-overview-anime-text .event-overview-word span.event-overview-keyword.hackathon::before,
+.event-overview-anime-text-container .event-overview-anime-text .event-overview-word span.event-overview-keyword.video::before,
+.event-overview-anime-text-container .event-overview-anime-text .event-overview-word span.event-overview-keyword.fusion::before {
   background-color: var(--accent-1);
 }
 
-.event-overview-anime-text-container .event-overview-anime-text .event-overview-word span.event-overview-keyword.creativity::before,
-.event-overview-anime-text-container .event-overview-anime-text .event-overview-word span.event-overview-keyword.experience::before,
-.event-overview-anime-text-container .event-overview-anime-text .event-overview-word span.event-overview-keyword.inspire::before {
+.event-overview-anime-text-container .event-overview-anime-text .event-overview-word span.event-overview-keyword.articon::before,
+.event-overview-anime-text-container .event-overview-anime-text .event-overview-word span.event-overview-keyword.ui\/ux::before,
+.event-overview-anime-text-container .event-overview-anime-text .event-overview-word span.event-overview-keyword.design::before,
+.event-overview-anime-text-container .event-overview-anime-text .event-overview-word span.event-overview-keyword.ideas::before {
   background-color: var(--accent-2);
 }
 
-.event-overview-anime-text-container .event-overview-anime-text .event-overview-word span.event-overview-keyword.collaboration::before,
-.event-overview-anime-text-container .event-overview-anime-text .event-overview-word span.event-overview-keyword.community::before,
-.event-overview-anime-text-container .event-overview-anime-text .event-overview-word span.event-overview-keyword.transform::before {
+.event-overview-anime-text-container .event-overview-anime-text .event-overview-word span.event-overview-keyword.ai::before,
+.event-overview-anime-text-container .event-overview-anime-text .event-overview-word span.event-overview-keyword.tools::before,
+.event-overview-anime-text-container .event-overview-anime-text .event-overview-word span.event-overview-keyword.art::before,
+.event-overview-anime-text-container .event-overview-anime-text .event-overview-word span.event-overview-keyword.festival::before {
   background-color: var(--accent-3);
 }
 
