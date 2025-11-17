@@ -115,3 +115,51 @@
   src: url("/fonts/big-shoulders-display/BigShouldersDisplay.ttf")
     format("woff2-variations");
 }
+
+@font-face {
+  font-family: "rader";
+  src: url("/fonts/rader/PPRader-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "rader";
+  src: url("/fonts/rader/PPRader-BoldItalic.ttf") format("truetype");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "formula-narrow";
+  src: url("/fonts/formula/PPFormula-NarrowRegular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "formula-narrow";
+  src: url("/fonts/formula/PPFormula-NarrowSemibold.ttf") format("truetype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "supply-mono";
+  src: url("/fonts/supply-mono/PPSupplyMono-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "supply-mono";
+  src: url("/fonts/supply-mono/PPSupplyMono-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}

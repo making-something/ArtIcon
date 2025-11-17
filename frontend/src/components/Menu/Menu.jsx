@@ -10,6 +10,7 @@ import { useViewTransition } from "@/hooks/useViewTransition";
 gsap.registerPlugin(useGSAP, SplitText);
 
 const Menu = ({ pageRef }) => {
+  const isMenuButtonDisabled = true;
   const navToggleRef = useRef(null);
   const menuOverlayRef = useRef(null);
   const menuImageRef = useRef(null);
@@ -26,8 +27,38 @@ const Menu = ({ pageRef }) => {
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMenuAnimating, setIsMenuAnimating] = useState(false);
+  const [isLogoVisible, setIsLogoVisible] = useState(true);
 
   const lenis = useLenis();
+
+  useEffect(() => {
+    const updateLogoVisibility = (scrollValue = 0) => {
+      setIsLogoVisible(scrollValue <= 40);
+    };
+
+    if (lenis) {
+      const handleLenisScroll = ({ scroll }) => updateLogoVisibility(scroll);
+
+      lenis.on("scroll", handleLenisScroll);
+      updateLogoVisibility(lenis.scroll || 0);
+
+      return () => {
+        lenis.off("scroll", handleLenisScroll);
+      };
+    }
+
+    if (typeof window === "undefined") return undefined;
+
+    const handleWindowScroll = () =>
+      updateLogoVisibility(window.scrollY || window.pageYOffset || 0);
+
+    handleWindowScroll();
+    window.addEventListener("scroll", handleWindowScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", handleWindowScroll);
+    };
+  }, [lenis]);
 
   const { navigateWithTransition } = useViewTransition();
 
@@ -456,7 +487,7 @@ const Menu = ({ pageRef }) => {
   return (
     <>
       <nav>
-        <div className="nav-logo">
+        <div className={`nav-logo ${isLogoVisible ? "" : "nav-logo--hidden"}`}>
           <a
             href="/"
             onClick={(e) => {
@@ -468,11 +499,25 @@ const Menu = ({ pageRef }) => {
               navigateWithTransition("/", isMenuOpen ? toggleMenu : null);
             }}
           >
-            <img src="/logo.svg" alt="" />
+            <img 
+              src="/logo.webp" 
+              alt="" 
+              style={{ height: "140px", width: "140px" }}
+            />
+
           </a>
         </div>
 
-        <div className="nav-toggle" ref={navToggleRef} onClick={toggleMenu}>
+        <div
+          className={`nav-toggle${
+            isMenuButtonDisabled ? " nav-toggle--disabled" : ""
+          }`}
+          ref={navToggleRef}
+          onClick={isMenuButtonDisabled ? undefined : toggleMenu}
+          aria-hidden={isMenuButtonDisabled}
+          aria-disabled={isMenuButtonDisabled}
+          tabIndex={isMenuButtonDisabled ? -1 : 0}
+        >
           <div className="nav-toggle-wrapper">
             <p ref={openLabelRef} className="open-label">
               Menu
@@ -493,55 +538,6 @@ const Menu = ({ pageRef }) => {
               menuColsRef.current[0] = el;
             }}
           >
-            <div className="menu-content-group">
-              <p>&copy; Polite Chaos</p>
-              <p>Seaside Studio Block</p>
-              <p>Oslo</p>
-            </div>
-
-            <div className="menu-content-group">
-              <p>Edition</p>
-              <p>Late Vol. 04</p>
-            </div>
-
-            <div className="menu-content-group">
-              <p>Say Hello</p>
-              <p>hi@politechaos.com</p>
-            </div>
-
-            <div className="menu-content-group">
-              <p>Hotline</p>
-              <p>+47 9824 554321</p>
-            </div>
-          </div>
-          <div
-            className="menu-col"
-            ref={(el) => {
-              menuColsRef.current[1] = el;
-            }}
-          >
-            <div className="menu-content-group">
-              <p>Field Log</p>
-
-              <a href="https://www.instagram.com/codegridweb/" target="_blank">
-                Instagram
-              </a>
-
-              <a href="https://www.youtube.com/@codegrid" target="_blank">
-                YouTube
-              </a>
-            </div>
-
-            <div className="menu-content-group">
-              <p>Language</p>
-              <p>Human</p>
-            </div>
-
-            <div className="menu-content-group">
-              <p>Credits</p>
-              <p>Made by Codegrid</p>
-              <p>MWT. OCT2025</p>
-            </div>
           </div>
         </div>
 

@@ -76,11 +76,29 @@ const ClientReviews = () => {
           ".review-card-container"
         );
 
-        reviewCards.forEach((card) => {
-          if (card) gsap.set(card, { clearProps: "all" });
+        const mobileTweens = [];
+
+        reviewCards.forEach((card, index) => {
+          if (card) {
+            gsap.set(card, { clearProps: "all", opacity: 0, y: 30 });
+            const tween = gsap.to(card, {
+              opacity: 1,
+              y: 0,
+              duration: 0.6,
+              ease: "power2.out",
+              delay: index * 0.05,
+              scrollTrigger: {
+                trigger: card,
+                start: "top 85%",
+                toggleActions: "play none none reverse",
+              },
+            });
+            mobileTweens.push(tween);
+          }
         });
+
         cardContainers.forEach((cardContainer) => {
-          if (cardContainer) gsap.set(cardContainer, { clearProps: "all" });
+          if (cardContainer) gsap.set(cardContainer, { clearProps: "rotation" });
         });
 
         ScrollTrigger.refresh();
@@ -93,6 +111,7 @@ const ClientReviews = () => {
         window.addEventListener("load", onLoad, { passive: true });
 
         return () => {
+          mobileTweens.forEach((tween) => tween?.kill());
           window.removeEventListener("orientationchange", refreshHandler);
           window.removeEventListener("load", onLoad);
         };

@@ -11,15 +11,14 @@ const CTACard = () => {
         <div className="cta-copy">
           <div className="cta-col">
             <Copy animateOnScroll={true}>
-              <p className="sm">Apply NOW or Miss the Magic!</p>
+              <p className="sm">Kyu Banoge ArtIcon? <br/> Kyunki Ye Mauka Baar-Baar Nahi Aata!</p>
             </Copy>
           </div>
 
           <div className="cta-col">
             <Copy animateOnScroll={true}>
               <p className="lg">
-                Great ideas knock once, open the door before opportunity slides into someone else's DMs!
-                Registration is FREE TO APPLY!
+                Jab Creativity aur Competition milte hai, tab banta hai Icon!
               </p>
             </Copy>
 
@@ -27,9 +26,9 @@ const CTACard = () => {
               animateOnScroll={true}
               delay={0.25}
               variant="dark"
-              href="/register"
+              href="/contact"
             >
-              Register NOW
+              Rules & Guidelines
             </Button>
           </div>
         </div>
@@ -38,19 +37,18 @@ const CTACard = () => {
           <div className="cta-card-copy">
             <div className="cta-card-col">
               <Copy animateOnScroll={true}>
-                <h3>Download Full Rulebook</h3>
+                <h3>What’s In It For You</h3>
               </Copy>
             </div>
 
             <div className="cta-card-col">
               <Copy animateOnScroll={true}>
                 <p>
-                  Before you dive into innovation, read the script, Picasso!
-                  Manual for the Makers & Masterminds!
+                  A chance to earn real recognition, connect with top creators, and collaborate with AI-driven tools and mentors who elevate your craft.
                 </p>
 
                 <p>
-                  Solo participation only, category selection, AI tools encouraged but not a substitute for real creativity!
+                  Build strong portfolio pieces under theme and time pressure, gain community visibility, and walk away with new friends and priceless bragging rights.
                 </p>
               </Copy>
 
@@ -59,9 +57,9 @@ const CTACard = () => {
                 delay={0.25}
                 variant="light"
                 icon={MdArticle}
-                href="/rules"
+                href="/studio"
               >
-                Download Rulebook
+                Register Now!
               </Button>
             </div>
           </div>

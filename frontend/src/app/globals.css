@@ -13,6 +13,10 @@
   --accent-4: #785f47;
   --accent-5: #2f72a9;
 
+  --bg: #edf1e8;
+  --bg2: #d7dbd2;
+  --fg: #141414;
+
   --variant-1: var(--base-200);
   --variant-2: var(--base-400);
   --variant-3: var(--base-500);

@@ -1,0 +1,177 @@
+/* Timeline Component Scoped Styles */
+.timeline {
+	--timeline-color-bg: #c0c0c0;
+	--timeline-color-section-1: #e76f51;
+	--timeline-color-section-2: #a8dadc;
+	--timeline-color-section-3: #457b9d;
+	--timeline-color-section-4: #1d3557;
+	--timeline-color-section-5: #2a9d8f;
+	--timeline-color-section-6: #efd6ac;
+	--timeline-color-section-7: #e9c46a;
+	--timeline-color-section-8: #f4a261;
+
+	position: relative;
+	width: 100%;
+	font-family: "PP Supply Sans", sans-serif;
+	background: var(--timeline-color-bg);
+	display: flex;
+	gap: 0;
+}
+
+.timeline .map {
+	position: sticky;
+	top: 50px;
+	width: 20%;
+	height: fit-content;
+	padding: 0 20px;
+	align-self: flex-start;
+	z-index: 10;
+}
+
+.timeline .sections {
+	position: relative;
+	width: 80%;
+	padding: 30px 20px 50px 0px;
+}
+
+.timeline .map > div {
+	height: 100px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	margin-bottom: 20px;
+	padding: 20px;
+	border: 1.5px solid #000;
+	border-radius: 20px;
+	transition: height 0.5s;
+}
+
+.timeline .sections > div {
+	width: 100%;
+	margin: 20px 0 80px 0;
+}
+
+.timeline .header {
+	width: 100%;
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: 20px;
+	padding: 10px 25px;
+	border: 1.5px solid #000;
+	border-radius: 40px;
+	font-size: 14px;
+}
+
+.timeline .map > div p:nth-child(1) {
+	font-size: 13px;
+}
+
+.timeline .map > div p:nth-child(2) {
+	font-size: 20px;
+}
+
+.timeline .copy {
+	width: 100%;
+	height: 100%;
+	padding: 20px;
+	border: 1.5px solid #000;
+	border-radius: 20px;
+}
+
+.timeline .copy h1 {
+	font-weight: 300;
+	font-size: 60px;
+}
+
+.timeline .section-1 {
+	height: 500px;
+}
+
+.timeline .section-2 {
+	height: 800px;
+}
+
+.timeline .section-3 {
+	height: 600px;
+}
+
+.timeline .section-4 {
+	height: 900px;
+}
+
+.timeline .section-5 {
+	height: 800px;
+}
+
+.timeline .section-6 {
+	height: 400px;
+}
+
+.timeline .section-7 {
+	height: 600px;
+}
+
+.timeline .section-8 {
+	height: 800px;
+}
+
+.timeline .whitespace {
+	width: 100%;
+	height: 100px;
+	overflow: hidden;
+	border: none !important;
+}
+
+.timeline .s-1,
+.timeline .section-1 .header,
+.timeline .section-1 .copy {
+	background: var(--timeline-color-section-1);
+	color: #fff;
+}
+
+.timeline .s-2,
+.timeline .section-2 .header,
+.timeline .section-2 .copy {
+	background: var(--timeline-color-section-2);
+	/* color: #fff; */
+}
+
+.timeline .s-3,
+.timeline .section-3 .header,
+.timeline .section-3 .copy {
+	background: var(--timeline-color-section-3);
+	color: #fff;
+}
+
+.timeline .s-4,
+.timeline .section-4 .header,
+.timeline .section-4 .copy {
+	background: var(--timeline-color-section-4);
+	color: #fff;
+}
+
+.timeline .s-5,
+.timeline .section-5 .header,
+.timeline .section-5 .copy {
+	background: var(--timeline-color-section-5);
+	color: #fff;
+}
+
+.timeline .s-6,
+.timeline .section-6 .header,
+.timeline .section-6 .copy {
+	background: var(--timeline-color-section-6);
+	/* color: #fff; */
+}
+
+.timeline .s-7,
+.timeline .section-7 .header,
+.timeline .section-7 .copy {
+	background: var(--timeline-color-section-7);
+}
+
+.timeline .s-8,
+.timeline .section-8 .header,
+.timeline .section-8 .copy {
+	background: var(--timeline-color-section-8);
+}

@@ -171,6 +171,25 @@ export default function TeamCards() {
           if (card) gsap.set(card, { clearProps: "all", opacity: 1 });
         });
 
+        const mobileCards = document.querySelectorAll(".team-mobile .card");
+        const mobileTweens = [];
+
+        mobileCards.forEach((card, index) => {
+          gsap.set(card, { opacity: 0, y: 40 });
+          const tween = gsap.to(card, {
+            opacity: 1,
+            y: 0,
+            duration: 0.5,
+            delay: index * 0.08,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: card,
+              start: "top 90%",
+            },
+          });
+          mobileTweens.push(tween);
+        });
+
         ScrollTrigger.refresh();
 
         const refreshHandler = () => {
@@ -182,6 +201,7 @@ export default function TeamCards() {
         window.addEventListener("load", onLoad, { passive: true });
 
         return () => {
+          mobileTweens.forEach((tween) => tween?.kill());
           window.removeEventListener("orientationchange", refreshHandler);
           window.removeEventListener("load", onLoad);
         };

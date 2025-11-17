@@ -21,8 +21,24 @@ nav .nav-logo img {
   object-fit: cover;
 }
 
+nav .nav-logo {
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+nav .nav-logo--hidden {
+  opacity: 0;
+  transform: translateY(-25%);
+  pointer-events: none;
+}
+
 nav .nav-toggle {
   cursor: pointer;
+}
+
+nav .nav-toggle--disabled {
+  display: none;
+  pointer-events: none;
+  visibility: hidden;
 }
 
 nav .nav-toggle-wrapper {
