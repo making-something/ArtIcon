@@ -4,7 +4,6 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SplitType from "split-type";
 import "./JunoLanding.css";
-import { MdHeight } from "react-icons/md";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -527,7 +526,7 @@ const JunoLanding = () => {
 									data-animate-type="line-reveal"
 									data-animate-delay="0.25"
 								>
-									Creators, ready your AI and imagination for ArtIcon 2025, the Hackathon of Creativity.
+									Creators, ready your AI and imagination for <br/>ArtIcon 2025, the Hackathon of Creativity.
 
 								</p>
 							</div>
@@ -539,13 +538,13 @@ const JunoLanding = () => {
 								>
 									<span>&#9654;</span> Intelligence In Creation
 								</p>
-								<p
+								{/* <p
 									className="mono"
 									data-animate-type="scramble"
 									data-animate-delay="0.5"
 								>
 									<span>&#9654;</span> Hackathon of Creativity
-								</p>
+								</p> */}
 							</div>
 						</div>
 					</div>

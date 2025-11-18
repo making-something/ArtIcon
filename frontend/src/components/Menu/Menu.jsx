@@ -499,10 +499,10 @@ const Menu = ({ pageRef }) => {
               navigateWithTransition("/", isMenuOpen ? toggleMenu : null);
             }}
           >
-            <img 
-              src="/logo.webp" 
-              alt="" 
-              style={{ height: "140px", width: "140px" }}
+            <img
+              src="/logo.webp"
+              alt=""
+              style={{ height: "200px", width: "250px" }}
             />
 
           </a>

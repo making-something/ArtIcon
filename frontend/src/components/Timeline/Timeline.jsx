@@ -7,6 +7,74 @@ import './Timeline.css';
 
 gsap.registerPlugin(ScrollTrigger);
 
+// Clean SVG icon components
+const TimelineIcon = ({ type }) => {
+  const icons = {
+    door: (
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="3" y="1" width="18" height="22" rx="2" ry="2"/>
+        <circle cx="16" cy="12" r="1"/>
+      </svg>
+    ),
+    microphone: (
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+        <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+        <line x1="12" y1="19" x2="12" y2="23"/>
+        <line x1="8" y1="23" x2="16" y2="23"/>
+      </svg>
+    ),
+    zap: (
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+      </svg>
+    ),
+    pizza: (
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M15 11h.01"/>
+        <path d="M11 15h.01"/>
+        <path d="M16 16h.01"/>
+        <path d="m2 16 20 6-6-20A20 20 0 0 0 2 16"/>
+        <path d="M5.71 17.11a17.04 17.04 0 0 1 11.4-11.4"/>
+      </svg>
+    ),
+    chart: (
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <line x1="18" y1="20" x2="18" y2="10"/>
+        <line x1="12" y1="20" x2="12" y2="4"/>
+        <line x1="6" y1="20" x2="6" y2="14"/>
+      </svg>
+    ),
+    music: (
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M9 18V5l12-2v13"/>
+        <circle cx="6" cy="18" r="3"/>
+        <circle cx="18" cy="16" r="3"/>
+      </svg>
+    ),
+    rocket: (
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/>
+        <path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/>
+        <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/>
+        <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/>
+      </svg>
+    ),
+    trophy: (
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
+        <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
+        <path d="M4 22h16"/>
+        <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/>
+        <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/>
+        <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>
+      </svg>
+    )
+  };
+
+  return <div className="timeline-icon-svg" style={{ color: '#c9a876' }}>{icons[type]}</div>;
+};
+
 const defaultHackathonEvents = [
   {
     id: '1',
@@ -14,7 +82,7 @@ const defaultHackathonEvents = [
     title: 'Doors Open',
     description:
       'Welcome to the hackathon! Check in and grab some coffee while we set up.',
-    icon: '🚪'
+    icon: 'door'
   },
   {
     id: '2',
@@ -22,7 +90,7 @@ const defaultHackathonEvents = [
     title: 'Opening Ceremony',
     description:
       'Meet the judges, sponsors, and fellow hackers. Learn about the themes and prizes.',
-    icon: '🎤'
+    icon: 'microphone'
   },
   {
     id: '3',
@@ -30,7 +98,7 @@ const defaultHackathonEvents = [
     title: 'Hacking Begins',
     description:
       'Form your teams and start building. The 24-hour countdown begins now!',
-    icon: '⚡'
+    icon: 'zap'
   },
   {
     id: '4',
@@ -38,7 +106,7 @@ const defaultHackathonEvents = [
     title: 'Lunch Break',
     description:
       'Take a break and fuel up with our catered lunch. Network with other teams.',
-    icon: '🍕'
+    icon: 'pizza'
   },
   {
     id: '5',
@@ -46,7 +114,7 @@ const defaultHackathonEvents = [
     title: 'Midpoint Check-in',
     description:
       'Showcase your progress so far. Mentors available for guidance and feedback.',
-    icon: '📊'
+    icon: 'chart'
   },
   {
     id: '6',
@@ -54,7 +122,7 @@ const defaultHackathonEvents = [
     title: 'Dinner & Entertainment',
     description:
       'Relax, recharge, and enjoy live music and games with your team.',
-    icon: '🎵'
+    icon: 'music'
   },
   {
     id: '7',
@@ -62,7 +130,7 @@ const defaultHackathonEvents = [
     title: 'Final Push',
     description:
       'Last hours to polish your project and prepare your pitch. Make it count!',
-    icon: '🚀'
+    icon: 'rocket'
   },
   {
     id: '8',
@@ -70,7 +138,7 @@ const defaultHackathonEvents = [
     title: 'Presentations & Awards',
     description:
       'Present your projects to the judges. Celebrate winners and recognize all efforts.',
-    icon: '🏆'
+    icon: 'trophy'
   }
 ];
 
@@ -166,9 +234,10 @@ export default function HackathonTimeline({
         }
 
         // Icons bounce in after card appears
-        if (icon) {
+        const iconSvg = event.querySelector('.timeline-icon-svg');
+        if (iconSvg) {
           gsap.fromTo(
-            icon,
+            iconSvg,
             { scale: 0, rotation: -180 },
             {
               scale: 1,
@@ -185,21 +254,37 @@ export default function HackathonTimeline({
           );
         }
 
-        // Magnetic hover effect on cards
+        // Magnetic hover effect on cards with dynamic shadows
         if (card) {
           const handleMouseMove = (e) => {
             const rect = card.getBoundingClientRect();
             const x = e.clientX - rect.left - rect.width / 2;
             const y = e.clientY - rect.top - rect.height / 2;
 
+            // Calculate shadow offset based on mouse position (reduced intensity)
+            const shadowX = -x * 0.03;
+            const shadowY = -y * 0.03;
+            const shadowBlur = 24 + Math.abs(x * 0.015) + Math.abs(y * 0.015);
+
             gsap.to(card, {
-              x: x * 0.1,
-              y: y * 0.1,
-              rotateX: -y * 0.05,
-              rotateY: x * 0.05,
-              duration: 0.5,
+              x: x * 0.05, // Reduced from 0.1
+              y: y * 0.05, // Reduced from 0.1
+              rotateX: -y * 0.02, // Reduced from 0.05
+              rotateY: x * 0.02, // Reduced from 0.05
+              boxShadow: `${shadowX}px ${shadowY}px ${shadowBlur}px rgba(197, 170, 140, 0.25)`,
+              duration: 0.4,
               ease: 'power2.out'
             });
+
+            // Subtle icon scale on hover
+            const cardIcon = card.parentElement.querySelector('.timeline-icon-svg');
+            if (cardIcon) {
+              gsap.to(cardIcon, {
+                scale: 1.15,
+                duration: 0.3,
+                ease: 'back.out(2)'
+              });
+            }
           };
 
           const handleMouseLeave = () => {
@@ -208,9 +293,20 @@ export default function HackathonTimeline({
               y: 0,
               rotateX: 0,
               rotateY: 0,
-              duration: 0.5,
-              ease: 'power2.out'
+              boxShadow: '0 8px 24px rgba(0, 0, 0, 0.08)',
+              duration: 0.6,
+              ease: 'elastic.out(1, 0.6)'
             });
+
+            // Reset icon scale
+            const cardIcon = card.parentElement.querySelector('.timeline-icon-svg');
+            if (cardIcon) {
+              gsap.to(cardIcon, {
+                scale: 1,
+                duration: 0.4,
+                ease: 'back.out(2)'
+              });
+            }
           };
 
           card.addEventListener('mousemove', handleMouseMove);
@@ -244,7 +340,7 @@ export default function HackathonTimeline({
                 className="timeline-event"
               >
                 <div className="timeline-dot">
-                  <div className="timeline-icon">{event.icon}</div>
+                  <TimelineIcon type={event.icon} />
                 </div>
                 <div className="timeline-card">
                   <div className="timeline-time">{event.time}</div>

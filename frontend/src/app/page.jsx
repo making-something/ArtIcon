@@ -11,6 +11,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import JunoLanding from "@/components/JunoLanding/JunoLanding";
 import EventOverview from "@/components/EventOverview/EventOverview";
 import Timeline from "@/components/Timeline/Timeline";
+import TeamCards from "@/components/TeamCards/TeamCards";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -35,6 +36,7 @@ const Page = () => {
       <JunoLanding />
       <EventOverview />
       <Timeline />
+      <TeamCards />
       <ClientReviews />
       <Spotlight />
       <CTACard />
