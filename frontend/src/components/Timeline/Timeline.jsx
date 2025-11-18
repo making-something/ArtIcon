@@ -92,29 +92,130 @@ export default function HackathonTimeline({
     if (!containerRef.current || !timelineRef.current) return;
     eventsRef.current = eventsRef.current.slice(0, safeEvents.length);
 
-    // Simple fade-in for events on scroll
     const ctx = gsap.context(() => {
-      eventsRef.current.forEach((event) => {
+      // Progressive timeline line drawing based on scroll
+      gsap.to('.timeline-line-fill', {
+        scaleY: 1,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '.timeline-content-wrapper',
+          start: 'top 80%',
+          end: 'bottom 20%',
+          scrub: 1
+        }
+      });
+
+      // Animate each event
+      eventsRef.current.forEach((event, index) => {
         if (!event) return;
 
+        const isEven = index % 2 === 0;
+        const card = event.querySelector('.timeline-card');
+        const dot = event.querySelector('.timeline-dot');
+        const icon = event.querySelector('.timeline-icon');
+
+        // Cards slide in from their respective sides with rotation
         gsap.fromTo(
-          event,
+          card,
           {
             opacity: 0,
-            y: 20
+            x: isEven ? -80 : 80,
+            rotateY: isEven ? -15 : 15,
+            scale: 0.9
           },
           {
             opacity: 1,
-            y: 0,
-            duration: 0.5,
-            ease: 'power2.out',
+            x: 0,
+            rotateY: 0,
+            scale: 1,
+            duration: 1,
+            ease: 'power3.out',
             scrollTrigger: {
               trigger: event,
-              start: 'top 85%',
+              start: 'top 75%',
               once: true
             }
           }
         );
+
+        // Dots scale in with ripple effect
+        if (dot) {
+          gsap.fromTo(
+            dot,
+            { scale: 0, opacity: 0 },
+            {
+              scale: 1,
+              opacity: 1,
+              duration: 0.6,
+              ease: 'back.out(2)',
+              scrollTrigger: {
+                trigger: event,
+                start: 'top 75%',
+                once: true
+              },
+              onComplete: () => {
+                // Ripple pulse effect
+                gsap.to(dot, {
+                  boxShadow: '0 0 0 20px rgba(197, 170, 140, 0)',
+                  duration: 1.5,
+                  ease: 'power2.out'
+                });
+              }
+            }
+          );
+        }
+
+        // Icons bounce in after card appears
+        if (icon) {
+          gsap.fromTo(
+            icon,
+            { scale: 0, rotation: -180 },
+            {
+              scale: 1,
+              rotation: 0,
+              duration: 0.8,
+              ease: 'elastic.out(1, 0.5)',
+              scrollTrigger: {
+                trigger: event,
+                start: 'top 75%',
+                once: true
+              },
+              delay: 0.3
+            }
+          );
+        }
+
+        // Magnetic hover effect on cards
+        if (card) {
+          const handleMouseMove = (e) => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left - rect.width / 2;
+            const y = e.clientY - rect.top - rect.height / 2;
+
+            gsap.to(card, {
+              x: x * 0.1,
+              y: y * 0.1,
+              rotateX: -y * 0.05,
+              rotateY: x * 0.05,
+              duration: 0.5,
+              ease: 'power2.out'
+            });
+          };
+
+          const handleMouseLeave = () => {
+            gsap.to(card, {
+              x: 0,
+              y: 0,
+              rotateX: 0,
+              rotateY: 0,
+              duration: 0.5,
+              ease: 'power2.out'
+            });
+          };
+
+          card.addEventListener('mousemove', handleMouseMove);
+          card.addEventListener('mouseleave', handleMouseLeave);
+        }
       });
     }, containerRef);
 

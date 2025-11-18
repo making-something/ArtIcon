@@ -51,6 +51,7 @@
     #a68259 100%
   );
   transform-origin: top;
+  transform: scaleY(0);
 }
 
 .timeline-events {
@@ -65,7 +66,7 @@
   display: flex;
   gap: 2rem;
   position: relative;
-  opacity: 0;
+  perspective: 1000px;
 }
 
 .timeline-event:nth-child(odd) {
@@ -109,9 +110,11 @@
   padding: 2rem;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
   border: 1px solid rgba(197, 170, 140, 0.2);
-  transition: transform 0.2s ease;
   position: relative;
   overflow: hidden;
+  transform-style: preserve-3d;
+  perspective: 1000px;
+  transition: box-shadow 0.3s ease;
 }
 
 .timeline-time {
@@ -178,7 +181,7 @@
   }
 }
 
-/* Simple hover effect */
+/* Smooth shadow transition on hover */
 .timeline-card:hover {
-  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(197, 170, 140, 0.2);
 }
