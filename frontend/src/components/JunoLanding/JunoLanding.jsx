@@ -648,21 +648,23 @@ const JunoLanding = () => {
 							</div>
 						</div>
 						<div className="home-about-header">
+							<h2
+								data-animate-type="line-reveal"
+								data-animate-delay="0.2"
+								data-animate-on-scroll="true"
+								style={{marginBottom:"100px", fontSize:"80px"}}
+							>
+								Jab Creativity aur Competition milte hai, tab banta hai Icon!
+							</h2>
 							<p
 								className="mono"
 								data-animate-type="scramble"
 								data-animate-delay="0.2"
 								data-animate-on-scroll="true"
+								style={{fontSize:"20px"}}
 							>
 								<span>&#9654;</span> Kyu Banoge ArtIcon?
 							</p>
-							<h2
-								data-animate-type="line-reveal"
-								data-animate-delay="0.2"
-								data-animate-on-scroll="true"
-							>
-								Jab Creativity aur Competition milte hai, tab banta hai Icon!
-							</h2>
 						</div>
 					</div>
 					<div className="home-about-col">
