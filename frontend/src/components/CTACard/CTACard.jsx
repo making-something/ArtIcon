@@ -26,7 +26,8 @@ const CTACard = () => {
               animateOnScroll={true}
               delay={0.25}
               variant="dark"
-              href="/contact"
+              href="/rules.pdf"
+              download
             >
               Rules & Guidelines
             </Button>
