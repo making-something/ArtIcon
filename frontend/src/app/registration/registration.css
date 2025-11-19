@@ -1,0 +1,156 @@
+.register-page {
+	position: relative;
+	width: 100vw;
+	height: 100svh;
+	background-color: var(--base-400); /* Dark BG */
+	color: var(--base-100); /* Light Text */
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: flex-start; /* Left align feels more like writing */
+	padding: 0 10vw; /* Large side padding */
+	overflow: hidden;
+}
+
+.register-container {
+	position: relative;
+	width: 100%;
+	max-width: 1200px;
+	margin: 0 auto;
+}
+
+/* The Sentence Flow */
+.form-sentence {
+	font-family: "Barlow Condensed", sans-serif;
+	font-weight: 600;
+	font-size: clamp(2rem, 5vw, 4.5rem); /* Large, responsive text */
+	line-height: 1.4;
+	text-transform: uppercase;
+}
+
+.sentence-part {
+	display: inline; /* Keep flow inline */
+	opacity: 0; /* Hidden by default for GSAP */
+	will-change: transform, opacity;
+}
+
+.sentence-part.visible {
+	opacity: 1;
+}
+
+/* The Input "Blank" */
+.input-wrapper {
+	display: inline-block;
+	position: relative;
+	margin: 0 0.2em;
+}
+
+.register-input {
+	background: transparent;
+	border: none;
+	border-bottom: 2px solid var(--base-300); /* Dim underline */
+	color: var(--accent-3); /* Highlight color for user input */
+	font-family: "Barlow Condensed", sans-serif;
+	font-size: inherit;
+	font-weight: 900; /* Bold input */
+	text-transform: uppercase;
+	width: 250px; /* Default width */
+	padding: 0 0.2rem;
+	outline: none;
+	transition: border-color 0.3s ease, width 0.2s ease;
+}
+
+.register-input:focus {
+	border-bottom-color: var(--base-100); /* Light underline on focus */
+}
+
+.register-input::placeholder {
+	color: var(--base-300);
+	opacity: 0.3;
+	font-weight: 400;
+}
+
+/* Specific widths for specific fields */
+.register-input[name="city"] {
+	width: 200px;
+}
+.register-input[name="email"] {
+	width: 350px;
+}
+.register-input[name="phone"] {
+	width: 300px;
+}
+.register-input[name="portfolio"] {
+	width: 400px;
+}
+
+/* Navigation Hint */
+.nav-hint {
+	position: fixed;
+	bottom: 3rem;
+	right: 3rem;
+	font-family: "DM Mono", monospace;
+	font-size: 0.8rem;
+	color: var(--base-300);
+	opacity: 0;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.enter-key-icon {
+	border: 1px solid var(--base-300);
+	padding: 0.2rem 0.4rem;
+	border-radius: 4px;
+}
+
+/* Submit Button */
+.submit-wrapper {
+	margin-top: 4rem;
+	opacity: 0;
+}
+
+.submit-btn {
+	background-color: var(--base-100);
+	color: var(--base-400);
+	border: none;
+	padding: 1.5rem 4rem;
+	border-radius: 3rem;
+	font-family: "Barlow Condensed", sans-serif;
+	font-weight: 900;
+	font-size: 1.5rem;
+	text-transform: uppercase;
+	cursor: pointer;
+	transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.submit-btn:hover {
+	background-color: var(--accent-1);
+	transform: scale(1.05);
+}
+
+/* Mobile Adjustments */
+@media (max-width: 768px) {
+	.register-page {
+		padding: 0 1.5rem;
+		justify-content: flex-start;
+		padding-top: 20vh;
+	}
+
+	.register-input {
+		width: 100% !important; /* Full width on mobile */
+		display: block;
+		margin-bottom: 1rem;
+	}
+
+	.input-wrapper {
+		display: block;
+		margin: 0.5rem 0 1.5rem 0;
+	}
+
+	.nav-hint {
+		bottom: 1rem;
+		right: 1rem;
+	}
+}
+

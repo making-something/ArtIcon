@@ -1,64 +1,71 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
+import { usePathname } from "next/navigation";
 import { ReactLenis } from "lenis/react";
 import Menu from "./components/Menu/Menu";
 
 export default function ClientLayout({ children }) {
-  const pageRef = useRef();
+	const pageRef = useRef();
+	const pathname = usePathname();
 
-  const [isMobile, setIsMobile] = useState(false);
+	const [isMobile, setIsMobile] = useState(false);
 
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 1000);
-    };
+	// Routes where Menu should be hidden
+	const hideMenuRoutes = ["/registration"];
 
-    checkMobile();
+	useEffect(() => {
+		const checkMobile = () => {
+			setIsMobile(window.innerWidth <= 1000);
+		};
 
-    window.addEventListener("resize", checkMobile);
+		checkMobile();
 
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
+		window.addEventListener("resize", checkMobile);
 
-  const scrollSettings = isMobile
-    ? {
-        duration: 0.8,
-        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-        direction: "vertical",
-        gestureDirection: "vertical",
-        smooth: true,
-        smoothTouch: true,
-        touchMultiplier: 1.5,
-        infinite: false,
-        lerp: 0.09,
-        wheelMultiplier: 1,
-        orientation: "vertical",
-        smoothWheel: true,
-        syncTouch: true,
-      }
-    : {
-        duration: 1.2,
-        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-        direction: "vertical",
-        gestureDirection: "vertical",
-        smooth: true,
-        smoothTouch: false,
-        touchMultiplier: 2,
-        infinite: false,
-        lerp: 0.1,
-        wheelMultiplier: 1,
-        orientation: "vertical",
-        smoothWheel: true,
-        syncTouch: true,
-      };
+		return () => window.removeEventListener("resize", checkMobile);
+	}, []);
 
-  return (
-    <ReactLenis root options={scrollSettings}>
-      <Menu pageRef={pageRef} />
+	const scrollSettings = isMobile
+		? {
+				duration: 0.8,
+				easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+				direction: "vertical",
+				gestureDirection: "vertical",
+				smooth: true,
+				smoothTouch: true,
+				touchMultiplier: 1.5,
+				infinite: false,
+				lerp: 0.09,
+				wheelMultiplier: 1,
+				orientation: "vertical",
+				smoothWheel: true,
+				syncTouch: true,
+		  }
+		: {
+				duration: 1.2,
+				easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+				direction: "vertical",
+				gestureDirection: "vertical",
+				smooth: true,
+				smoothTouch: false,
+				touchMultiplier: 2,
+				infinite: false,
+				lerp: 0.1,
+				wheelMultiplier: 1,
+				orientation: "vertical",
+				smoothWheel: true,
+				syncTouch: true,
+		  };
 
-      <div className="page" ref={pageRef}>
-        {children}
-      </div>
-    </ReactLenis>
-  );
+	const shouldHideMenu = hideMenuRoutes.includes(pathname);
+
+	return (
+		<ReactLenis root options={scrollSettings}>
+			{!shouldHideMenu && <Menu pageRef={pageRef} />}
+
+			<div className="page" ref={pageRef}>
+				{children}
+			</div>
+		</ReactLenis>
+	);
 }
