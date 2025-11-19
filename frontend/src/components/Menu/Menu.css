@@ -14,7 +14,7 @@ nav {
 /* --- LOGO --- */
 nav .nav-logo {
 	pointer-events: auto; /* Re-enable clicks for logo */
-	margin-top: -0.35rem;
+	margin-top: -3rem;
 	transition: opacity 0.35s ease, transform 0.35s ease;
 }
 
@@ -25,9 +25,10 @@ nav .nav-logo a {
 }
 
 nav .nav-logo img {
-	width: 300px;
-	height: 260px;
+	width: 130%;
+	height: auto;
 	object-fit: contain;
+	
 }
 
 nav .nav-scroll-hidden {
@@ -49,7 +50,7 @@ nav .nav-cta-wrapper {
 	border-radius: 2rem;
 	cursor: pointer;
 	overflow: hidden;
-	margin-top: -0.35rem;
+	margin-top: -3rem; /* Match logo lift to keep alignment */
 	transition: opacity 0.35s ease, transform 0.35s ease;
 }
 
@@ -85,5 +86,22 @@ nav .cta-label {
 
 	nav .cta-label {
 		font-size: 0.8rem;
+	}
+}
+
+@media (max-width: 480px) {
+
+	nav .nav-logo a {
+		width: 5rem;
+	}
+
+	nav .nav-cta-wrapper {
+		height: 2rem;
+		padding: 0 0.75rem;
+		margin-top: -0.5rem;
+	}
+
+	nav .cta-label {
+		font-size: 0.7rem;
 	}
 }

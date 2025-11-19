@@ -814,7 +814,7 @@ p.mono span {
 
 @media (max-width: 600px) {
 	.hero .hero-content .hero-header h1 {
-		font-size: 25vw;
+		font-size: 18vw;
 	}
 
 	.hero .hero-cards {
@@ -825,7 +825,7 @@ p.mono span {
 
 @media (max-width: 500px) {
 	.hero .hero-content .hero-header h1 {
-		font-size: 30vw;
+		font-size: 20vw;
 	}
 
 	.hero .hero-cards {
