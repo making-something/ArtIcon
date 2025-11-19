@@ -1,31 +1,34 @@
 export const clientReviewsData = [
 	{
-		review: "one",
-		clientName: "one",
+		review:
+			"Students coding with full focus, solving problems one logic at a time.",
+		clientName: "Darshan University",
 		clientCompany: "one",
 	},
 	{
-		review: "two",
+		review:
+			"Young coders turning ideas into working solutions under real-time pressure",
 		clientName: "two",
 		clientCompany: "two",
 	},
 	{
-		review: "three",
+		review:
+			"Students who cracked every challenge and proved their coding skills",
 		clientName: "three",
 		clientCompany: "three",
 	},
 	{
-		review: "four",
+		review: "Coders who stood out with clean logic and smooth execution.",
 		clientName: "four",
 		clientCompany: "four",
 	},
 	{
-		review: "five",
+		review: "A lively coding space where students built smart solutions",
 		clientName: "five",
 		clientCompany: "five",
 	},
 	{
-		review: "six",
+		review: "Active screens, active minds and pure coding energy on campus.",
 		clientName: "six",
 		clientCompany: "six",
 	},

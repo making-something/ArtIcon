@@ -9,151 +9,136 @@ import SplitType from "split-type";
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 const Spotlight = () => {
-  const spotlightRef = useRef(null);
+	const spotlightRef = useRef(null);
 
-  useGSAP(
-    () => {
-      const scrollTriggerInstances = [];
+	useGSAP(
+		() => {
+			const scrollTriggerInstances = [];
 
-      const initSpotlight = () => {
-        new SplitType(".marquee-text-item h1", { types: "chars" });
+			// Wait for ClientReviews to initialize first
+			gsap.delayedCall(0.4, () => {
+				// Initialize spotlight animations
+				new SplitType(".marquee-text-item h1", { types: "chars" });
 
-        document
-          .querySelectorAll(".marquee-container")
-          .forEach((container, index) => {
-            const marquee = container.querySelector(".marquee");
-            const chars = container.querySelectorAll(".char");
+				document
+					.querySelectorAll(".marquee-container")
+					.forEach((container, index) => {
+						const marquee = container.querySelector(".marquee");
+						const chars = container.querySelectorAll(".char");
 
-            const marqueeTrigger = gsap.to(marquee, {
-              x: index % 2 === 0 ? "5%" : "-15%",
-              scrollTrigger: {
-                trigger: container,
-                start: "top bottom",
-                end: "150% top",
-                scrub: true,
-              },
-              force3D: true,
-            });
+						const marqueeTrigger = gsap.to(marquee, {
+							x: index % 2 === 0 ? "5%" : "-15%",
+							scrollTrigger: {
+								trigger: container,
+								start: "top bottom",
+								end: "150% top",
+								scrub: true,
+							},
+							force3D: true,
+						});
 
-            const charsTrigger = gsap.fromTo(
-              chars,
-              { fontWeight: 100 },
-              {
-                fontWeight: 900,
-                duration: 1,
-                ease: "none",
-                stagger: {
-                  each: 0.35,
-                  from: index % 2 === 0 ? "end" : "start",
-                  ease: "linear",
-                },
-                scrollTrigger: {
-                  trigger: container,
-                  start: "50% bottom",
-                  end: "top top",
-                  scrub: true,
-                },
-              }
-            );
+						const charsTrigger = gsap.fromTo(
+							chars,
+							{ fontWeight: 100 },
+							{
+								fontWeight: 900,
+								duration: 1,
+								ease: "none",
+								stagger: {
+									each: 0.35,
+									from: index % 2 === 0 ? "end" : "start",
+									ease: "linear",
+								},
+								scrollTrigger: {
+									trigger: container,
+									start: "50% bottom",
+									end: "top top",
+									scrub: true,
+								},
+							}
+						);
 
-            if (marqueeTrigger.scrollTrigger) {
-              scrollTriggerInstances.push(marqueeTrigger.scrollTrigger);
-            }
-            if (charsTrigger.scrollTrigger) {
-              scrollTriggerInstances.push(charsTrigger.scrollTrigger);
-            }
-          });
+						if (marqueeTrigger.scrollTrigger) {
+							scrollTriggerInstances.push(marqueeTrigger.scrollTrigger);
+						}
+						if (charsTrigger.scrollTrigger) {
+							scrollTriggerInstances.push(charsTrigger.scrollTrigger);
+						}
+					});
 
-        ScrollTrigger.refresh();
-      };
+				return () => {
+					scrollTriggerInstances.forEach((trigger) => trigger.kill());
+				};
+			}); // End of gsap.delayedCall
+		},
+		{ scope: spotlightRef }
+	);
 
-      const waitForOtherTriggers = () => {
-        const existingTriggers = ScrollTrigger.getAll();
-        const hasPinnedTrigger = existingTriggers.some(
-          (trigger) => trigger.vars && trigger.vars.pin
-        );
+	return (
+		<section className="spotlight" ref={spotlightRef}>
+			<div className="marquees">
+				<div className="marquee-container" id="marquee-1">
+					<div className="marquee">
+						<div className="marquee-img-item">
+							<img src="/spotlight/spotlight-1.avif" alt="" />
+						</div>
+						<div className="marquee-img-item marquee-text-item">
+							<h1>Graphics</h1>
+						</div>
+						<div className="marquee-img-item">
+							<img src="/spotlight/spotlight-2.avif" alt="" />
+						</div>
+						<div className="marquee-img-item">
+							<img src="/spotlight/spotlight-3.avif" alt="" />
+						</div>
+						<div className="marquee-img-item">
+							<img src="/spotlight/spotlight-4.avif" alt="" />
+						</div>
+					</div>
+				</div>
 
-        if (hasPinnedTrigger || existingTriggers.length > 0) {
-          setTimeout(initSpotlight, 300);
-        } else {
-          initSpotlight();
-        }
-      };
+				<div className="marquee-container" id="marquee-2">
+					<div className="marquee">
+						<div className="marquee-img-item">
+							<img src="/spotlight/spotlight-5.avif" alt="" />
+						</div>
+						<div className="marquee-img-item">
+							<img src="/spotlight/spotlight-6.avif" alt="" />
+						</div>
+						<div className="marquee-img-item">
+							<img src="/spotlight/spotlight-7.avif" alt="" />
+						</div>
+						<div className="marquee-img-item marquee-text-item">
+							<h1>Video Editor</h1>
+						</div>
+						<div className="marquee-img-item">
+							<img src="/spotlight/spotlight-8.avif" alt="" />
+						</div>
+					</div>
+				</div>
 
-      setTimeout(waitForOtherTriggers, 100);
-
-      return () => {
-        scrollTriggerInstances.forEach((trigger) => trigger.kill());
-      };
-    },
-    { scope: spotlightRef }
-  );
-
-  return (
-    <section className="spotlight" ref={spotlightRef}>
-      <div className="marquees">
-        <div className="marquee-container" id="marquee-1">
-          <div className="marquee">
-            <div className="marquee-img-item">
-              <img src="/spotlight/spotlight-1.jpg" alt="" />
-            </div>
-            <div className="marquee-img-item marquee-text-item">
-              <h1>Graphics</h1>
-            </div>
-            <div className="marquee-img-item">
-              <img src="/spotlight/spotlight-2.jpg" alt="" />
-            </div>
-            <div className="marquee-img-item">
-              <img src="/spotlight/spotlight-3.jpg" alt="" />
-            </div>
-            <div className="marquee-img-item">
-              <img src="/spotlight/spotlight-4.jpg" alt="" />
-            </div>
-          </div>
-        </div>
-
-        <div className="marquee-container" id="marquee-2">
-          <div className="marquee">
-            <div className="marquee-img-item">
-              <img src="/spotlight/spotlight-5.jpg" alt="" />
-            </div>
-            <div className="marquee-img-item">
-              <img src="/spotlight/spotlight-6.jpg" alt="" />
-            </div>
-            <div className="marquee-img-item">
-              <img src="/spotlight/spotlight-7.jpg" alt="" />
-            </div>
-            <div className="marquee-img-item marquee-text-item">
-              <h1>Video Editor</h1>
-            </div>
-            <div className="marquee-img-item">
-              <img src="/spotlight/spotlight-8.jpg" alt="" />
-            </div>
-          </div>
-        </div>
-
-        <div className="marquee-container" id="marquee-3">
-          <div className="marquee">
-            <div className="marquee-img-item">
-              <img src="/spotlight/spotlight-9.jpg" alt="" />
-            </div>
-            <div className="marquee-img-item marquee-text-item">
-              <h1>UI/UX</h1>
-            </div>
-            <div className="marquee-img-item">
-              <img src="/spotlight/spotlight-10.jpg" alt="" />
-            </div>
-            <div className="marquee-img-item">
-              <img src="/spotlight/spotlight-11.jpg" alt="" />
-            </div>
-            <div className="marquee-img-item">
-              <img src="/spotlight/spotlight-12.jpg" alt="" />
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
+				<div className="marquee-container" id="marquee-3">
+					<div className="marquee">
+						<div className="marquee-img-item">
+							<img src="/spotlight/spotlight-9.avif" alt="" />
+						</div>
+						<div className="marquee-img-item marquee-text-item">
+							<h1>UI/UX</h1>
+						</div>
+						<div className="marquee-img-item">
+							<img src="/spotlight/spotlight-10.avif" alt="" />
+						</div>
+						<div className="marquee-img-item">
+							<img src="/spotlight/spotlight-11.avif" alt="" />
+						</div>
+						<div className="marquee-img-item">
+							<img src="/spotlight/spotlight-12.avif" alt="" />
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+	);
 };
 
 export default Spotlight;

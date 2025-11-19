@@ -4,6 +4,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SplitType from "split-type";
 import "./JunoLanding.css";
+import { MdHeight } from "react-icons/md";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -255,15 +256,17 @@ const JunoLanding = () => {
 		ScrollTrigger.create({
 			trigger: ".home-services",
 			start: "top top",
-			end: `+=${window.innerHeight * 4}px`,
+			end: `+=${window.innerHeight * 8}px`,
 			pin: ".home-services",
 			pinSpacing: true,
+			invalidateOnRefresh: true,
+			id: "home-services-pin",
 		});
 
 		ScrollTrigger.create({
 			trigger: ".home-services",
 			start: "top bottom",
-			end: `+=${window.innerHeight * 4}`,
+			end: `+=${window.innerHeight * 8}`,
 			scrub: 1,
 			onUpdate: (self) => {
 				const progress = self.progress;
@@ -375,7 +378,9 @@ const JunoLanding = () => {
 			end: `+=${window.innerHeight * 7}px`,
 			pin: true,
 			pinSpacing: true,
+			invalidateOnRefresh: true,
 			scrub: 1,
+			id: "home-spotlight-pin",
 			onUpdate: (self) => {
 				const progress = self.progress;
 
@@ -452,7 +457,9 @@ const JunoLanding = () => {
 			end: `+=${window.innerHeight * 3}px`,
 			pin: true,
 			pinSpacing: true,
+			invalidateOnRefresh: true,
 			scrub: 1,
+			id: "outro-pin",
 			onUpdate: (self) => {
 				const progress = self.progress;
 
@@ -502,12 +509,12 @@ const JunoLanding = () => {
 					<div className="container">
 						<div className="symbols-container">
 							<div className="symbol">
-								<img src="/symbols/s1-dark.svg" alt="Symbol" />
+								{/* <img src="/symbols/s1" alt="Symbol" /> */}
 							</div>
 						</div>
 						<div className="symbols-container">
 							<div className="symbol">
-								<img src="/symbols/s1-dark.svg" alt="Symbol" />
+								{/* <img src="/symbols/s1" alt="Symbol" /> */}
 							</div>
 						</div>
 					</div>
@@ -516,7 +523,7 @@ const JunoLanding = () => {
 					<div className="hero-content">
 						<div className="hero-header">
 							<h1 data-animate-type="reveal" data-animate-delay="0.25">
-                ArtIcon
+								ArtIcon
 							</h1>
 						</div>
 						<div className="hero-footer">
@@ -526,8 +533,8 @@ const JunoLanding = () => {
 									data-animate-type="line-reveal"
 									data-animate-delay="0.25"
 								>
-									Creators, ready your AI and imagination for <br/>ArtIcon 2025, the Hackathon of Creativity.
-
+									Creators, ready your AI and imagination for ArtIcon 2025,
+									the Hackathon of Creativity.
 								</p>
 							</div>
 							<div className="hero-footer-tags">
@@ -538,13 +545,13 @@ const JunoLanding = () => {
 								>
 									<span>&#9654;</span> Intelligence In Creation
 								</p>
-								{/* <p
+								<p
 									className="mono"
 									data-animate-type="scramble"
 									data-animate-delay="0.5"
 								>
 									<span>&#9654;</span> Hackathon of Creativity
-								</p> */}
+								</p>
 							</div>
 						</div>
 					</div>
@@ -555,12 +562,20 @@ const JunoLanding = () => {
 									<p className="mono">UI/UX</p>
 									<p className="mono">01</p>
 								</div>
-								<svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="#3d424a" style={{
-                  height: "60px",
-                  width: "60px",
-                  display: "block",
-                  margin: "0 auto"
-                  }}><path d="M24 4.5167a2.117 2.117 0 01-2.117 2.117 2.117 2.117 0 01-2.117-2.117 2.117 2.117 0 012.117-2.117A2.117 2.117 0 0124 4.5168zM1.1397 7.7475h5.7055c.5642 0 .9806.1772 1.1465.9716.185.8836.1129 1.4986-.8858 1.5686l-1.7909.132c1.318 8.3303 9.0277 11.0453 13.2221 2.073.6952-1.485.922-1.7548 1.6826-1.5663 1.0314.2561 1.1724.7899.677 2.2828-3.6234 11.0566-15.8186 12.166-18.211-2.6044l-1.4546.105C.0463 10.7942 0 9.7956 0 9.2404c0-1.0992.4074-1.493 1.1397-1.493z"/></svg>
+								<svg
+									role="img"
+									viewBox="0 0 24 24"
+									xmlns="http://www.w3.org/2000/svg"
+									fill="#3d424a"
+									style={{
+										height: "60px",
+										width: "60px",
+										display: "block",
+										margin: "0 auto",
+									}}
+								>
+									<path d="M24 4.5167a2.117 2.117 0 01-2.117 2.117 2.117 2.117 0 01-2.117-2.117 2.117 2.117 0 012.117-2.117A2.117 2.117 0 0124 4.5168zM1.1397 7.7475h5.7055c.5642 0 .9806.1772 1.1465.9716.185.8836.1129 1.4986-.8858 1.5686l-1.7909.132c1.318 8.3303 9.0277 11.0453 13.2221 2.073.6952-1.485.922-1.7548 1.6826-1.5663 1.0314.2561 1.1724.7899.677 2.2828-3.6234 11.0566-15.8186 12.166-18.211-2.6044l-1.4546.105C.0463 10.7942 0 9.7956 0 9.2404c0-1.0992.4074-1.493 1.1397-1.493z" />
+								</svg>
 								<div className="card-title">
 									<p className="mono">01</p>
 									<p className="mono">UI/UX</p>
@@ -573,16 +588,23 @@ const JunoLanding = () => {
 									<p className="mono">Graphics</p>
 									<p className="mono">02</p>
 								</div>
-								<svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="#3d424a" style={{
-                  height: "60px",
-                  width: "60px",
-                  display: "block",
-                  margin: "0 auto"
-                  }}>
-                  <path d="M19.343 20.672a1.94 1.94 0 0 0 1.94-1.94 1.94 1.94 0 1 0-3.88 0 1.94 1.94 0 0 0 1.94 1.94zM9.058 12.796a6.858 6.858 0 1 0-2.324-9.67c-.062.099-.125.198-.185.3-.06.103-.11.205-.167.31a6.858 6.858 0 0 0 2.676 9.06zm0-.003h-4.23l-2.113 3.663 2.114 3.667h4.229l2.116-3.667zm0 7.33L6.82 23.999h4.48Z"/></svg>
+								<svg
+									role="img"
+									viewBox="0 0 24 24"
+									xmlns="http://www.w3.org/2000/svg"
+									fill="#3d424a"
+									style={{
+										height: "60px",
+										width: "60px",
+										display: "block",
+										margin: "0 auto",
+									}}
+								>
+									<path d="M19.343 20.672a1.94 1.94 0 0 0 1.94-1.94 1.94 1.94 0 1 0-3.88 0 1.94 1.94 0 0 0 1.94 1.94zM9.058 12.796a6.858 6.858 0 1 0-2.324-9.67c-.062.099-.125.198-.185.3-.06.103-.11.205-.167.31a6.858 6.858 0 0 0 2.676 9.06zm0-.003h-4.23l-2.113 3.663 2.114 3.667h4.229l2.116-3.667zm0 7.33L6.82 23.999h4.48Z" />
+								</svg>
 								<div className="card-title">
 									<p className="mono">02</p>
-                  
+
 									<p className="mono">Graphics</p>
 								</div>
 							</div>
@@ -593,12 +615,20 @@ const JunoLanding = () => {
 									<p className="mono">Video Editor</p>
 									<p className="mono">03</p>
 								</div>
-								<svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="#3d424a" style={{
-                  height: "60px",
-                  width: "60px",
-                  display: "block",
-                  margin: "0 auto"
-                  }}><path d="M9.191 6.777a1.409 1.409 0 0 0-1.384 1.41v7.62a1.406 1.406 0 0 0 2.109 1.218l6.633-3.832a1.38 1.38 0 0 0 0-2.392L9.916 6.969a1.39 1.39 0 0 0-.725-.192zm.381 1.33a.895.895 0 0 1 .602.106l5.22 3.014a.896.896 0 0 1 0 1.546l-5.22 3.014a.894.894 0 0 1-1.342-.773V8.986a.895.895 0 0 1 .74-.878zM8.154.633C3.414 2.233 0 6.716 0 12c0 6.626 5.374 12 12 12 5.161 0 9.568-3.266 11.258-7.84l-3.838-.844-5.148 5.149-8.465-2.272-2.272-8.465 5.059-5.056zM12 0c-.471 0-.929.025-1.387.076l.412 3.801 7.168 1.924 1.91 7.101 3.774.832c.084-.567.123-1.14.123-1.734 0-6.626-5.374-12-12-12z"/></svg>
+								<svg
+									role="img"
+									viewBox="0 0 24 24"
+									xmlns="http://www.w3.org/2000/svg"
+									fill="#3d424a"
+									style={{
+										height: "60px",
+										width: "60px",
+										display: "block",
+										margin: "0 auto",
+									}}
+								>
+									<path d="M9.191 6.777a1.409 1.409 0 0 0-1.384 1.41v7.62a1.406 1.406 0 0 0 2.109 1.218l6.633-3.832a1.38 1.38 0 0 0 0-2.392L9.916 6.969a1.39 1.39 0 0 0-.725-.192zm.381 1.33a.895.895 0 0 1 .602.106l5.22 3.014a.896.896 0 0 1 0 1.546l-5.22 3.014a.894.894 0 0 1-1.342-.773V8.986a.895.895 0 0 1 .74-.878zM8.154.633C3.414 2.233 0 6.716 0 12c0 6.626 5.374 12 12 12 5.161 0 9.568-3.266 11.258-7.84l-3.838-.844-5.148 5.149-8.465-2.272-2.272-8.465 5.059-5.056zM12 0c-.471 0-.929.025-1.387.076l.412 3.801 7.168 1.924 1.91 7.101 3.774.832c.084-.567.123-1.14.123-1.734 0-6.626-5.374-12-12-12z" />
+								</svg>
 								<div className="card-title">
 									<p className="mono">03</p>
 									<p className="mono">Video Editor</p>
@@ -626,13 +656,13 @@ const JunoLanding = () => {
 							>
 								<span>&#9654;</span> Kyu Banoge ArtIcon?
 							</p>
-							<h3
+							<h2
 								data-animate-type="line-reveal"
 								data-animate-delay="0.2"
 								data-animate-on-scroll="true"
 							>
 								Jab Creativity aur Competition milte hai, tab banta hai Icon!
-							</h3>
+							</h2>
 						</div>
 					</div>
 					<div className="home-about-col">
@@ -650,6 +680,8 @@ const JunoLanding = () => {
 									data-animate-type="line-reveal"
 									data-animate-delay="0.2"
 									data-animate-on-scroll="true"
+									style={{ transform: "translateY(-40px)" }}
+
 								>
 									Graphic Design
 								</h4>
@@ -667,6 +699,7 @@ const JunoLanding = () => {
 									data-animate-type="line-reveal"
 									data-animate-delay="0.25"
 									data-animate-on-scroll="true"
+									style={{ transform: "translateY(-40px)" }}
 								>
 									UI/UX Design
 								</h4>
@@ -686,6 +719,7 @@ const JunoLanding = () => {
 									data-animate-type="line-reveal"
 									data-animate-delay="0.3"
 									data-animate-on-scroll="true"
+									style={{ transform: "translateY(-40px)" }}
 								>
 									Video Editing
 								</h4>
@@ -703,6 +737,7 @@ const JunoLanding = () => {
 									data-animate-type="line-reveal"
 									data-animate-delay="0.35"
 									data-animate-on-scroll="true"
+									style={{ transform: "translateY(-40px)" }}
 								>
 									One Icon to Rule Them All
 								</h4>
@@ -767,12 +802,20 @@ const JunoLanding = () => {
 											<p className="mono">UI/UX</p>
 											<p className="mono">01</p>
 										</div>
-										<svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="#3d424a" style={{
-                  height: "200px",
-                  width: "200px",
-                  display: "block",
-                  margin: "0 auto"
-                  }}><path d="M24 4.5167a2.117 2.117 0 01-2.117 2.117 2.117 2.117 0 01-2.117-2.117 2.117 2.117 0 012.117-2.117A2.117 2.117 0 0124 4.5168zM1.1397 7.7475h5.7055c.5642 0 .9806.1772 1.1465.9716.185.8836.1129 1.4986-.8858 1.5686l-1.7909.132c1.318 8.3303 9.0277 11.0453 13.2221 2.073.6952-1.485.922-1.7548 1.6826-1.5663 1.0314.2561 1.1724.7899.677 2.2828-3.6234 11.0566-15.8186 12.166-18.211-2.6044l-1.4546.105C.0463 10.7942 0 9.7956 0 9.2404c0-1.0992.4074-1.493 1.1397-1.493z"/></svg>
+										<svg
+											role="img"
+											viewBox="0 0 24 24"
+											xmlns="http://www.w3.org/2000/svg"
+											fill="#3d424a"
+											style={{
+												height: "200px",
+												width: "200px",
+												display: "block",
+												margin: "0 auto",
+											}}
+										>
+											<path d="M24 4.5167a2.117 2.117 0 01-2.117 2.117 2.117 2.117 0 01-2.117-2.117 2.117 2.117 0 012.117-2.117A2.117 2.117 0 0124 4.5168zM1.1397 7.7475h5.7055c.5642 0 .9806.1772 1.1465.9716.185.8836.1129 1.4986-.8858 1.5686l-1.7909.132c1.318 8.3303 9.0277 11.0453 13.2221 2.073.6952-1.485.922-1.7548 1.6826-1.5663 1.0314.2561 1.1724.7899.677 2.2828-3.6234 11.0566-15.8186 12.166-18.211-2.6044l-1.4546.105C.0463 10.7942 0 9.7956 0 9.2404c0-1.0992.4074-1.493 1.1397-1.493z" />
+										</svg>
 										<div className="card-title">
 											<p className="mono">01</p>
 											<p className="mono">UI/UX</p>
@@ -807,13 +850,20 @@ const JunoLanding = () => {
 											<p className="mono">Graphics</p>
 											<p className="mono">02</p>
 										</div>
-										<svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="#3d424a" style={{
-                  height: "200px",
-                  width: "200px",
-                  display: "block",
-                  margin: "0 auto"
-                  }}>
-                  <path d="M19.343 20.672a1.94 1.94 0 0 0 1.94-1.94 1.94 1.94 0 1 0-3.88 0 1.94 1.94 0 0 0 1.94 1.94zM9.058 12.796a6.858 6.858 0 1 0-2.324-9.67c-.062.099-.125.198-.185.3-.06.103-.11.205-.167.31a6.858 6.858 0 0 0 2.676 9.06zm0-.003h-4.23l-2.113 3.663 2.114 3.667h4.229l2.116-3.667zm0 7.33L6.82 23.999h4.48Z"/></svg>
+										<svg
+											role="img"
+											viewBox="0 0 24 24"
+											xmlns="http://www.w3.org/2000/svg"
+											fill="#3d424a"
+											style={{
+												height: "200px",
+												width: "200px",
+												display: "block",
+												margin: "0 auto",
+											}}
+										>
+											<path d="M19.343 20.672a1.94 1.94 0 0 0 1.94-1.94 1.94 1.94 0 1 0-3.88 0 1.94 1.94 0 0 0 1.94 1.94zM9.058 12.796a6.858 6.858 0 1 0-2.324-9.67c-.062.099-.125.198-.185.3-.06.103-.11.205-.167.31a6.858 6.858 0 0 0 2.676 9.06zm0-.003h-4.23l-2.113 3.663 2.114 3.667h4.229l2.116-3.667zm0 7.33L6.82 23.999h4.48Z" />
+										</svg>
 										<div className="card-title">
 											<p className="mono">02</p>
 											<p className="mono">Graphics</p>
@@ -848,12 +898,20 @@ const JunoLanding = () => {
 											<p className="mono">Video Editor</p>
 											<p className="mono">03</p>
 										</div>
-										<svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="#3d424a" style={{
-                  height: "200px",
-                  width: "200px",
-                  display: "block",
-                  margin: "0 auto"
-                  }}><path d="M9.191 6.777a1.409 1.409 0 0 0-1.384 1.41v7.62a1.406 1.406 0 0 0 2.109 1.218l6.633-3.832a1.38 1.38 0 0 0 0-2.392L9.916 6.969a1.39 1.39 0 0 0-.725-.192zm.381 1.33a.895.895 0 0 1 .602.106l5.22 3.014a.896.896 0 0 1 0 1.546l-5.22 3.014a.894.894 0 0 1-1.342-.773V8.986a.895.895 0 0 1 .74-.878zM8.154.633C3.414 2.233 0 6.716 0 12c0 6.626 5.374 12 12 12 5.161 0 9.568-3.266 11.258-7.84l-3.838-.844-5.148 5.149-8.465-2.272-2.272-8.465 5.059-5.056zM12 0c-.471 0-.929.025-1.387.076l.412 3.801 7.168 1.924 1.91 7.101 3.774.832c.084-.567.123-1.14.123-1.734 0-6.626-5.374-12-12-12z"/></svg>
+										<svg
+											role="img"
+											viewBox="0 0 24 24"
+											xmlns="http://www.w3.org/2000/svg"
+											fill="#3d424a"
+											style={{
+												height: "200px",
+												width: "200px",
+												display: "block",
+												margin: "0 auto",
+											}}
+										>
+											<path d="M9.191 6.777a1.409 1.409 0 0 0-1.384 1.41v7.62a1.406 1.406 0 0 0 2.109 1.218l6.633-3.832a1.38 1.38 0 0 0 0-2.392L9.916 6.969a1.39 1.39 0 0 0-.725-.192zm.381 1.33a.895.895 0 0 1 .602.106l5.22 3.014a.896.896 0 0 1 0 1.546l-5.22 3.014a.894.894 0 0 1-1.342-.773V8.986a.895.895 0 0 1 .74-.878zM8.154.633C3.414 2.233 0 6.716 0 12c0 6.626 5.374 12 12 12 5.161 0 9.568-3.266 11.258-7.84l-3.838-.844-5.148 5.149-8.465-2.272-2.272-8.465 5.059-5.056zM12 0c-.471 0-.929.025-1.387.076l.412 3.801 7.168 1.924 1.91 7.101 3.774.832c.084-.567.123-1.14.123-1.734 0-6.626-5.374-12-12-12z" />
+										</svg>
 										<div className="card-title">
 											<p className="mono">03</p>
 											<p className="mono">Video Editor</p>

@@ -187,16 +187,16 @@ const Preloader = () => {
 
         <div className="preloader-images">
           <div className="img">
-            <img src="/featured-work/work-1.jpg" alt="" />
+            <img src="/featured-work/work-1.avif" alt="" />
           </div>
           <div className="img">
-            <img src="/featured-work/work-2.jpg" alt="" />
+            <img src="/featured-work/work-2.avif" alt="" />
           </div>
           <div className="img">
-            <img src="/featured-work/work-5.jpg" alt="" />
+            <img src="/featured-work/work-5.avif" alt="" />
           </div>
           <div className="img">
-            <img src="/featured-work/work-3.jpg" alt="" />
+            <img src="/featured-work/work-3.avif" alt="" />
           </div>
         </div>
       </div>

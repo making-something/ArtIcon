@@ -1,359 +1,238 @@
-'use client';
+"use client";
+import "./Timeline.css";
+import { useRef, useEffect, useState } from "react";
+import { timelineWorkItems } from "./timelineData.js";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
 
-import React, { useEffect, useMemo, useRef } from 'react';
-import gsap from 'gsap';
-import ScrollTrigger from 'gsap/ScrollTrigger';
-import './Timeline.css';
+gsap.registerPlugin(useGSAP, ScrollTrigger);
 
-gsap.registerPlugin(ScrollTrigger);
+export default function Timeline() {
+	const timelineContainerRef = useRef(null);
+	const [isMobile, setIsMobile] = useState(false);
 
-// Clean SVG icon components
-const TimelineIcon = ({ type }) => {
-  const icons = {
-    door: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="3" y="1" width="18" height="22" rx="2" ry="2"/>
-        <circle cx="16" cy="12" r="1"/>
-      </svg>
-    ),
-    microphone: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
-        <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
-        <line x1="12" y1="19" x2="12" y2="23"/>
-        <line x1="8" y1="23" x2="16" y2="23"/>
-      </svg>
-    ),
-    zap: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
-      </svg>
-    ),
-    pizza: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M15 11h.01"/>
-        <path d="M11 15h.01"/>
-        <path d="M16 16h.01"/>
-        <path d="m2 16 20 6-6-20A20 20 0 0 0 2 16"/>
-        <path d="M5.71 17.11a17.04 17.04 0 0 1 11.4-11.4"/>
-      </svg>
-    ),
-    chart: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <line x1="18" y1="20" x2="18" y2="10"/>
-        <line x1="12" y1="20" x2="12" y2="4"/>
-        <line x1="6" y1="20" x2="6" y2="14"/>
-      </svg>
-    ),
-    music: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M9 18V5l12-2v13"/>
-        <circle cx="6" cy="18" r="3"/>
-        <circle cx="18" cy="16" r="3"/>
-      </svg>
-    ),
-    rocket: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/>
-        <path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/>
-        <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/>
-        <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/>
-      </svg>
-    ),
-    trophy: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
-        <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
-        <path d="M4 22h16"/>
-        <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/>
-        <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/>
-        <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>
-      </svg>
-    )
-  };
+	// Handle responsive behavior
+	useEffect(() => {
+		const checkMobile = () => {
+			setIsMobile(window.innerWidth <= 1000);
+		};
 
-  return <div className="timeline-icon-svg" style={{ color: '#c9a876' }}>{icons[type]}</div>;
-};
+		checkMobile();
+		window.addEventListener("resize", checkMobile);
 
-const defaultHackathonEvents = [
-  {
-    id: '1',
-    time: '9:00 AM',
-    title: 'Doors Open',
-    description:
-      'Welcome to the hackathon! Check in and grab some coffee while we set up.',
-    icon: 'door'
-  },
-  {
-    id: '2',
-    time: '10:00 AM',
-    title: 'Opening Ceremony',
-    description:
-      'Meet the judges, sponsors, and fellow hackers. Learn about the themes and prizes.',
-    icon: 'microphone'
-  },
-  {
-    id: '3',
-    time: '11:00 AM',
-    title: 'Hacking Begins',
-    description:
-      'Form your teams and start building. The 24-hour countdown begins now!',
-    icon: 'zap'
-  },
-  {
-    id: '4',
-    time: '2:00 PM',
-    title: 'Lunch Break',
-    description:
-      'Take a break and fuel up with our catered lunch. Network with other teams.',
-    icon: 'pizza'
-  },
-  {
-    id: '5',
-    time: '6:00 PM',
-    title: 'Midpoint Check-in',
-    description:
-      'Showcase your progress so far. Mentors available for guidance and feedback.',
-    icon: 'chart'
-  },
-  {
-    id: '6',
-    time: '9:00 PM',
-    title: 'Dinner & Entertainment',
-    description:
-      'Relax, recharge, and enjoy live music and games with your team.',
-    icon: 'music'
-  },
-  {
-    id: '7',
-    time: '10:00 AM (Day 2)',
-    title: 'Final Push',
-    description:
-      'Last hours to polish your project and prepare your pitch. Make it count!',
-    icon: 'rocket'
-  },
-  {
-    id: '8',
-    time: '1:00 PM',
-    title: 'Presentations & Awards',
-    description:
-      'Present your projects to the judges. Celebrate winners and recognize all efforts.',
-    icon: 'trophy'
-  }
-];
+		return () => window.removeEventListener("resize", checkMobile);
+	}, []);
 
-export default function HackathonTimeline({ 
-  events,
-  title = "Hackathon Timeline"
-}) {
-  const safeEvents = useMemo(() => {
-    if (Array.isArray(events) && events.length > 0) {
-      return events;
-    }
-    return defaultHackathonEvents;
-  }, [events]);
-  const containerRef = useRef(null);
-  const timelineRef = useRef(null);
-  const eventsRef = useRef([]);
+	useGSAP(
+		() => {
+			const container = timelineContainerRef.current;
+			if (!container) return;
 
-  useEffect(() => {
-    if (!containerRef.current || !timelineRef.current) return;
-    eventsRef.current = eventsRef.current.slice(0, safeEvents.length);
+			let scrollTriggerInstance = null;
 
-    const ctx = gsap.context(() => {
-      // Progressive timeline line drawing based on scroll
-      gsap.to('.timeline-line-fill', {
-        scaleY: 1,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: '.timeline-content-wrapper',
-          start: 'top 80%',
-          end: 'bottom 20%',
-          scrub: 1
-        }
-      });
+			const initAnimations = () => {
+				// Wait for EventOverview to initialize first
+				gsap.delayedCall(0.2, () => {
+					// Kill existing ScrollTrigger if it exists
+					if (scrollTriggerInstance) {
+						scrollTriggerInstance.kill();
+						scrollTriggerInstance = null;
+					}
 
-      // Animate each event
-      eventsRef.current.forEach((event, index) => {
-        if (!event) return;
+					// Don't run animations on mobile
+					if (window.innerWidth <= 1000) {
+						return;
+					}
 
-        const isEven = index % 2 === 0;
-        const card = event.querySelector('.timeline-card');
-        const dot = event.querySelector('.timeline-dot');
-        const icon = event.querySelector('.timeline-icon');
+					const indicatorContainer = container.querySelector(
+						".timeline-work-indicator"
+					);
 
-        // Cards slide in from their respective sides with rotation
-        gsap.fromTo(
-          card,
-          {
-            opacity: 0,
-            x: isEven ? -80 : 80,
-            rotateY: isEven ? -15 : 15,
-            scale: 0.9
-          },
-          {
-            opacity: 1,
-            x: 0,
-            rotateY: 0,
-            scale: 1,
-            duration: 1,
-            ease: 'power3.out',
-            scrollTrigger: {
-              trigger: event,
-              start: 'top 75%',
-              once: true
-            }
-          }
-        );
+					if (!indicatorContainer) return;
 
-        // Dots scale in with ripple effect
-        if (dot) {
-          gsap.fromTo(
-            dot,
-            { scale: 0, opacity: 0 },
-            {
-              scale: 1,
-              opacity: 1,
-              duration: 0.6,
-              ease: 'back.out(2)',
-              scrollTrigger: {
-                trigger: event,
-                start: 'top 75%',
-                once: true
-              },
-              onComplete: () => {
-                // Ripple pulse effect
-                gsap.to(dot, {
-                  boxShadow: '0 0 0 20px rgba(197, 170, 140, 0)',
-                  duration: 1.5,
-                  ease: 'power2.out'
-                });
-              }
-            }
-          );
-        }
+					// Clear and rebuild indicators
+					indicatorContainer.innerHTML = "";
 
-        // Icons bounce in after card appears
-        const iconSvg = event.querySelector('.timeline-icon-svg');
-        if (iconSvg) {
-          gsap.fromTo(
-            iconSvg,
-            { scale: 0, rotation: -180 },
-            {
-              scale: 1,
-              rotation: 0,
-              duration: 0.8,
-              ease: 'elastic.out(1, 0.5)',
-              scrollTrigger: {
-                trigger: event,
-                start: 'top 75%',
-                once: true
-              },
-              delay: 0.3
-            }
-          );
-        }
+					for (let section = 1; section <= 5; section++) {
+						const sectionNumber = document.createElement("p");
+						sectionNumber.className = "mn";
+						sectionNumber.textContent = `0${section}`;
+						indicatorContainer.appendChild(sectionNumber);
 
-        // Magnetic hover effect on cards with dynamic shadows
-        if (card) {
-          const handleMouseMove = (e) => {
-            const rect = card.getBoundingClientRect();
-            const x = e.clientX - rect.left - rect.width / 2;
-            const y = e.clientY - rect.top - rect.height / 2;
+						for (let i = 0; i < 10; i++) {
+							const indicator = document.createElement("div");
+							indicator.className = "indicator";
+							indicatorContainer.appendChild(indicator);
+						}
+					}
 
-            // Calculate shadow offset based on mouse position (reduced intensity)
-            const shadowX = -x * 0.03;
-            const shadowY = -y * 0.03;
-            const shadowBlur = 24 + Math.abs(x * 0.015) + Math.abs(y * 0.015);
+					// Position configurations for different screen sizes
+					const featuredCardPosSmall = [
+						{ y: 100, x: 1000 },
+						{ y: 1500, x: 100 },
+						{ y: 1250, x: 1950 },
+						{ y: 1500, x: 850 },
+						{ y: 200, x: 2100 },
+						{ y: 250, x: 600 },
+						{ y: 1100, x: 1650 },
+						{ y: 1000, x: 800 },
+						{ y: 900, x: 2200 },
+						{ y: 150, x: 1600 },
+					];
 
-            gsap.to(card, {
-              x: x * 0.05, // Reduced from 0.1
-              y: y * 0.05, // Reduced from 0.1
-              rotateX: -y * 0.02, // Reduced from 0.05
-              rotateY: x * 0.02, // Reduced from 0.05
-              boxShadow: `${shadowX}px ${shadowY}px ${shadowBlur}px rgba(197, 170, 140, 0.25)`,
-              duration: 0.4,
-              ease: 'power2.out'
-            });
+					const featuredCardPosLarge = [
+						{ y: 800, x: 5000 },
+						{ y: 2000, x: 3000 },
+						{ y: 240, x: 4450 },
+						{ y: 1200, x: 3450 },
+						{ y: 500, x: 2200 },
+						{ y: 750, x: 1100 },
+						{ y: 1850, x: 3350 },
+						{ y: 2200, x: 1300 },
+						{ y: 3000, x: 1950 },
+						{ y: 500, x: 4500 },
+					];
 
-            // Subtle icon scale on hover
-            const cardIcon = card.parentElement.querySelector('.timeline-icon-svg');
-            if (cardIcon) {
-              gsap.to(cardIcon, {
-                scale: 1.15,
-                duration: 0.3,
-                ease: 'back.out(2)'
-              });
-            }
-          };
+					const featuredCardPos =
+						window.innerWidth >= 1600
+							? featuredCardPosLarge
+							: featuredCardPosSmall;
 
-          const handleMouseLeave = () => {
-            gsap.to(card, {
-              x: 0,
-              y: 0,
-              rotateX: 0,
-              rotateY: 0,
-              boxShadow: '0 8px 24px rgba(0, 0, 0, 0.08)',
-              duration: 0.6,
-              ease: 'elastic.out(1, 0.6)'
-            });
+					const timelineTitles = container.querySelector(".timeline-titles");
+					const moveDistance = window.innerWidth * 4;
 
-            // Reset icon scale
-            const cardIcon = card.parentElement.querySelector('.timeline-icon-svg');
-            if (cardIcon) {
-              gsap.to(cardIcon, {
-                scale: 1,
-                duration: 0.4,
-                ease: 'back.out(2)'
-              });
-            }
-          };
+					const imagesContainer = container.querySelector(".timeline-images");
 
-          card.addEventListener('mousemove', handleMouseMove);
-          card.addEventListener('mouseleave', handleMouseLeave);
-        }
-      });
-    }, containerRef);
+					if (!imagesContainer || !timelineTitles) return;
 
-    return () => {
-      ctx.revert();
-    };
-  }, [safeEvents]);
+					// Clear and rebuild image cards
+					imagesContainer.innerHTML = "";
 
-  return (
-    <div ref={containerRef} className="hackathon-timeline-container">
-      <div className="timeline-wrapper">
-        <h1 className="timeline-title">{title}</h1>
-        
-        <div className="timeline-content-wrapper">
-          <div ref={timelineRef} className="timeline-line">
-            <div className="timeline-line-fill"></div>
-          </div>
+					for (let i = 0; i < timelineWorkItems.length; i++) {
+						const item = timelineWorkItems[i];
+						const timelineImgCard = document.createElement("div");
+						timelineImgCard.className = `timeline-img-card timeline-img-card-${
+							i + 1
+						}`;
 
-          <div className="timeline-events">
-            {safeEvents.map((event, index) => (
-              <div
-                key={event.id}
-                ref={(el) => {
-                  eventsRef.current[index] = el;
-                }}
-                className="timeline-event"
-              >
-                <div className="timeline-dot">
-                  <TimelineIcon type={event.icon} />
-                </div>
-                <div className="timeline-card">
-                  <div className="timeline-time">{event.time}</div>
-                  <div className="timeline-content">
-                    <h3 className="timeline-event-title">{event.title}</h3>
-                    <p className="timeline-description">{event.description}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+						const img = document.createElement("img");
+						img.src = item.image;
+						img.alt = item.alt;
+						timelineImgCard.appendChild(img);
+
+						const position = featuredCardPos[i];
+
+						gsap.set(timelineImgCard, {
+							x: position.x,
+							y: position.y,
+							z: -1500,
+							scale: 0,
+							force3D: true,
+						});
+
+						imagesContainer.appendChild(timelineImgCard);
+					}
+
+					const timelineImgCards =
+						container.querySelectorAll(".timeline-img-card");
+
+					// Create ScrollTrigger animation
+					scrollTriggerInstance = ScrollTrigger.create({
+						trigger: container,
+						start: "top top",
+						end: `+=${window.innerHeight * 5}px`,
+						pin: true,
+						pinSpacing: true,
+						invalidateOnRefresh: true,
+						fastScrollEnd: true,
+						anticipatePin: 1,
+						scrub: 1,
+						id: "timeline-main",
+						onUpdate: (self) => {
+							const xPosition = -moveDistance * self.progress;
+							gsap.set(timelineTitles, {
+								x: xPosition,
+							});
+
+							timelineImgCards.forEach((timelineImgCard, index) => {
+								const staggerOffset = index * 0.075;
+								const scaledProgress = (self.progress - staggerOffset) * 2;
+								const individualProgress = Math.max(
+									0,
+									Math.min(1, scaledProgress)
+								);
+								const newZ = -1500 + 3000 * individualProgress;
+								const scaleProgress = Math.min(1, individualProgress * 10);
+								const scale = Math.max(0, Math.min(1, scaleProgress));
+
+								gsap.set(timelineImgCard, {
+									z: newZ,
+									scale: scale,
+									force3D: true,
+								});
+							});
+
+							const indicators = container.querySelectorAll(".indicator");
+							const totalIndicators = indicators.length;
+							const progressPerIndicator = 1 / totalIndicators;
+
+							indicators.forEach((indicator, index) => {
+								const indicatorStart = index * progressPerIndicator;
+								const indicatorOpacity =
+									self.progress > indicatorStart ? 1 : 0.2;
+
+								gsap.to(indicator, {
+									opacity: indicatorOpacity,
+									duration: 0.3,
+								});
+							});
+						},
+					});
+				}); // End of gsap.delayedCall
+			};
+
+			initAnimations();
+
+			const handleResize = () => {
+				initAnimations();
+			};
+
+			window.addEventListener("resize", handleResize);
+
+			return () => {
+				if (scrollTriggerInstance) {
+					scrollTriggerInstance.kill();
+				}
+				window.removeEventListener("resize", handleResize);
+			};
+		},
+		{ scope: timelineContainerRef, dependencies: [isMobile] }
+	);
+
+	return (
+		<section className="timeline-work" ref={timelineContainerRef}>
+			<div className="timeline-images"></div>
+			<div className="timeline-titles">
+				{timelineWorkItems.map((item, index) => (
+					<div key={item.id} className="timeline-title-wrapper">
+						{!isMobile && index === 0 ? null : (
+							<div className="timeline-title-img">
+								<img src={item.image} alt={item.alt} />
+							</div>
+						)}
+						<h1 className="timeline-title">{item.title}</h1>
+					</div>
+				))}
+			</div>
+			<div className="timeline-work-indicator"></div>
+			<div className="timeline-work-footer">
+				<p className="mn">Visual Vault [ {timelineWorkItems.length} ]</p>
+				<p className="mn">///////////////////</p>
+				<p className="mn">
+					<a href="/work">Browse Full Collection</a>
+				</p>
+			</div>
+		</section>
+	);
 }

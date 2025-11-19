@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-const allowedExactPaths = new Set(["/", "/coming-soon"]);
+const allowedExactPaths = new Set(["/", "/register"]);
 
 const isInternalPath = (pathname) =>
   pathname.startsWith("/_next") ||
@@ -29,7 +29,7 @@ export function middleware(request) {
     return NextResponse.next();
   }
 
-  const comingSoonURL = new URL("/coming-soon", request.url);
+  const comingSoonURL = new URL("/register", request.url);
   return NextResponse.redirect(comingSoonURL);
 }
 

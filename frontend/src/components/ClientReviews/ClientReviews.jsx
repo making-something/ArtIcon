@@ -30,10 +30,9 @@ const ClientReviews = () => {
 
 				const scrollTriggerInstances = [];
 
-				// Wait longer for previous sections to initialize
+				// Wait for Timeline to initialize first
 				gsap.delayedCall(0.3, () => {
-					// Refresh to get correct positions after previous sections
-					ScrollTrigger.refresh();
+					// Initialize review cards stacking animation
 					reviewCards.forEach((card, index) => {
 						if (index < reviewCards.length - 1) {
 							const trigger = ScrollTrigger.create({
@@ -43,8 +42,9 @@ const ClientReviews = () => {
 								end: "top top",
 								pin: true,
 								pinSpacing: false,
+								invalidateOnRefresh: true,
 								scrub: 1,
-								id: `client-review-${index}`, // Add ID for debugging
+								id: `client-review-${index}`,
 							});
 							scrollTriggerInstances.push(trigger);
 						}
@@ -58,20 +58,20 @@ const ClientReviews = () => {
 							scrollTriggerInstances.push(trigger);
 						}
 					});
-				});
 
-				const refreshHandler = () => {
-					ScrollTrigger.refresh();
-				};
-				window.addEventListener("orientationchange", refreshHandler);
-				const onLoad = () => ScrollTrigger.refresh();
-				window.addEventListener("load", onLoad, { passive: true });
+					const refreshHandler = () => {
+						ScrollTrigger.refresh();
+					};
+					window.addEventListener("orientationchange", refreshHandler);
+					const onLoad = () => ScrollTrigger.refresh();
+					window.addEventListener("load", onLoad, { passive: true });
 
-				return () => {
-					scrollTriggerInstances.forEach((trigger) => trigger.kill());
-					window.removeEventListener("orientationchange", refreshHandler);
-					window.removeEventListener("load", onLoad);
-				};
+					return () => {
+						scrollTriggerInstances.forEach((trigger) => trigger.kill());
+						window.removeEventListener("orientationchange", refreshHandler);
+						window.removeEventListener("load", onLoad);
+					};
+				}); // End of gsap.delayedCall
 			});
 
 			mm.add("(max-width: 999px)", () => {

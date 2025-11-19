@@ -1,8 +1,17 @@
+@import url("https://fonts.googleapis.com/css2?family=Host+Grotesk:ital,wght@0,300..800;1,300..800&display=swap");
+
 .client-reviews {
 	position: relative;
 	width: 100%;
 	height: 100%;
 	background-color: var(--base-100);
+	font-family: "Host Grotesk", sans-serif;
+}
+
+.client-reviews h3,
+.client-reviews p,
+.client-reviews .review-card-client-info {
+	font-family: "Host Grotesk", sans-serif;
 }
 
 .client-reviews .review-card {
@@ -53,32 +62,32 @@
 
 /* Background images for each card */
 .client-reviews #review-card-1 {
-	background-image: url("/past_events/23TEWFSD.png");
+	background-image: url("/past_events/23TEWFSD.avif");
 	color: var(--base-100);
 }
 
 .client-reviews #review-card-2 {
-	background-image: url("/past_events/32RQEFASD.png");
+	background-image: url("/past_events/32RQEFASD.avif");
 	color: var(--base-100);
 }
 
 .client-reviews #review-card-3 {
-	background-image: url("/past_events/43RGFXB.png");
+	background-image: url("/past_events/43RGFXB.avif");
 	color: var(--base-100);
 }
 
 .client-reviews #review-card-4 {
-	background-image: url("/past_events/53rqefda.png");
+	background-image: url("/past_events/53rqefda.avif");
 	color: var(--base-100);
 }
 
 .client-reviews #review-card-5 {
-	background-image: url("/past_events/TQEGADVVDZ.png");
+	background-image: url("/past_events/TQEGADVVDZ.avif");
 	color: var(--base-100);
 }
 
 .client-reviews #review-card-6 {
-	background-image: url("/past_events/ytjhnb.png");
+	background-image: url("/past_events/ytjhnb.avif");
 	color: var(--base-100);
 }
 
@@ -91,17 +100,16 @@
 	text-align: center;
 }
 
+
 .client-reviews h3.review-card-text {
 	font-size: 1.8rem; /* Smaller text */
 	letter-spacing: 0;
-	font-family: "Brush Script MT", "Lucida Handwriting", cursive; /* Cursive font */
-	font-weight: bold;
+	font-weight: 600;
 	line-height: 1.4;
 }
 
 .client-reviews .review-card-client-info {
-	font-family: "Brush Script MT", "Lucida Handwriting", cursive; /* Cursive font */
-	font-weight: bold;
+	font-weight: 600;
 }
 
 .client-reviews p.review-card-client {
@@ -154,4 +162,10 @@
 	.client-reviews .review-card {
 		padding: 1.25rem 0 0 0;
 	}
+}
+
+.client-reviews .review-card {
+	/* Helps initialization */
+	visibility: visible;
+	will-change: transform, opacity;
 }
