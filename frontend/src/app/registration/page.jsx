@@ -4,10 +4,17 @@ import { useRouter } from "next/navigation";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import "./registration.css";
-import { registerParticipant, loginParticipant } from "@/services/api";
+import { registerParticipant, loginParticipant, isAuthenticated } from "@/services/api";
 
 const Register = () => {
 	const router = useRouter();
+
+	useEffect(() => {
+		if (isAuthenticated()) {
+			router.push("/dashboard");
+		}
+	}, [router]);
+
 	const [phase, setPhase] = useState("register");
 	const [step, setStep] = useState(0);
 	const [isRestoring, setIsRestoring] = useState(false);
@@ -315,24 +322,27 @@ const Register = () => {
 
 			// Submit registration to backend
 			setIsSubmitting(true);
+			setError("");
 			try {
 				const response = await registerParticipant(formData);
 
 				if (response.success) {
-					console.log("Registration successful:", response.data);
-					alert("Registration Successful! You can now login.");
-					handlePhaseTransition("login");
+					console.log("Registration successful:", response.participant);
+					// Redirect to dashboard immediately
+					router.push("/dashboard");
 				}
 			} catch (error) {
 				console.error("Registration error:", error);
-				setError(error.message || "Registration failed. Please try again.");
-				alert(error.message || "Registration failed. Please try again.");
+				const errorMsg = error.message || "Registration failed. Please try again.";
+				setError(errorMsg);
+				alert(`❌ ${errorMsg}`);
 			} finally {
 				setIsSubmitting(false);
 			}
 		} else if (phase === "login") {
 			// Handle login
 			setIsSubmitting(true);
+			setError("");
 			try {
 				const response = await loginParticipant(
 					formData.loginEmail,
@@ -341,16 +351,14 @@ const Register = () => {
 
 				if (response.success) {
 					console.log("Login successful:", response.participant);
-					alert("Login Successful! Redirecting to dashboard...");
-					// Redirect to dashboard or home page
-					router.push("/");
+					// Redirect to dashboard immediately
+					router.push("/dashboard");
 				}
 			} catch (error) {
 				console.error("Login error:", error);
-				setError(
-					error.message || "Login failed. Please check your credentials."
-				);
-				alert(error.message || "Login failed. Please check your credentials.");
+				const errorMsg = error.message || "Login failed. Please check your credentials.";
+				setError(errorMsg);
+				alert(`❌ ${errorMsg}`);
 			} finally {
 				setIsSubmitting(false);
 			}
@@ -465,6 +473,13 @@ const Register = () => {
 							)}
 						</div>
 					</div>
+
+					{/* ERROR MESSAGE */}
+					{error && (
+						<div className="error-message">
+							{error}
+						</div>
+					)}
 
 					{/* SUBMIT AREA */}
 					<div className="submit-wrapper" ref={submitRef}>

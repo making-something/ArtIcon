@@ -116,14 +116,24 @@ export class ParticipantController {
 				console.error("Error sending notifications:", error);
 			});
 
+			// Generate token for auto-login
+			const { signToken } = await import("@/utils/jwt");
+			const token = signToken({
+				id: participant.id,
+				email: participant.email,
+				role: "participant",
+			});
+
 			res.status(201).json({
 				success: true,
 				message: "Registration successful",
-				data: {
+				token,
+				participant: {
 					id: participant.id,
 					name: participant.name,
 					email: participant.email,
 					category: participant.category,
+					city: participant.city,
 				},
 			});
 		} catch (error) {

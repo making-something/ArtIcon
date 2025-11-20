@@ -26,10 +26,10 @@ async function setupDatabase() {
 
   try {
     // Read the SQL schema file
-    const schemaPath = path.join(__dirname, "..", "supabase-schema.sql");
+    const schemaPath = path.join(__dirname, "..", "migration-complete.sql");
 
     if (!fs.existsSync(schemaPath)) {
-      console.error("❌ supabase-schema.sql not found!");
+      console.error("❌ migration-complete.sql not found!");
       process.exit(1);
     }
 
@@ -51,7 +51,7 @@ async function setupDatabase() {
 
     console.log('3️⃣  Click "New Query" button\n');
 
-    console.log("4️⃣  Copy the SQL from: articon2/supabase-schema.sql");
+    console.log("4️⃣  Copy the SQL from: backend/migration-complete.sql");
     console.log("   File location: " + schemaPath + "\n");
 
     console.log("5️⃣  Paste it into the SQL Editor\n");

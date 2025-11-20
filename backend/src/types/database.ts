@@ -55,22 +55,28 @@ export interface Database {
 					created_at?: string;
 					updated_at?: string;
 				};
-				Update: {
-					id?: string;
-					name?: string;
-					email?: string;
-					whatsapp_no?: string;
-					category?: "video" | "ui_ux" | "graphics";
-					city?: string;
-					portfolio_url?: string;
-					is_present?: boolean;
-					whatsapp_opt_in?: boolean | null;
-					whatsapp_opt_in_at?: string | null;
-					whatsapp_opt_in_source?: string | null;
-					whatsapp_opt_out_at?: string | null;
-					created_at?: string;
-					updated_at?: string;
-				};
+			Update: {
+				id?: string;
+				name?: string;
+				email?: string;
+				whatsapp_no?: string;
+				category?: "video" | "ui_ux" | "graphics";
+				city?: string;
+				portfolio_url?: string;
+				is_present?: boolean;
+				whatsapp_opt_in?: boolean | null;
+				whatsapp_opt_in_at?: string | null;
+				whatsapp_opt_in_source?: string | null;
+				whatsapp_opt_out_at?: string | null;
+				role?: string | null;
+				experience?: number | null;
+				organization?: string | null;
+				specialization?: string | null;
+				source?: string | null;
+				password_hash?: string | null;
+				created_at?: string;
+				updated_at?: string;
+			};
 			};
 			tasks: {
 				Row: {
@@ -107,6 +113,7 @@ export interface Database {
 					submitted_at: string;
 					judge_id: string | null;
 					preview_url: string | null;
+				score: number | null;
 					created_at: string;
 					updated_at: string;
 				};
@@ -118,6 +125,7 @@ export interface Database {
 					submitted_at?: string;
 					judge_id?: string | null;
 					preview_url?: string | null;
+				score?: number | null;
 					created_at?: string;
 					updated_at?: string;
 				};
@@ -129,6 +137,7 @@ export interface Database {
 					submitted_at?: string;
 					judge_id?: string | null;
 					preview_url?: string | null;
+				score?: number | null;
 					created_at?: string;
 					updated_at?: string;
 				};
