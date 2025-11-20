@@ -104,16 +104,9 @@ export class ParticipantController {
 				return;
 			}
 
-			// Send notifications asynchronously
-			Promise.all([
-				emailService.sendRegistrationEmail(participant),
-				// Send WhatsApp registration message
-				(async () => {
-					const whatsappService = await import("@/services/whatsapp.service");
-					await whatsappService.default.sendRegistrationMessage(participant);
-				})(),
-			]).catch((error) => {
-				console.error("Error sending notifications:", error);
+			// Send registration email asynchronously
+			emailService.sendRegistrationEmail(participant).catch((error) => {
+				console.error("Error sending registration email:", error);
 			});
 
 			// Generate token for auto-login
@@ -258,19 +251,20 @@ export class ParticipantController {
 	}
 
 	/**
-	 * Send WhatsApp opt-in message to participant
+	 * Update participant presence status via QR scan
 	 */
-	async sendOptInMessage(req: Request, res: Response): Promise<void> {
+	async scanQRCode(req: Request, res: Response): Promise<void> {
 		try {
 			const { id } = req.params;
 
-			const { data: participant, error } = await supabaseAdmin
+			// Get participant
+			const { data: participant, error: fetchError } = await supabaseAdmin
 				.from("participants")
 				.select("*")
 				.eq("id", id)
 				.single();
 
-			if (error || !participant) {
+			if (fetchError || !participant) {
 				res.status(404).json({
 					success: false,
 					message: "Participant not found",
@@ -278,15 +272,33 @@ export class ParticipantController {
 				return;
 			}
 
-			const whatsappService = await import("@/services/whatsapp.service");
-			await whatsappService.default.sendRegistrationMessage(participant);
+			// Update is_present to true
+			const { data: updatedParticipant, error: updateError } = await supabaseAdmin
+				.from("participants")
+				.update({ is_present: true })
+				.eq("id", id)
+				.select()
+				.single();
+
+			if (updateError || !updatedParticipant) {
+				res.status(500).json({
+					success: false,
+					message: "Failed to update presence",
+				});
+				return;
+			}
 
 			res.status(200).json({
 				success: true,
-				message: "WhatsApp opt-in message sent successfully",
+				message: "Attendance marked successfully",
+				data: {
+					id: updatedParticipant.id,
+					name: updatedParticipant.name,
+					is_present: updatedParticipant.is_present,
+				},
 			});
 		} catch (error) {
-			console.error("Error in sendOptInMessage:", error);
+			console.error("Error in scanQRCode:", error);
 			res.status(500).json({
 				success: false,
 				message: "Internal server error",

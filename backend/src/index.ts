@@ -11,14 +11,8 @@ import adminRoutes from "@/routes/admin.routes";
 import judgeRoutes from "@/routes/judge.routes";
 import notificationRoutes from "@/routes/notification.routes";
 import uploadRoutes from "@/routes/upload";
-import whatsappSimpleRoutes from "@/routes/whatsappSimple.routes";
 
-// Import cron jobs
-import { initializeCronJobs, stopCronJobs } from "@/utils/cron";
 import { validateEnv } from "@/config/validateEnv";
-
-// Import WhatsApp service for webhook
-import whatsappService from "@/services/whatsapp.service";
 
 // Validate required environment variables
 validateEnv();
@@ -84,36 +78,6 @@ app.get("/health", (_req: Request, res: Response) => {
   });
 });
 
-// WhatsApp webhook verification (Meta requires GET endpoint)
-app.get("/webhook/whatsapp", (req: Request, res: Response) => {
-  const mode = req.query["hub.mode"] as string;
-  const token = req.query["hub.verify_token"] as string;
-  const challenge = req.query["hub.challenge"] as string;
-
-  const verificationResult = whatsappService.verifyWebhook(
-    mode,
-    token,
-    challenge,
-  );
-
-  if (verificationResult) {
-    res.status(200).send(verificationResult);
-  } else {
-    res.status(403).send("Verification failed");
-  }
-});
-
-// WhatsApp webhook handler (Meta sends POST requests here)
-app.post("/webhook/whatsapp", async (req: Request, res: Response) => {
-  try {
-    await whatsappService.handleWebhook(req.body);
-    res.status(200).send("EVENT_RECEIVED");
-  } catch (error) {
-    console.error("Error handling WhatsApp webhook:", error);
-    res.status(500).send("Error processing webhook");
-  }
-});
-
 // API Routes
 app.use("/api/participants", participantRoutes);
 app.use("/api/submissions", submissionRoutes);
@@ -121,7 +85,6 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/judge", judgeRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/upload", uploadRoutes);
-app.use("/api/whatsapp-simple", whatsappSimpleRoutes);
 
 // 404 handler
 app.use((req: Request, res: Response) => {
@@ -168,14 +131,6 @@ io.on("connection", (socket) => {
 // Export io for use in controllers
 export { io };
 
-// Initialize cron jobs
-if (process.env.NODE_ENV !== "test") {
-  if (!process.env.CRON_BASE_URL && !process.env.API_URL) {
-    console.warn('[Cron] Using inferred base URL from PORT. Set CRON_BASE_URL for production.');
-  }
-  initializeCronJobs();
-}
-
 // Start server
 httpServer.listen(PORT, () => {
   console.log("=".repeat(50));
@@ -191,8 +146,6 @@ httpServer.listen(PORT, () => {
 // Graceful shutdown
 const gracefulShutdown = () => {
   console.log("\nReceived shutdown signal. Closing server gracefully...");
-
-  stopCronJobs();
 
   httpServer.close(() => {
     console.log("HTTP server closed");

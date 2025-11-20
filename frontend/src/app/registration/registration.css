@@ -168,31 +168,6 @@
 	width: 300px;
 }
 
-/* Error Message */
-.error-message {
-	margin-top: 2rem;
-	padding: 1rem 2rem;
-	background-color: rgba(239, 68, 68, 0.1);
-	border: 1px solid rgb(239, 68, 68);
-	border-radius: 0.5rem;
-	color: rgb(239, 68, 68);
-	font-family: "Barlow Condensed", sans-serif;
-	font-size: 1rem;
-	text-align: center;
-	animation: slideDown 0.3s ease;
-}
-
-@keyframes slideDown {
-	from {
-		opacity: 0;
-		transform: translateY(-10px);
-	}
-	to {
-		opacity: 1;
-		transform: translateY(0);
-	}
-}
-
 /* Submit Button */
 .submit-wrapper {
 	margin-top: 3rem;
@@ -521,4 +496,354 @@
 /* Adjust spacing for select arrow */
 .register-select {
 	padding-right: 1.5rem;
+}
+
+.portfolio-wrapper {
+	display: inline-flex;
+	align-items: baseline;
+	gap: 0.5rem;
+	position: relative;
+}
+
+/* The hidden file input */
+.hidden-file-input {
+	display: none;
+}
+
+/* The Attachment Button (Paperclip) */
+.file-upload-btn {
+	background: transparent;
+	border: 1px solid var(--base-300);
+	color: var(--base-300);
+	width: 2rem;
+	height: 2rem;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	transition: all 0.3s ease;
+	transform: translateY(5px); /* Visual alignment with text baseline */
+}
+
+.file-upload-btn:hover {
+	border-color: var(--accent-3);
+	color: var(--accent-3);
+	background-color: rgba(255, 255, 255, 0.05);
+}
+
+.file-upload-btn svg {
+	width: 1rem;
+	height: 1rem;
+	fill: currentColor;
+}
+
+/* When a file is selected, make the text look distinct */
+.register-input.has-file {
+	color: var(--accent-1); /* Different color to indicate it's a file */
+	font-style: italic;
+}
+
+/* Import Cursive Font */
+@import url("https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap");
+
+/* WRAPPER to prevent CSS Bleeding from Home Page */
+.register-wrapper {
+	/* Reset standard properties to ensure Home CSS doesn't interfere */
+	all: initial;
+	font-family: "Barlow Condensed", sans-serif; /* Re-apply font */
+	box-sizing: border-box;
+}
+
+.register-wrapper * {
+	box-sizing: border-box;
+}
+
+.register-page {
+	position: relative;
+	width: 100vw;
+	height: 100svh;
+	/* Force Dark Background with !important to override any global body styles */
+	background-color: var(--base-400) !important;
+	color: var(--base-100) !important; /* Force Light Text */
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	padding: 0 5vw;
+	overflow: hidden;
+	z-index: 1; /* Ensure it sits on top */
+}
+
+/* --- TOP BAR --- */
+.register-top-bar {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	padding: 2rem 3rem;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	z-index: 10;
+	pointer-events: none;
+}
+
+.page-title {
+	font-family: "Barlow Condensed", sans-serif;
+	font-weight: 700;
+	text-transform: uppercase;
+	font-size: 1.5rem;
+	color: var(--base-300);
+	pointer-events: auto;
+}
+
+.cursive-accent {
+	font-family: "Dancing Script", cursive;
+	text-transform: none;
+	font-weight: 400;
+	font-size: 1.8rem;
+	color: var(--accent-3);
+	margin-left: 0.5rem;
+}
+
+.login-nav-btn {
+	pointer-events: auto;
+	background: transparent;
+	border: 1px solid var(--base-300);
+	color: var(--base-100);
+	padding: 0.75rem 2rem;
+	border-radius: 2rem;
+	font-family: "Barlow Condensed", sans-serif;
+	font-weight: 600;
+	text-transform: uppercase;
+	font-size: 1rem;
+	cursor: pointer;
+	transition: all 0.3s ease;
+}
+
+.login-nav-btn:hover {
+	background-color: var(--base-100);
+	color: var(--base-400);
+}
+
+/* --- MAIN CONTAINER --- */
+.register-container {
+	position: relative;
+	width: 100%;
+	max-width: 1400px;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+}
+
+.form-scroll-container {
+	width: 100%;
+	max-height: calc(100vh - 250px);
+	overflow-y: auto;
+	padding-right: 1rem;
+	-ms-overflow-style: none;
+	scrollbar-width: none;
+}
+
+.form-scroll-container::-webkit-scrollbar {
+	display: none;
+}
+
+/* The Sentence Flow */
+.form-sentence {
+	font-family: "Barlow Condensed", sans-serif;
+	font-weight: 600;
+	font-size: clamp(1.8rem, 3.5vw, 3.5rem);
+	line-height: 1.6;
+	text-transform: uppercase;
+	color: var(--base-100); /* Ensure text color is explicit */
+}
+
+.sentence-part {
+	display: inline;
+	opacity: 0;
+	will-change: transform, opacity;
+}
+
+.sentence-part.visible {
+	opacity: 1;
+}
+
+/* --- INPUT STYLING (Specific Classes to beat Global CSS) --- */
+.input-wrapper {
+	display: inline-block;
+	position: relative;
+	margin: 0 0.2em;
+}
+
+/* High Specificity Selectors */
+.register-page .register-input,
+.register-page .register-select {
+	background: transparent !important;
+	border: none !important;
+	border-bottom: 2px solid var(--base-300) !important;
+	color: var(--accent-3) !important; /* Force Highlight Color */
+	font-family: "Barlow Condensed", sans-serif;
+	font-size: inherit;
+	font-weight: 900;
+	text-transform: uppercase;
+	padding: 0 0.2rem;
+	outline: none;
+	transition: border-color 0.3s ease, width 0.1s ease;
+	border-radius: 0;
+	min-width: 100px;
+	width: auto;
+	box-sizing: content-box;
+}
+
+.register-page .register-input:focus,
+.register-page .register-select:focus {
+	border-bottom-color: var(--base-100) !important;
+}
+
+.register-page .register-input::placeholder {
+	color: var(--base-300);
+	opacity: 0.3;
+	font-weight: 400;
+}
+
+/* Hidden Sizer */
+.input-sizer-ghost {
+	position: absolute;
+	top: -9999px;
+	left: -9999px;
+	visibility: hidden;
+	white-space: pre;
+	font-family: "Barlow Condensed", sans-serif;
+	font-size: clamp(1.8rem, 3.5vw, 3.5rem);
+	font-weight: 900;
+	text-transform: uppercase;
+	padding: 0 0.2rem;
+	pointer-events: none;
+}
+
+/* Dropdown Specifics */
+.register-select {
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+	cursor: pointer;
+	background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%238c7e77%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E") !important;
+	background-repeat: no-repeat !important;
+	background-position: right 0 top 50% !important;
+	background-size: 0.65rem auto !important;
+	padding-right: 1.5rem !important;
+}
+
+.register-select option {
+	background-color: var(--base-400);
+	color: var(--base-100);
+	font-size: 1rem;
+}
+
+/* Back & Submit Buttons */
+.back-btn {
+	background: transparent;
+	border: none;
+	color: var(--base-300);
+	font-family: "Barlow Condensed", sans-serif;
+	font-weight: 600;
+	text-transform: uppercase;
+	font-size: 1rem;
+	cursor: pointer;
+	margin-bottom: 1rem;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	padding: 0;
+}
+
+.back-btn:hover {
+	color: var(--base-100);
+}
+
+.submit-wrapper {
+	margin-top: 2rem;
+	width: 100%;
+	display: flex;
+	align-items: center;
+	gap: 2rem;
+	opacity: 0;
+	transform: translateY(20px);
+	pointer-events: none;
+}
+
+.submit-btn {
+	background-color: var(--base-100);
+	color: var(--base-400);
+	border: none;
+	padding: 1.5rem 4rem;
+	border-radius: 3rem;
+	font-family: "Barlow Condensed", sans-serif;
+	font-weight: 900;
+	font-size: 1.5rem;
+	text-transform: uppercase;
+	cursor: pointer;
+	transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.submit-btn:hover {
+	background-color: var(--accent-1);
+	transform: scale(1.05);
+}
+
+/* Portfolio */
+.portfolio-wrapper {
+	display: inline-flex;
+	align-items: baseline;
+	gap: 0.5rem;
+	position: relative;
+}
+
+.hidden-file-input {
+	display: none;
+}
+
+.file-upload-btn {
+	background: transparent;
+	border: 1px solid var(--base-300);
+	color: var(--base-300);
+	width: 2rem;
+	height: 2rem;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	transition: all 0.3s ease;
+	transform: translateY(5px);
+}
+
+.file-upload-btn:hover {
+	border-color: var(--accent-3);
+	color: var(--accent-3);
+	background-color: rgba(255, 255, 255, 0.05);
+}
+
+.file-upload-btn svg {
+	width: 1rem;
+	height: 1rem;
+	fill: currentColor;
+}
+
+.register-input.has-file {
+	color: var(--accent-1) !important;
+	font-style: italic;
+}
+
+/* Mobile */
+@media (max-width: 1000px) {
+	.form-scroll-container {
+		max-height: calc(100vh - 200px);
+	}
+	.register-page {
+		padding-top: 4rem;
+		justify-content: flex-start;
+	}
 }

@@ -75,94 +75,45 @@ export class EmailService {
   }
 
   /**
-   * Send event start notification
+   * Send portfolio selection email
    */
-  async sendEventStartEmail(participant: Participant): Promise<EmailResult> {
-    const html = this.generateEventStartTemplate(participant);
-    const text = this.generateEventStartText(participant);
+  async sendPortfolioSelectedEmail(participant: Participant, eventDate: Date): Promise<EmailResult> {
+    const html = this.generatePortfolioSelectedTemplate(participant, eventDate);
+    const text = this.generatePortfolioSelectedText(participant, eventDate);
 
     return await this.sendEmail({
       to: participant.email,
-      subject: '🚀 Articon Hackathon 2025 - Event Started!',
+      subject: '🎉 Portfolio Selected - Articon Hackathon 2025',
       html,
       text,
     });
   }
 
   /**
-   * Send notification email to multiple participants
+   * Send portfolio rejection email
    */
-  async sendNotificationEmail(
-    participants: Participant[],
-    message: string,
-    subject: string = '📢 Articon Hackathon Update'
-  ): Promise<EmailResult[]> {
-    const promises = participants.map(participant => {
-      const html = this.generateNotificationTemplate(participant, message);
-      const text = this.generateNotificationText(participant, message);
-
-      return this.sendEmail({
-        to: participant.email,
-        subject,
-        html,
-        text,
-      });
-    });
-
-    return await Promise.all(promises);
-  }
-
-  /**
-   * Send winner congratulations email
-   */
-  async sendWinnerEmail(
-    participant: Participant,
-    position: number,
-    category: string,
-    prizeDescription?: string
-  ): Promise<EmailResult> {
-    const html = this.generateWinnerTemplate(participant, position, category, prizeDescription);
-    const text = this.generateWinnerText(participant, position, category, prizeDescription);
-
-    const medals = ['🥇', '🥈', '🥉'];
-    const medal = medals[position - 1] || '🏆';
+  async sendPortfolioRejectedEmail(participant: Participant): Promise<EmailResult> {
+    const html = this.generatePortfolioRejectedTemplate(participant);
+    const text = this.generatePortfolioRejectedText(participant);
 
     return await this.sendEmail({
       to: participant.email,
-      subject: `${medal} Congratulations! You Won at Articon Hackathon 2025`,
+      subject: 'Articon Hackathon 2025 - Portfolio Update',
       html,
       text,
     });
   }
 
   /**
-   * Send submission confirmation email
+   * Send event reminder (1 day before)
    */
-  async sendSubmissionConfirmationEmail(
-    participant: Participant,
-    taskTitle?: string
-  ): Promise<EmailResult> {
-    const html = this.generateSubmissionTemplate(participant, taskTitle);
-    const text = this.generateSubmissionText(participant, taskTitle);
+  async sendEventReminderEmail(participant: Participant, eventDate: Date): Promise<EmailResult> {
+    const html = this.generateEventReminderTemplate(participant, eventDate);
+    const text = this.generateEventReminderText(participant, eventDate);
 
     return await this.sendEmail({
       to: participant.email,
-      subject: '✅ Submission Received - Articon Hackathon 2025',
-      html,
-      text,
-    });
-  }
-
-  /**
-   * Send deadline reminder email
-   */
-  async sendDeadlineReminderEmail(participant: Participant, deadline: Date): Promise<EmailResult> {
-    const html = this.generateDeadlineReminderTemplate(participant, deadline);
-    const text = this.generateDeadlineReminderText(participant, deadline);
-
-    return await this.sendEmail({
-      to: participant.email,
-      subject: '⏰ Deadline Reminder - Articon Hackathon 2025',
+      subject: '⏰ Reminder: Articon Hackathon Tomorrow!',
       html,
       text,
     });
@@ -278,303 +229,233 @@ Good luck! 🏆
     `;
   }
 
-  private generateEventStartTemplate(participant: Participant): string {
+  private generatePortfolioSelectedTemplate(participant: Participant, eventDate: Date): string {
+    const eventDateStr = eventDate.toLocaleDateString('en-US', { 
+      weekday: 'long', 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    });
+    const eventTimeStr = eventDate.toLocaleTimeString('en-US', { 
+      hour: '2-digit', 
+      minute: '2-digit' 
+    });
+
     return `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
         <div style="padding: 40px 20px; text-align: center;">
-          <h1 style="margin: 0; font-size: 32px;">🚀 Event Started!</h1>
-          <p style="margin: 10px 0 0 0; font-size: 18px; opacity: 0.9;">Articon Hackathon 2025 is now live</p>
+          <h1 style="margin: 0; font-size: 32px;">🎉 You're Selected!</h1>
+          <p style="margin: 10px 0 0 0; font-size: 18px; opacity: 0.9;">Your portfolio has been approved</p>
         </div>
         <div style="background: white; color: #333; padding: 30px; border-radius: 8px 8px 0 0;">
-          <h2 style="color: #f5576c; margin-top: 0;">Let's Go ${participant.name}! 🎯</h2>
-          <p style="font-size: 16px; line-height: 1.6;">The <strong>Articon Hackathon 2025</strong> has officially begun! Your tasks are now available in the dashboard.</p>
+          <h2 style="color: #667eea; margin-top: 0;">Congratulations ${participant.name}! 🎊</h2>
+          <p style="font-size: 16px; line-height: 1.6;">Your portfolio impressed us! You're officially selected for <strong>Articon Hackathon 2025</strong>.</p>
+
+          <div style="background-color: #e7f3ff; border-left: 4px solid #007bff; padding: 20px; margin: 25px 0;">
+            <h4 style="margin-top: 0; color: #0056b3;">📅 Event Details:</h4>
+            <p style="margin-bottom: 0;">
+              <strong>Date:</strong> ${eventDateStr}<br>
+              <strong>Time:</strong> ${eventTimeStr}<br>
+              <strong>Category:</strong> ${this.formatCategory(participant.category)}
+            </p>
+          </div>
 
           <div style="background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 20px; margin: 25px 0;">
-            <h4 style="margin-top: 0; color: #856404;">⏰ What's Next:</h4>
-            <ol style="margin-bottom: 0; color: #856404; line-height: 1.8;">
-              <li>Login to your dashboard</li>
-              <li>View your assigned tasks</li>
-              <li>Start working on submissions</li>
-              <li>Submit before the deadline</li>
-            </ol>
+            <h4 style="margin-top: 0; color: #856404;">⏳ Please Wait:</h4>
+            <p style="margin-bottom: 0; color: #856404;">
+              The event will start at the scheduled time. Please check your email for a QR code that you'll need to scan at the event for attendance.
+            </p>
           </div>
 
           <div style="text-align: center; margin: 30px 0;">
-            <a href="https://articon.com/dashboard" style="background-color: #f5576c; color: white; padding: 15px 35px; text-decoration: none; border-radius: 25px; font-weight: bold; display: inline-block; font-size: 16px;">
-              View My Tasks
+            <a href="https://articon.com/dashboard" style="background-color: #667eea; color: white; padding: 12px 30px; text-decoration: none; border-radius: 25px; font-weight: bold; display: inline-block;">
+              Access Dashboard
             </a>
           </div>
 
           <p style="color: #6c757d; font-size: 14px; text-align: center;">
-            Category: ${this.formatCategory(participant.category)}<br>
-            Show us your best work! 💪
+            We can't wait to see what you create! 🚀
           </p>
         </div>
       </div>
     `;
   }
 
-  private generateEventStartText(participant: Participant): string {
+  private generatePortfolioSelectedText(participant: Participant, eventDate: Date): string {
+    const eventDateStr = eventDate.toLocaleDateString('en-US', { 
+      weekday: 'long', 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    });
+    const eventTimeStr = eventDate.toLocaleTimeString('en-US', { 
+      hour: '2-digit', 
+      minute: '2-digit' 
+    });
+
     return `
-🚀 Articon Hackathon 2025 - Event Started!
+🎉 You're Selected! - Articon Hackathon 2025
 
-Hi ${participant.name}!
+Congratulations ${participant.name}!
 
-The Articon Hackathon 2025 has officially begun! Your tasks are now available.
+Your portfolio impressed us! You're officially selected for Articon Hackathon 2025.
 
-What's Next:
-1. Login to your dashboard
-2. View your assigned tasks
-3. Start working on submissions
-4. Submit before the deadline
+Event Details:
+- Date: ${eventDateStr}
+- Time: ${eventTimeStr}
+- Category: ${this.formatCategory(participant.category)}
 
-Access your tasks: https://articon.com/dashboard
+Please Wait:
+The event will start at the scheduled time. Please check your email for a QR code that you'll need to scan at the event for attendance.
 
-Category: ${this.formatCategory(participant.category)}
+Access your dashboard: https://articon.com/dashboard
 
-Show us your best work! 💪
+We can't wait to see what you create! 🚀
     `;
   }
 
-  private generateNotificationTemplate(participant: Participant, message: string): string {
+  private generatePortfolioRejectedTemplate(participant: Participant): string {
     return `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); padding: 30px 20px; text-align: center; color: white;">
-          <h1 style="margin: 0; font-size: 28px;">📢 Articon Update</h1>
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 20px; text-align: center; color: white;">
+          <h1 style="margin: 0; font-size: 28px;">Articon Hackathon 2025</h1>
+          <p style="margin: 10px 0 0 0; font-size: 16px; opacity: 0.9;">Portfolio Review Update</p>
         </div>
         <div style="background: white; padding: 30px; border-radius: 0 0 8px 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-          <h2 style="color: #4facfe; margin-top: 0;">Hi ${participant.name}! 👋</h2>
-          <div style="background-color: #f8f9fa; padding: 20px; border-radius: 6px; margin: 20px 0;">
-            <p style="margin: 0; color: #495057; white-space: pre-wrap;">${message}</p>
-          </div>
-          <p style="color: #6c757d; font-size: 14px; text-align: center;">
-            Stay tuned for more updates! 🚀
-          </p>
-        </div>
-      </div>
-    `;
-  }
-
-  private generateNotificationText(participant: Participant, message: string): string {
-    return `
-📢 Articon Hackathon Update
-
-Hi ${participant.name}!
-
-${message}
-
-Stay tuned for more updates! 🚀
-    `;
-  }
-
-  private generateWinnerTemplate(
-    participant: Participant,
-    position: number,
-    category: string,
-    prizeDescription?: string
-  ): string {
-    const medals = ['🥇', '🥈', '🥉'];
-    const medal = medals[position - 1] || '🏆';
-
-    return `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <div style="background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); padding: 40px 20px; text-align: center; color: white;">
-          <div style="font-size: 60px; margin-bottom: 10px;">${medal}</div>
-          <h1 style="margin: 0; font-size: 32px;">CONGRATULATIONS!</h1>
-          <p style="margin: 10px 0 0 0; font-size: 18px; opacity: 0.9;">You're a WINNER! 🎉</p>
-        </div>
-        <div style="background: white; padding: 30px; border-radius: 0 0 8px 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-          <h2 style="color: #FFD700; margin-top: 0;">Amazing Work, ${participant.name}!</h2>
-          <p style="font-size: 16px; line-height: 1.6;">Your exceptional creativity and skill have earned you this incredible achievement in Articon Hackathon 2025!</p>
-
-          <div style="background-color: #fff3cd; padding: 20px; border-radius: 8px; margin: 25px 0; text-align: center;">
-            <h3 style="margin-top: 0; color: #856404;">🏆 Your Achievement</h3>
-            <p style="font-size: 18px; margin: 10px 0; color: #856404;">
-              <strong>Position:</strong> ${position}<br>
-              <strong>Category:</strong> ${this.formatCategory(category)}
-              ${prizeDescription ? `<br><strong>Prize:</strong> ${prizeDescription}` : ''}
-            </p>
-          </div>
-
-          <div style="text-align: center; margin: 30px 0;">
-            <p style="color: #6c757d; font-size: 16px; margin: 0;">
-              We were incredibly impressed by your creativity and skill! 👏<br>
-              Stay connected for prize distribution details! 🎁
-            </p>
-          </div>
-        </div>
-      </div>
-    `;
-  }
-
-  private generateWinnerText(
-    participant: Participant,
-    position: number,
-    category: string,
-    prizeDescription?: string
-  ): string {
-    const medals = ['🥇', '🥈', '🥉'];
-    const medal = medals[position - 1] || '🏆';
-
-    return `
-${medal} CONGRATULATIONS! ${medal}
-
-Hi ${participant.name}!
-
-You're a WINNER of Articon Hackathon 2025! 🎉
-
-Your Achievement:
-- Position: ${position}
-- Category: ${this.formatCategory(category)}
-${prizeDescription ? `- Prize: ${prizeDescription}` : ''}
-
-Your exceptional work has earned you this amazing achievement! We were incredibly impressed by your creativity and skill! 👏
-
-Stay connected for prize distribution details! 🎁
-
-Congratulations once again! 🌟
-    `;
-  }
-
-  private generateSubmissionTemplate(participant: Participant, taskTitle?: string): string {
-    return `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <div style="background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%); padding: 40px 20px; text-align: center; color: white;">
-          <h1 style="margin: 0; font-size: 32px;">✅ Submission Received!</h1>
-          <p style="margin: 10px 0 0 0; font-size: 18px; opacity: 0.9;">Your work is now under review</p>
-        </div>
-        <div style="background: white; padding: 30px; border-radius: 0 0 8px 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-          <h2 style="color: #56ab2f; margin-top: 0;">Great News ${participant.name}! 👋</h2>
-          <p style="font-size: 16px; line-height: 1.6;">We've successfully received your submission for <strong>Articon Hackathon 2025</strong>.</p>
-
-          ${taskTitle ? `
-          <div style="background-color: #e8f5e8; padding: 20px; border-radius: 8px; margin: 25px 0;">
-            <h4 style="margin-top: 0; color: #2e7d32;">📝 Submission Details:</h4>
-            <p style="margin-bottom: 0; color: #2e7d32;">
-              <strong>Task:</strong> ${taskTitle}
-            </p>
-          </div>
-          ` : ''}
+          <h2 style="color: #495057; margin-top: 0;">Hello ${participant.name},</h2>
+          <p style="font-size: 16px; line-height: 1.6;">Thank you for your interest in <strong>Articon Hackathon 2025</strong>.</p>
 
           <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 25px 0;">
-            <h4 style="margin-top: 0; color: #495057;">🔍 What's Next:</h4>
-            <ul style="margin-bottom: 0; color: #6c757d; line-height: 1.8;">
-              <li>Judges will review all submissions</li>
-              <li>Results will be announced soon</li>
-              <li>Keep an eye on your messages for updates</li>
+            <p style="margin: 0; color: #495057; line-height: 1.8;">
+              After careful review of all portfolios, we regret to inform you that your portfolio is currently under review. Please allow 2-3 business days for a final decision. We received an overwhelming number of applications and the selection process is highly competitive.
+            </p>
+          </div>
+
+          <div style="background-color: #e7f3ff; border-left: 4px solid #007bff; padding: 20px; margin: 25px 0;">
+            <h4 style="margin-top: 0; color: #0056b3;">💡 We Encourage You:</h4>
+            <ul style="margin-bottom: 0; color: #495057; line-height: 1.8;">
+              <li>Keep building your portfolio</li>
+              <li>Participate in future events</li>
+              <li>Stay connected with our community</li>
             </ul>
           </div>
 
           <p style="color: #6c757d; font-size: 14px; text-align: center;">
-            Thank you for participating! 🙏<br>
-            Good luck! 🍀
+            Thank you for your understanding. We wish you all the best in your creative journey! ✨
           </p>
         </div>
       </div>
     `;
   }
 
-  private generateSubmissionText(participant: Participant, taskTitle?: string): string {
+  private generatePortfolioRejectedText(participant: Participant): string {
     return `
-✅ Submission Received - Articon Hackathon 2025
+Articon Hackathon 2025 - Portfolio Review Update
 
-Hi ${participant.name}!
+Hello ${participant.name},
 
-Great news! We've successfully received your submission for Articon Hackathon 2025.
-${taskTitle ? `Task: ${taskTitle}` : ''}
+Thank you for your interest in Articon Hackathon 2025.
 
-What's Next:
-- Judges will review all submissions
-- Results will be announced soon
-- Keep an eye on your messages for updates
+After careful review of all portfolios, we regret to inform you that your portfolio is currently under review. Please allow 2-3 business days for a final decision. We received an overwhelming number of applications and the selection process is highly competitive.
 
-Thank you for participating! 🙏
+We Encourage You:
+- Keep building your portfolio
+- Participate in future events
+- Stay connected with our community
 
-Good luck! 🍀
+Thank you for your understanding. We wish you all the best in your creative journey! ✨
     `;
   }
 
-  private generateDeadlineReminderTemplate(participant: Participant, deadline: Date): string {
-    const timeLeft = this.getTimeRemaining(deadline);
+  private generateEventReminderTemplate(participant: Participant, eventDate: Date): string {
+    const eventDateStr = eventDate.toLocaleDateString('en-US', { 
+      weekday: 'long', 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    });
+    const eventTimeStr = eventDate.toLocaleTimeString('en-US', { 
+      hour: '2-digit', 
+      minute: '2-digit' 
+    });
 
     return `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <div style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%); padding: 40px 20px; text-align: center; color: white;">
-          <h1 style="margin: 0; font-size: 32px;">⏰ Deadline Reminder!</h1>
-          <p style="margin: 10px 0 0 0; font-size: 18px; opacity: 0.9;">Time is running out</p>
+        <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); padding: 40px 20px; text-align: center; color: white;">
+          <h1 style="margin: 0; font-size: 32px;">⏰ Event Tomorrow!</h1>
+          <p style="margin: 10px 0 0 0; font-size: 18px; opacity: 0.9;">Don't forget about Articon Hackathon</p>
         </div>
         <div style="background: white; padding: 30px; border-radius: 0 0 8px 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-          <h2 style="color: #ff6b6b; margin-top: 0;">Hi ${participant.name}! 👋</h2>
-          <p style="font-size: 16px; line-height: 1.6;">This is a friendly reminder that the submission deadline is approaching!</p>
+          <h2 style="color: #f5576c; margin-top: 0;">Hi ${participant.name}! 👋</h2>
+          <p style="font-size: 16px; line-height: 1.6;">This is a friendly reminder that <strong>Articon Hackathon 2025</strong> starts tomorrow!</p>
 
           <div style="background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 20px; margin: 25px 0;">
-            <h4 style="margin-top: 0; color: #856404;">⏱️ Time Remaining:</h4>
-            <p style="margin-bottom: 0; font-size: 18px; color: #856404;">
-              ${timeLeft}
+            <h4 style="margin-top: 0; color: #856404;">📅 Event Details:</h4>
+            <p style="margin-bottom: 0;">
+              <strong>Date:</strong> ${eventDateStr}<br>
+              <strong>Time:</strong> ${eventTimeStr}<br>
+              <strong>Category:</strong> ${this.formatCategory(participant.category)}
             </p>
           </div>
 
           <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 25px 0;">
-            <h4 style="margin-top: 0; color: #495057;">✅ Final Checklist:</h4>
+            <h4 style="margin-top: 0; color: #495057;">✅ Preparation Checklist:</h4>
             <ul style="margin-bottom: 0; color: #6c757d; line-height: 1.8;">
-              <li>Review task requirements</li>
-              <li>Complete your submissions</li>
-              <li>Test everything works</li>
-              <li>Submit before deadline</li>
+              <li>Keep your QR code ready for attendance scanning</li>
+              <li>Ensure your tools and software are ready</li>
+              <li>Have your login credentials handy</li>
+              <li>Get a good night's rest!</li>
             </ul>
           </div>
 
           <div style="text-align: center; margin: 30px 0;">
-            <a href="https://articon.com/dashboard" style="background-color: #ff6b6b; color: white; padding: 12px 30px; text-decoration: none; border-radius: 25px; font-weight: bold; display: inline-block;">
-              Submit Now
+            <a href="https://articon.com/dashboard" style="background-color: #f5576c; color: white; padding: 12px 30px; text-decoration: none; border-radius: 25px; font-weight: bold; display: inline-block;">
+              View Dashboard
             </a>
           </div>
 
           <p style="color: #6c757d; font-size: 14px; text-align: center;">
-            Last chance to shine! ✨
+            See you tomorrow! Best of luck! 🍀
           </p>
         </div>
       </div>
     `;
   }
 
-  private generateDeadlineReminderText(participant: Participant, deadline: Date): string {
-    const timeLeft = this.getTimeRemaining(deadline);
+  private generateEventReminderText(participant: Participant, eventDate: Date): string {
+    const eventDateStr = eventDate.toLocaleDateString('en-US', { 
+      weekday: 'long', 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    });
+    const eventTimeStr = eventDate.toLocaleTimeString('en-US', { 
+      hour: '2-digit', 
+      minute: '2-digit' 
+    });
 
     return `
-⏰ Deadline Reminder - Articon Hackathon 2025
+⏰ Event Tomorrow! - Articon Hackathon 2025
 
 Hi ${participant.name}!
 
-This is a friendly reminder that the submission deadline is approaching!
+This is a friendly reminder that Articon Hackathon 2025 starts tomorrow!
 
-Time Remaining: ${timeLeft}
+Event Details:
+- Date: ${eventDateStr}
+- Time: ${eventTimeStr}
+- Category: ${this.formatCategory(participant.category)}
 
-Final Checklist:
-- Review task requirements
-- Complete your submissions
-- Test everything works
-- Submit before deadline
+Preparation Checklist:
+- Keep your QR code ready for attendance scanning
+- Ensure your tools and software are ready
+- Have your login credentials handy
+- Get a good night's rest!
 
-Submit now: https://articon.com/dashboard
+Dashboard: https://articon.com/dashboard
 
-Last chance to shine! ✨
+See you tomorrow! Best of luck! 🍀
     `;
-  }
-
-  private getTimeRemaining(deadline: Date): string {
-    const now = new Date();
-    const diff = deadline.getTime() - now.getTime();
-
-    if (diff <= 0) return 'Deadline passed';
-
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-
-    if (days > 0) return `${days} day${days > 1 ? 's' : ''}, ${hours} hour${hours > 1 ? 's' : ''}`;
-    if (hours > 0) return `${hours} hour${hours > 1 ? 's' : ''}, ${minutes} minute${minutes > 1 ? 's' : ''}`;
-    return `${minutes} minute${minutes > 1 ? 's' : ''}`;
   }
 
   private formatCategory(category: string): string {
