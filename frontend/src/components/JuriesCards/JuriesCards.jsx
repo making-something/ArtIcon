@@ -10,6 +10,7 @@ gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 export default function JuriesCards() {
 	const juriesSectionRef = useRef(null);
+	const juriesHeroRef = useRef(null);
 	const [isMobile, setIsMobile] = useState(false);
 
 	// Handle responsive behavior
@@ -26,7 +27,23 @@ export default function JuriesCards() {
 
 	useGSAP(
 		() => {
-			// Don't run animations on mobile
+			// Animate hero paragraph on scroll
+			const heroParagraph = juriesHeroRef.current?.querySelector("p");
+			if (heroParagraph) {
+				gsap.to(heroParagraph, {
+					opacity: 1,
+					y: 0,
+					duration: 1,
+					ease: "power2.out",
+					scrollTrigger: {
+						trigger: heroParagraph,
+						start: "top 80%",
+						toggleActions: "play none none none",
+					},
+				});
+			}
+
+			// Don't run card animations on mobile
 			if (window.innerWidth <= 1000) {
 				return;
 			}
@@ -44,7 +61,8 @@ export default function JuriesCards() {
 					trigger: juriesSection,
 					start: "top bottom",
 					end: "top top",
-					scrub: 1,
+					scrub: 0.5,
+					ease: "power2.out",
 					id: "juries-entrance",
 					onUpdate: (self) => {
 						const progress = self.progress;
@@ -95,7 +113,8 @@ export default function JuriesCards() {
 					invalidateOnRefresh: true,
 					fastScrollEnd: true,
 					anticipatePin: 1,
-					scrub: 1,
+					scrub: 0.5,
+					ease: "power2.inOut",
 					id: "juries-slide-in",
 					onUpdate: (self) => {
 						const progress = self.progress;
@@ -161,40 +180,55 @@ export default function JuriesCards() {
 
 	return (
 		<>
-			<section className="juries-hero">
-				<h1>Meet Our Juries</h1>
+			<section className="juries-hero" ref={juriesHeroRef}>
+				<div className="juries-hero-content">
+					<h1>Meet Our Expert Jury Panel</h1>
+					<p>
+						Three industry experts who will evaluate your creativity,
+						consistency, storytelling, and time mastery
+					</p>
+				</div>
 			</section>
 
 			<section className="juries" ref={juriesSectionRef}>
 				<div className="jury-member">
 					<div className="jury-member-name-initial">
-						<h1>R</h1>
+						<h3>R R</h3>
 					</div>
 					<div className="jury-member-card">
 						<div className="jury-member-img">
-							<img src="/juries/01.avif" alt="Jury Member 1" />
+							<img src="/juries/JURY 1-01.avif" alt="Ronak Raiyani" />
+						</div>
+						<div className="jury-member-info">
+							<p>President of RITA Groups</p>
 						</div>
 					</div>
 				</div>
 
 				<div className="jury-member">
 					<div className="jury-member-name-initial">
-						<h1>K</h1>
+						<h3>K P</h3>
 					</div>
 					<div className="jury-member-card">
 						<div className="jury-member-img">
-							<img src="/juries/02.avif" alt="Jury Member 2" />
+							<img src="/juries/JURY 2-01.avif" alt="Kashyap Pandya" />
+						</div>
+						<div className="jury-member-info">
+							<p>Senior Project Manager at Multiicon</p>
 						</div>
 					</div>
 				</div>
 
 				<div className="jury-member">
 					<div className="jury-member-name-initial">
-						<h1>V</h1>
+						<h3>V M</h3>
 					</div>
 					<div className="jury-member-card">
 						<div className="jury-member-img">
-							<img src="/juries/03.avif" alt="Jury Member 3" />
+							<img src="/juries/JURY 3-01.avif" alt="Vandana Mehta" />
+						</div>
+						<div className="jury-member-info">
+							<p>Founder, Elevate Consulting Partner</p>
 						</div>
 					</div>
 				</div>

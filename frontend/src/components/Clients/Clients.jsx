@@ -15,14 +15,16 @@ const Clients = () => {
 			{
 				name: "MULTIICON",
 				logoSrc: "/multiicon.avif",
-				alt: "Multiicon sponsor logo",
+				alt: "Multiicon logo",
+				topText: "Sponsored By",
+				bottomText: "Your Creative Partner in Innovation",
 			},
-		],
-		[
 			{
 				name: "RITA",
 				logoSrc: "/rita.avif",
-				alt: "Rita sponsor logo",
+				alt: "Rita logo",
+				topText: "Supported By",
+				bottomText: "Empowering Gujarat's Creative Community",
 			},
 		],
 	];
@@ -140,16 +142,20 @@ const Clients = () => {
 				onMouseMove={handleMouseMove}
 			>
 				<div className="clients-header">
-					<p>[ &nbsp;Selected Collaborations&nbsp; ]</p>
-					<h3>Sponsors in Creation</h3>
+					<p>[ &nbsp;The Dream Team&nbsp; ]</p>
+					<h3>Powered By Passion, Backed By Excellence</h3>
 				</div>
 
 				<div className="grid">
 					{clients.map((row, rowIndex) => (
 						<div className="grid-row" key={rowIndex}>
 							{row.map((client, clientIndex) => (
-								<div className="grid-item" key={`${client.name}-${clientIndex}`}>
+								<div
+									className="grid-item"
+									key={`${client.name}-${clientIndex}`}
+								>
 									<div className="grid-item-content">
+										<p className="client-top-text">{client.topText}</p>
 										<div className="logo-wrapper">
 											<Image
 												src={client.logoSrc}
@@ -161,6 +167,7 @@ const Clients = () => {
 												style={{ objectFit: "contain" }}
 											/>
 										</div>
+										<p className="client-bottom-text">{client.bottomText}</p>
 									</div>
 								</div>
 							))}

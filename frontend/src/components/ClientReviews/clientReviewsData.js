@@ -1,35 +1,38 @@
 export const clientReviewsData = [
 	{
 		review:
-			"Students coding with full focus, solving problems one logic at a time.",
-		clientName: "Darshan University",
-		clientCompany: "one",
+			"Designers creating with full focus, solving visual challenges one frame at a time.",
+		clientName: "Past Participant",
+		clientCompany: "ArtIcon 2024",
 	},
 	{
 		review:
-			"Young coders turning ideas into working solutions under real-time pressure",
-		clientName: "two",
-		clientCompany: "two",
+			"Young creators turning concepts into stunning designs under real-time pressure",
+		clientName: "Design Student",
+		clientCompany: "Gujarat",
 	},
 	{
 		review:
-			"Students who cracked every challenge and proved their coding skills",
-		clientName: "three",
-		clientCompany: "three",
+			"Participants who mastered all three categories and proved their creative versatility",
+		clientName: "Winner Team",
+		clientCompany: "ArtIcon 2023",
 	},
 	{
-		review: "Coders who stood out with clean logic and smooth execution.",
-		clientName: "four",
-		clientCompany: "four",
+		review:
+			"Creators who stood out with innovative thinking and flawless execution.",
+		clientName: "Jury Member",
+		clientCompany: "Industry Expert",
 	},
 	{
-		review: "A lively coding space where students built smart solutions",
-		clientName: "five",
-		clientCompany: "five",
+		review:
+			"An electrifying creative space where designers built portfolio-worthy projects",
+		clientName: "Event Attendee",
+		clientCompany: "Multiicon",
 	},
 	{
-		review: "Active screens, active minds and pure coding energy on campus.",
-		clientName: "six",
-		clientCompany: "six",
+		review:
+			"Active screens, active minds and pure creative energy at the venue.",
+		clientName: "Organizer",
+		clientCompany: "ArtIcon Team",
 	},
 ];

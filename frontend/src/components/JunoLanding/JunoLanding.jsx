@@ -534,7 +534,7 @@ const JunoLanding = () => {
 									data-animate-delay="0.25"
 								>
 									Creators, ready your AI and imagination for ArtIcon 2025,
-									the Hackathon of Creativity.
+									Gujarat's fusion festival of design, logic & futuristic art!
 								</p>
 							</div>
 							<div className="hero-footer-tags">
@@ -543,14 +543,15 @@ const JunoLanding = () => {
 									data-animate-type="scramble"
 									data-animate-delay="0.5"
 								>
-									<span>&#9654;</span> Intelligence In Creation
+									<span>&#9654;</span> 30th November 2025 | 9:00 AM - 7:30 PM
 								</p>
 								<p
 									className="mono"
 									data-animate-type="scramble"
 									data-animate-delay="0.5"
 								>
-									<span>&#9654;</span> Hackathon of Creativity
+									<span>&#9654;</span> Multiicon, 4th Floor | Up to 100
+									Participants
 								</p>
 							</div>
 						</div>
@@ -652,18 +653,18 @@ const JunoLanding = () => {
 								data-animate-type="line-reveal"
 								data-animate-delay="0.2"
 								data-animate-on-scroll="true"
-								style={{marginBottom:"100px", fontSize:"80px"}}
+								style={{ marginBottom: "100px", fontSize: "80px" }}
 							>
-								Jab Creativity aur Competition milte hai, tab banta hai Icon!
+								Three Categories. One Theme. One Trophy to Win Them All!
 							</h2>
 							<p
 								className="mono"
 								data-animate-type="scramble"
 								data-animate-delay="0.2"
 								data-animate-on-scroll="true"
-								style={{fontSize:"20px"}}
+								style={{ fontSize: "20px" }}
 							>
-								<span>&#9654;</span> Kyu Banoge ArtIcon?
+								<span>&#9654;</span> Complete All Three Tasks Under One Theme
 							</p>
 						</div>
 					</div>
@@ -683,7 +684,6 @@ const JunoLanding = () => {
 									data-animate-delay="0.2"
 									data-animate-on-scroll="true"
 									style={{ transform: "translateY(-40px)" }}
-
 								>
 									Graphic Design
 								</h4>

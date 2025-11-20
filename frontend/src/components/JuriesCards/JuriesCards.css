@@ -12,10 +12,34 @@
 	background-color: var(--base-100);
 }
 
+.juries-hero-content {
+	width: 100%;
+	max-width: 1400px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 3rem;
+}
+
 .juries-hero h1 {
-	width: 75%;
-	color: var(--base-500);
+	color: var(--accent-9);
 	font-size: clamp(3rem, 12vw, 12rem);
+	margin: 0;
+	text-align: center;
+}
+
+.juries-hero p {
+	font-family: "Big Shoulders Display", sans-serif;
+	font-size: clamp(2rem, 4vw, 4.5rem);
+	font-weight: 700;
+	text-transform: uppercase;
+	color: var(--base-400);
+	margin: 0;
+	line-height: 1.3;
+	text-align: center;
+	max-width: 1200px;
+	opacity: 0;
+	transform: translateY(30px);
 }
 
 /* Juries Section */
@@ -27,10 +51,9 @@
 	padding: 1rem;
 	display: flex;
 	gap: 1rem;
-	background-image: url("/juries/BG-01.avif");
-	background-size: contain;
+	/* background-size: contain;
 	background-position: center;
-	background-repeat: no-repeat;
+	background-repeat: no-repeat; */
 	background-color: var(--base-100); /* Same as hero section */
 }
 
@@ -65,7 +88,7 @@
 }
 
 .jury-member-name-initial h1 {
-	color: var(--base-500);
+	color: var(--accent-7);
 	font-size: clamp(8rem, 20vw, 20rem);
 	will-change: transform;
 	transform: scale(0);
@@ -77,16 +100,16 @@
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
-	width: 400px;
-	height: 400px;
+	width: 550px;
 	max-width: 90%;
-	max-height: 90%;
-	aspect-ratio: 1;
 	border-radius: 1rem;
-	overflow: hidden;
+	overflow: visible;
 	will-change: transform;
-	box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-	background-color: #000;
+	/* box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5); */
+	background-color: var(--base-100);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 }
 
 .jury-member:nth-child(1) .jury-member-card {
@@ -102,9 +125,11 @@
 }
 
 .jury-member-img {
-	width: 100%;
-	height: 100%;
+	width: 550px;
+	height: 550px;
 	position: relative;
+	border-radius: 1rem;
+	overflow: hidden;
 }
 
 .jury-member-img img {
@@ -114,6 +139,22 @@
 	display: block;
 }
 
+.jury-member-info {
+	width: 100%;
+	padding: 1.5rem 1rem;
+	text-align: center;
+}
+
+.jury-member-info p {
+	font-family: "Big Shoulders Display", sans-serif;
+	font-size: 1.75rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	/* color: var(--accent-7); */
+	margin: 0;
+	line-height: 1.2;
+}
+
 /* Mobile Responsive */
 @media (max-width: 1000px) {
 	.juries-hero {
@@ -121,9 +162,16 @@
 		padding: 6rem 1rem 1rem 1rem;
 	}
 
+	.juries-hero-content {
+		gap: 2rem;
+	}
+
 	.juries-hero h1 {
-		width: 100%;
 		font-size: clamp(2.5rem, 10vw, 4rem);
+	}
+
+	.juries-hero p {
+		font-size: clamp(1.5rem, 3.5vw, 2.5rem);
 	}
 
 	.juries {
@@ -147,18 +195,30 @@
 
 	.jury-member-card {
 		width: 300px;
-		height: 300px;
 		transform: translate(-50%, -50%) scale(1) rotate(0deg) !important;
+	}
+
+	.jury-member-img {
+		width: 300px;
+		height: 300px;
 	}
 }
 
 @media (max-width: 600px) {
 	.jury-member-card {
 		width: 250px;
+	}
+
+	.jury-member-img {
+		width: 250px;
 		height: 250px;
 	}
 
 	.jury-member {
 		height: 270px;
+	}
+
+	.jury-member-info p {
+		font-size: 1.1rem;
 	}
 }

@@ -11,38 +11,38 @@ gsap.registerPlugin(ScrollTrigger);
 const workItems = [
 	{
 		id: 1,
-		title: "Cosmic Deli",
-		category: "Character Design",
+		title: "DesignSprint",
+		category: "UI/UX Hackathon at Darshan University",
 		img: "/past_events/23TEWFSD.avif",
 	},
 	{
 		id: 2,
-		title: "Skull Pop 7",
-		category: "Color Exploration",
+		title: "CodeCraft Fusion",
+		category: "Design & Dev Hackathon at Atmiya University",
 		img: "/past_events/32RQEFASD.avif",
 	},
 	{
 		id: 3,
-		title: "Room 404",
-		category: "3D Composition",
+		title: "Creative Clash",
+		category: "Graphics Battle at Darshan University",
 		img: "/past_events/43RGFXB.avif",
 	},
 	{
 		id: 4,
-		title: "Red Dot Mission",
-		category: "Narrative Design",
+		title: "ArtTech Summit",
+		category: "Video Editing Marathon at Atmiya University",
 		img: "/past_events/53rqefda.avif",
 	},
 	{
 		id: 5,
-		title: "Sweetbones",
-		category: "Editorial Illustration",
+		title: "PixelWars Gujarat",
+		category: "Multi-Category Hackathon at Darshan University",
 		img: "/past_events/TQEGADVVDZ.avif",
 	},
 	{
 		id: 6,
-		title: "Carnival Bloom 31",
-		category: "Pattern Design",
+		title: "Innovation Fest 2024",
+		category: "Design Thinking Workshop at Atmiya University",
 		img: "/past_events/ytjhnb.avif",
 	},
 ];
@@ -102,7 +102,11 @@ const WorkGallery = () => {
 		<div ref={containerRef} className="work-gallery-page">
 			{/* Header */}
 			<div className="work-gallery-header">
-				<h1>PAST EVENTS</h1>
+				<h1>WE'VE BEEN THERE, DONE THAT!</h1>
+				<p className="work-gallery-subtitle">
+					Gujarat's colleges ne dekha hai creativity ka asli power. Yeh raha
+					proof!
+				</p>
 			</div>
 
 			{/* Work Items */}

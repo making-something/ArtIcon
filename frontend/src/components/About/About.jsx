@@ -173,34 +173,35 @@ const About = () => {
 			<div className="about-copy">
 				<div className="about-copy-content">
 					<h3>
-						We design things that <span>click</span> — literally. From{" "}
-						<span>BOLD</span> brands to
-						<span>PIXEL-PERFECT</span> code, this event lives in the digital
-						space where color, energy, and
-						<span>CLEVER</span> details come out to play.
+						<span>ArtIcon 2025</span> — Where <span>Art</span> Meets{" "}
+						<span>Innovation</span>. A full-day creative <span>HACKATHON</span>{" "}
+						bringing together up to <span>100 CREATORS</span>, artists, and
+						innovators at <span>Multiicon</span> on{" "}
+						<span>30th November 2025</span>.
 					</h3>
 					<h3>
-						Every project here is a <span>SANDBOX</span> — where ideas get
-						messy, buttons have
-						<span>FEELINGS</span>, and layouts get <span>PERSONALITY</span>.
+						From <span>9:00 AM to 7:30 PM</span>, dive into three creative
+						challenges — <span>UI/UX</span>, <span>GRAPHICS</span>, and{" "}
+						<span>VIDEO EDITING</span>. Complete all three under one theme to
+						claim the <span>MAIN ARTICON TROPHY</span>!
 					</h3>
 				</div>
 
 				{/* Parallax Tags */}
 				<div className="about-tag" id="tag-1">
-					<p>Interactive</p>
+					<p>AI-Powered</p>
 				</div>
 				<div className="about-tag" id="tag-2">
-					<p>Joyful</p>
+					<p>Solo Challenge</p>
 				</div>
 				<div className="about-tag" id="tag-3">
-					<p>Precise</p>
+					<p>One Theme</p>
 				</div>
 				<div className="about-tag" id="tag-4">
-					<p>Curious</p>
+					<p>Three Tasks</p>
 				</div>
 				<div className="about-tag" id="tag-5">
-					<p>Personality</p>
+					<p>Full Day</p>
 				</div>
 			</div>
 
@@ -226,26 +227,26 @@ const About = () => {
 							<br />
 							love me
 						</h1>
-						<p>Some slightly unhinged stats from the Event</p>
+						<p>Key stats that make ArtIcon 2025 unforgettable</p>
 					</div>
 					<div className="stats-col stats-item-1">
-						<h1>32</h1>
+						<h1>100</h1>
 						<p className="desc">
-							Design projects that made me shout "this is the one" (every time)
+							Creative minds, artists, and innovators competing together
 						</p>
 					</div>
 				</div>
 				<div className="stats-row">
 					<div className="stats-col stats-item-2">
-						<h1>100%</h1>
+						<h1>10.5 Hrs</h1>
 						<p className="desc">
-							Remote, independent, and allergic to open-plan offices
+							Non-stop creativity from 9:00 AM to 7:30 PM on November 30th
 						</p>
 					</div>
 					<div className="stats-col stats-item-3">
-						<h1>30+</h1>
+						<h1>3 Jury</h1>
 						<p className="desc">
-							Clients who said "wow" — or at least made the face
+							Expert judges evaluating creativity, consistency & storytelling
 						</p>
 					</div>
 				</div>

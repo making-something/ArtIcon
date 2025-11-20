@@ -17,6 +17,7 @@ import JuriesCards from "@/components/JuriesCards/JuriesCards";
 import Clients from "@/components/Clients/Clients";
 import About from "@/components/About/About";
 import WorkGallery from "@/components/WorkGallery/WorkGallery";
+import FAQ from "@/components/FAQ/FAQ";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -103,6 +104,10 @@ const Page = () => {
 				</div>
 
 				<div style={{ ...sectionStyle, zIndex: 10 }}>
+					<FAQ />
+				</div>
+
+				<div style={{ ...sectionStyle, zIndex: 11 }}>
 					<Footer />
 				</div>
 			</main>
