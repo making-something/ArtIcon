@@ -774,26 +774,6 @@ const JunoLanding = () => {
 						</div>
 					</div>
 				</div>
-				<div className="home-services-bottom-bar">
-					<div className="container">
-						<p
-							className="mono"
-							data-animate-type="scramble"
-							data-animate-delay="0.2"
-							data-animate-on-scroll="true"
-						>
-							<span>&#9654;</span> Date & Time
-						</p>
-						<p
-							className="mono"
-							data-animate-type="scramble"
-							data-animate-delay="0.25"
-							data-animate-on-scroll="true"
-						>
-							29th November 2025 | 9:00 AM – 7:30 PM
-						</p>
-					</div>
-				</div>
 				<div className="cards">
 					<div className="cards-container">
 						<div className="card" id="card-1">

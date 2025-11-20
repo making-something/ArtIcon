@@ -889,9 +889,10 @@ p.mono span {
 	/* Matching h4 style */
 	text-transform: uppercase;
 	font-family: "Barlow Condensed", sans-serif;
-	font-weight: 900;
+	font-weight: 600;
 	font-size: 3rem; /* Large like a header */
 	line-height: 0.9;
+	margin-top: -3rem;
 	letter-spacing: -0.02rem;
 	color: var(--base-300); /* Dark color */
 }
