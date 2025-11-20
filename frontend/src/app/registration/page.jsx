@@ -128,7 +128,7 @@ const Register = () => {
 			id: 9,
 			field: "email",
 			type: "email",
-			pre: " or ",
+			pre: " AND ",
 			post: " for further communication.",
 			placeholder: "EMAIL ADDRESS",
 		},
