@@ -113,6 +113,7 @@
 	height: 100%;
 	padding: 8em 2em 8em 2em; /* Exact Ref Padding */
 	background-color: var(--bg-main);
+	overflow: hidden; /* Contain floating tags within this section */
 }
 
 .about-copy-content {
@@ -150,7 +151,13 @@
 	background-color: var(--text-main);
 	border-radius: 0.5em;
 	width: max-content;
-	z-index: 1;
+	z-index: 100; /* Higher z-index to ensure visibility */
+	/* Remove CSS transforms to let GSAP handle them */
+	will-change: transform;
+	backface-visibility: hidden;
+	transform-style: preserve-3d;
+	pointer-events: none; /* Prevent interaction issues */
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Add subtle shadow for depth */
 }
 
 .about-tag p {
@@ -158,37 +165,38 @@
 	color: var(--bg-main);
 	font-family: "DM Mono", monospace;
 	font-size: 1rem;
-	padding: 0.75em 0.5em 0.5em 0.5em; /* Asymmetric padding from ref */
+	padding: 0.75em 1em 0.5em 1em;
 	margin: 0;
 	font-weight: 500;
 	font-style: normal;
+	white-space: nowrap;
 }
 
-/* Exact Positioning from Reference */
+/* Positioning from Reference - Adjusted to stay near content */
 #tag-1 {
-	top: 50%;
-	left: 25%;
-	transform: translate(-50%, -50%) rotate(20deg);
+	top: 20%;
+	left: 20%;
+	transform: translate(-50%, -50%); /* Base centering only */
 }
 #tag-2 {
-	top: 65%;
+	top: 50%;
 	left: 10%;
-	transform: translate(-50%, -50%) rotate(-45deg);
+	transform: translate(-50%, -50%);
 }
 #tag-3 {
-	top: 50%;
-	left: 75%;
-	transform: translate(-50%, -50%) rotate(5deg);
+	top: 25%;
+	left: 80%;
+	transform: translate(-50%, -50%);
 }
 #tag-4 {
-	top: 75%;
-	left: 50%;
-	transform: translate(-50%, -50%) rotate(45deg);
+	top: 70%;
+	left: 75%;
+	transform: translate(-50%, -50%);
 }
 #tag-5 {
-	top: 100%;
-	left: 80%;
-	transform: translate(-50%, -50%) rotate(-60deg);
+	top: 75%;
+	left: 30%;
+	transform: translate(-50%, -50%);
 }
 
 /* --- 3. SKILLS (Typewriter Box) --- */
@@ -429,7 +437,18 @@
 		font-size: 1.5rem;
 	}
 	.about-tag {
-		display: none;
+		display: block; /* Keep tags visible on mobile */
+		position: relative; /* Stack them normally on mobile */
+		margin: 1em auto;
+		width: max-content;
+		top: auto;
+		left: auto;
+		transform: none;
+	}
+
+	.about-tag p {
+		font-size: 0.875rem;
+		padding: 0.5em 0.75em;
 	}
 
 	.skills-copy {

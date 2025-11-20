@@ -15,90 +15,146 @@ const About = () => {
 			const isDesktop = window.innerWidth > 1000;
 
 			// 1. STATS ANIMATION (Pop In)
-			// Reference: "gsap.set([.items], { scale: 0 }) ... to({ scale: 1, ease: 'power4.out' })"
-			const statItems = [".stats-item-1", ".stats-item-2", ".stats-item-3"];
+			const setupStatsAnimation = () => {
+				const statElements = [
+					containerRef.current?.querySelector(".stats-item-1"),
+					containerRef.current?.querySelector(".stats-item-2"),
+					containerRef.current?.querySelector(".stats-item-3"),
+				].filter(Boolean);
 
-			gsap.set(statItems, { scale: 0 });
+				if (statElements.length > 0) {
+					gsap.set(statElements, { scale: 0 });
 
-			ScrollTrigger.create({
-				trigger: ".about-stats",
-				start: "top 50%",
-				toggleActions: "play none none none", // Exact Ref behavior
-				onEnter: () => {
-					gsap.to(statItems, {
-						scale: 1,
-						duration: 1,
-						stagger: 0.1,
-						ease: "power4.out",
-						force3D: true,
+					ScrollTrigger.create({
+						trigger: ".about-stats",
+						start: "top 70%",
+						toggleActions: "play none none none",
+						onEnter: () => {
+							gsap.to(statElements, {
+								scale: 1,
+								duration: 1.2,
+								stagger: 0.2,
+								ease: "back.out(1.7)",
+								force3D: true,
+							});
+						},
 					});
-				},
-			});
+				}
+			};
 
-			if (isDesktop) {
-				// 2. HERO PORTRAIT PARALLAX
-				// Reference: "y: -200, rotation: -25, scrub: 1"
-				gsap.to(".about-hero-portrait", {
-					y: -200,
-					rotation: -25,
-					ease: "none", // Scrub handles easing
-					scrollTrigger: {
-						trigger: ".about-hero",
-						start: "top top",
-						end: "bottom top",
-						scrub: 1,
+			// Set up stats animation after a short delay
+			setTimeout(setupStatsAnimation, 150);
+
+			// 2. FLOATING TAGS PARALLAX - Always run for visual effect
+			// Wait a bit for DOM to be ready, then set up animations
+			const setupTagAnimations = () => {
+				const tagElements = [
+					{
+						id: "#tag-1",
+						initialY: 0,
+						targetY: -300,
+						initialR: 20,
+						targetR: -45,
 					},
-				});
-
-				// 3. FLOATING TAGS PARALLAX (Exact Ref Values)
-				const tagAnimations = [
-					{ id: "#tag-1", y: -300, r: -45 },
-					{ id: "#tag-2", y: -150, r: 70 },
-					{ id: "#tag-3", y: -400, r: 120 },
-					{ id: "#tag-4", y: -350, r: -60 },
-					{ id: "#tag-5", y: -200, r: 100 },
+					{
+						id: "#tag-2",
+						initialY: 0,
+						targetY: -150,
+						initialR: -45,
+						targetR: 70,
+					},
+					{
+						id: "#tag-3",
+						initialY: 0,
+						targetY: -400,
+						initialR: 5,
+						targetR: 120,
+					},
+					{
+						id: "#tag-4",
+						initialY: 0,
+						targetY: -350,
+						initialR: 45,
+						targetR: -60,
+					},
+					{
+						id: "#tag-5",
+						initialY: 0,
+						targetY: -200,
+						initialR: -60,
+						targetR: 100,
+					},
 				];
 
-				tagAnimations.forEach((tag) => {
-					gsap.to(tag.id, {
-						y: tag.y,
-						rotation: tag.r,
+				tagElements.forEach((tag, index) => {
+					const element = containerRef.current?.querySelector(tag.id);
+					if (element) {
+						console.log(`Setting up animation for ${tag.id}`);
+
+						// Override CSS transform with GSAP
+						gsap.set(element, {
+							y: tag.initialY,
+							rotation: tag.initialR,
+							force3D: true,
+							transformOrigin: "center center",
+						});
+
+						// Create parallax animation - constrained to about-copy section
+						gsap.to(element, {
+							y: isDesktop ? tag.targetY * 0.6 : tag.targetY * 0.2, // Reduced movement
+							rotation: tag.targetR * 0.7, // Reduced rotation
+							ease: "none",
+							force3D: true,
+							scrollTrigger: {
+								trigger: ".about-copy",
+								start: "top 80%", // Start when section comes into view
+								end: "bottom 20%", // End before section leaves view
+								scrub: 1.5,
+								refreshPriority: -1,
+								markers: false, // Disabled debugging
+								id: `tag-${index + 1}`,
+							},
+						});
+					} else {
+						console.warn(`Element not found: ${tag.id}`);
+					}
+				});
+			};
+
+			// Set up tag animations after a short delay
+			setTimeout(setupTagAnimations, 100);
+
+			if (isDesktop) {
+				// 3. HERO PORTRAIT PARALLAX
+				const portraitElement = containerRef.current?.querySelector(
+					".about-hero-portrait"
+				);
+				if (portraitElement) {
+					gsap.to(portraitElement, {
+						y: -200,
+						rotation: -25,
 						ease: "none",
+						force3D: true,
 						scrollTrigger: {
-							trigger: ".about-copy",
-							start: "top bottom",
-							end: "bottom+=100% top",
+							trigger: ".about-hero",
+							start: "top top",
+							end: "bottom top",
 							scrub: 1,
 						},
 					});
-				});
+				}
 			}
+
+			// Refresh ScrollTrigger after setup
+			setTimeout(() => {
+				ScrollTrigger.refresh();
+			}, 200);
 		},
 		{ scope: containerRef }
 	);
-
 	return (
 		<section className="about-section-wrapper" ref={containerRef}>
 			{/* HERO */}
-			{/* <div className="about-hero">
-				<div className="about-hero-header">
-					<h1>This is</h1>
-					<h1>ArtIcon 2025</h1>
-				</div>
-
-				<div className="about-hero-bio">
-					<p className="ss">
-						A fusion festival where logic meets creativity. We blend playful
-						thinking with clean execution. If it moves, clicks, scrolls, or
-						shimmers — it belongs here.
-					</p>
-					<p className="mn">Inside the event / slightly filtered</p>
-				</div>
-
-				<div className="about-hero-portrait">
-					<img src="/juries/JURY 2-01.png" alt="ArtIcon Portrait" />
-				</div>
-			</div> */}
 
 			{/* STORY */}
 			<div className="about-copy">

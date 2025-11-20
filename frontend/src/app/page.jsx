@@ -16,6 +16,7 @@ import EventOverview from "@/components/EventOverview/EventOverview";
 import JuriesCards from "@/components/JuriesCards/JuriesCards";
 import Clients from "@/components/Clients/Clients";
 import About from "@/components/About/About";
+import WorkGallery from "@/components/WorkGallery/WorkGallery";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -52,7 +53,6 @@ const Page = () => {
 	// Helper style for sections to ensure they stack cleanly
 	const sectionStyle = {
 		position: "relative",
-		backgroundColor: "var(--base-100)",
 	};
 
 	return (
@@ -64,7 +64,6 @@ const Page = () => {
 				style={{
 					width: "100%",
 					overflowX: "hidden",
-					backgroundColor: "var(--base-100)",
 				}}
 			>
 				<div style={{ ...sectionStyle, zIndex: 1 }}>
@@ -83,9 +82,9 @@ const Page = () => {
 					<About />
 				</div>
 
-				{/* <div style={{ ...sectionStyle, zIndex: 5 }}>
+				<div style={{ ...sectionStyle, zIndex: 5 }}>
 					<WorkGallery />
-				</div> */}
+				</div>
 
 				<div style={{ ...sectionStyle, zIndex: 6 }}>
 					<Spotlight />
