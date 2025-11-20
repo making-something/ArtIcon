@@ -94,7 +94,14 @@
 	margin-left: 0.5rem;
 }
 
-.login-nav-btn {
+.top-nav-buttons {
+	display: flex;
+	gap: 1rem;
+	align-items: center;
+}
+
+.login-nav-btn,
+.back-nav-btn {
 	pointer-events: auto;
 	background: transparent;
 	border: 1px solid var(--base-300);
@@ -109,7 +116,8 @@
 	transition: all 0.3s ease;
 }
 
-.login-nav-btn:hover {
+.login-nav-btn:hover,
+.back-nav-btn:hover {
 	background-color: var(--base-100);
 	color: var(--base-400);
 }
@@ -272,29 +280,62 @@
 	border-radius: 4px;
 }
 
-/* Mobile Adjustments */
+/* Mobile Adjustments - CONSOLIDATED */
 @media (max-width: 1000px) {
 	.register-page {
 		padding: 0 1.5rem;
-		padding-top: 15vh;
+		padding-top: 8rem; /* Space for fixed top bar */
 		justify-content: flex-start;
-		overflow-y: auto; /* Allow scroll on mobile if form is long */
+		overflow: hidden; /* Prevent body scroll */
+		height: 100vh;
+		height: 100dvh; /* Use dynamic viewport height for mobile */
 	}
 
 	.register-top-bar {
 		padding: 1.5rem;
-		background: linear-gradient(to bottom, var(--base-400), transparent);
+		background: linear-gradient(
+			to bottom,
+			var(--base-400) 0%,
+			var(--base-400) 70%,
+			transparent 100%
+		);
+		z-index: 100;
+	}
+
+	.top-nav-buttons {
+		gap: 0.5rem;
+	}
+
+	.login-nav-btn,
+	.back-nav-btn {
+		padding: 0.5rem 1rem;
+		font-size: 0.85rem;
 	}
 
 	.page-title {
 		font-size: 1.2rem;
 	}
+
 	.cursive-accent {
 		font-size: 1.5rem;
 	}
 
+	.register-container {
+		width: 100%;
+		max-width: 100%;
+	}
+
+	.form-scroll-container {
+		max-height: calc(100dvh - 12rem); /* Account for top bar + submit button */
+		overflow-y: auto;
+		overflow-x: hidden;
+		-webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+		padding-bottom: 2rem;
+	}
+
 	.form-sentence {
-		font-size: 1.8rem;
+		font-size: clamp(1.5rem, 5vw, 2rem);
+		line-height: 1.5;
 	}
 
 	.register-input {
@@ -307,6 +348,12 @@
 		display: block;
 		width: 100%;
 		margin: 0;
+	}
+
+	.submit-wrapper {
+		position: relative;
+		margin-top: 1rem;
+		padding-bottom: 1rem;
 	}
 
 	.nav-hint {
@@ -478,17 +525,6 @@
 	pointer-events: none; /* Disabled until visible */
 }
 
-/* Mobile Fixes */
-@media (max-width: 1000px) {
-	.form-scroll-container {
-		max-height: calc(100vh - 200px); /* Adjust for mobile headers */
-	}
-	.register-page {
-		padding-top: 4rem;
-		justify-content: flex-start;
-	}
-}
-
 .register-input,
 .register-select {
 	background: transparent;
@@ -652,26 +688,6 @@
 	font-size: 1.8rem;
 	color: var(--accent-3);
 	margin-left: 0.5rem;
-}
-
-.login-nav-btn {
-	pointer-events: auto;
-	background: transparent;
-	border: 1px solid var(--base-300);
-	color: var(--base-100);
-	padding: 0.75rem 2rem;
-	border-radius: 2rem;
-	font-family: "Barlow Condensed", sans-serif;
-	font-weight: 600;
-	text-transform: uppercase;
-	font-size: 1rem;
-	cursor: pointer;
-	transition: all 0.3s ease;
-}
-
-.login-nav-btn:hover {
-	background-color: var(--base-100);
-	color: var(--base-400);
 }
 
 /* --- MAIN CONTAINER --- */
@@ -882,15 +898,4 @@
 .register-input.has-file {
 	color: var(--accent-1) !important;
 	font-style: italic;
-}
-
-/* Mobile */
-@media (max-width: 1000px) {
-	.form-scroll-container {
-		max-height: calc(100vh - 200px);
-	}
-	.register-page {
-		padding-top: 4rem;
-		justify-content: flex-start;
-	}
 }

@@ -559,7 +559,10 @@ const Register = () => {
 					<div className="page-title">
 						Register <span className="cursive-accent">Yourself</span>
 					</div>
-					<div>
+					<div className="top-nav-buttons">
+						<button className="back-nav-btn" onClick={() => router.push("/")}>
+							← Back
+						</button>
 						{phase !== "login" && (
 							<button
 								className="login-nav-btn"
