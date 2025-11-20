@@ -107,13 +107,13 @@ export default function JuriesCards() {
 				const cardSlideInAnimation = ScrollTrigger.create({
 					trigger: juriesSection,
 					start: "top top",
-					end: `+=${window.innerHeight * 3}`,
+					end: `+=${window.innerHeight * 2}`,
 					pin: true,
 					pinSpacing: true,
 					invalidateOnRefresh: true,
 					fastScrollEnd: true,
 					anticipatePin: 1,
-					scrub: 0.5,
+					scrub: 0.3,
 					ease: "power2.inOut",
 					id: "juries-slide-in",
 					onUpdate: (self) => {

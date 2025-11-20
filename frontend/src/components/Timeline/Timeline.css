@@ -1,3 +1,35 @@
+/* Timeline Header Section - Above Component */
+.timeline-header-section {
+	position: relative;
+	width: 100vw;
+	background-color: var(--base-100, #edf1e8);
+	padding: 6rem 2rem 4rem 2rem;
+	text-align: center;
+	margin-top: -1px;
+}
+
+.timeline-header-title {
+	font-family: "rader", sans-serif;
+	font-size: clamp(2rem, 4vw, 4rem);
+	font-weight: 400;
+	font-style: italic;
+	text-transform: uppercase;
+	color: var(--fg, #141414);
+	margin: 0;
+	line-height: 1.2;
+}
+
+.timeline-header-title .fancy-word {
+	font-family: "Dancing Script", cursive;
+	font-size: clamp(2.5rem, 5vw, 5rem);
+	font-weight: 400;
+	font-style: normal;
+	text-transform: lowercase;
+	color: var(--accent-9, #ed6a5a);
+	display: inline-block;
+	margin: 0 0.2em;
+}
+
 /* Timeline Work Component - Horizontal Scrolling Featured Work */
 
 .timeline-work {
@@ -7,6 +39,7 @@
 	overflow: hidden;
 	background-color: var(--base-100, #edf1e8);
 	color: var(--fg, #141414);
+	margin-top: -1px;
 }
 
 .timeline-work .timeline-titles {
@@ -23,6 +56,11 @@
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
+}
+
+/* First step text should be centered on screen initially */
+.timeline-work .timeline-title-wrapper:first-child {
+	margin-left: calc(50vw - 62.5vw);
 }
 
 .timeline-title-img {
@@ -51,6 +89,19 @@
 	font-family: "rader", sans-serif;
 	font-style: italic;
 	font-weight: 400;
+	margin-bottom: 0.5rem;
+}
+
+.timeline-step-description {
+	font-family: "PP Neue Montreal", sans-serif;
+	font-size: clamp(1rem, 1.5vw, 1.3rem);
+	font-weight: 500;
+	color: var(--base-400);
+	text-align: center;
+	margin: 0;
+	line-height: 1.4;
+	max-width: 500px;
+	padding: 0 2rem;
 }
 
 .timeline-work .timeline-images {
@@ -149,6 +200,18 @@
 
 /* Responsive Mobile Styles */
 @media (max-width: 1000px) {
+	.timeline-header-section {
+		padding: 4rem 1.5rem 3rem 1.5rem;
+	}
+
+	.timeline-header-title {
+		font-size: clamp(1.5rem, 6vw, 2.5rem);
+	}
+
+	.timeline-header-title .fancy-word {
+		font-size: clamp(2rem, 8vw, 3.5rem);
+	}
+
 	.timeline-work {
 		padding: 4em 0;
 		height: auto;
@@ -166,6 +229,7 @@
 
 	.timeline-work .timeline-title-wrapper:nth-child(1) {
 		margin-bottom: 2em;
+		margin-left: 0;
 	}
 
 	.timeline-work .timeline-title-wrapper h1 {
@@ -195,6 +259,12 @@
 
 	.timeline-title-img {
 		display: block;
+	}
+
+	.timeline-step-description {
+		font-size: clamp(0.9rem, 3vw, 1.1rem);
+		padding: 0 1rem;
+		max-width: 100%;
 	}
 
 	.timeline-work .timeline-titles {

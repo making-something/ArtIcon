@@ -82,7 +82,7 @@ const Clients = () => {
 	}, [isMobile]);
 
 	const getHighlightColor = () => {
-		return "#b1c1ef";
+		return "#8c7e77";
 	};
 
 	const moveToElement = (element) => {
@@ -153,6 +153,7 @@ const Clients = () => {
 								<div
 									className="grid-item"
 									key={`${client.name}-${clientIndex}`}
+									data-client={client.name.toLowerCase()}
 								>
 									<div className="grid-item-content">
 										<p className="client-top-text">{client.topText}</p>

@@ -100,7 +100,13 @@ export default function Timeline() {
 							: featuredCardPosSmall;
 
 					const timelineTitles = container.querySelector(".timeline-titles");
-					const moveDistance = window.innerWidth * 4;
+					// Calculate distance so last item stops at center
+					// First item has margin-left: -12.5vw to center it
+					// Total width = 500vw, 4 items, each = 125vw
+					// Item 1 center at: -12.5vw + 62.5vw = 50vw (centered)
+					// Item 4 starts at: -12.5vw + 375vw = 362.5vw, center at 425vw
+					// To center item 4: 425vw - 50vw = 375vw = 3.75 screens
+					const moveDistance = window.innerWidth * 3.75;
 
 					const imagesContainer = container.querySelector(".timeline-images");
 
@@ -109,29 +115,40 @@ export default function Timeline() {
 					// Clear and rebuild image cards
 					imagesContainer.innerHTML = "";
 
+					let cardIndex = 0;
 					for (let i = 0; i < timelineWorkItems.length; i++) {
 						const item = timelineWorkItems[i];
-						const timelineImgCard = document.createElement("div");
-						timelineImgCard.className = `timeline-img-card timeline-img-card-${
-							i + 1
-						}`;
+						// Create even number of images for all steps
+						// Step 1: 2 images, Steps 2-3: 4 images each, Step 4: 2 images
+						const isMiddleStep = i === 1 || i === 2;
+						const numImages = isMiddleStep ? 4 : 2;
 
-						const img = document.createElement("img");
-						img.src = item.image;
-						img.alt = item.alt;
-						timelineImgCard.appendChild(img);
+						for (let j = 0; j < numImages; j++) {
+							const timelineImgCard = document.createElement("div");
+							timelineImgCard.className = `timeline-img-card timeline-img-card-${
+								i + 1
+							}`;
+							timelineImgCard.setAttribute("data-step-index", i);
 
-						const position = featuredCardPos[i];
+							const img = document.createElement("img");
+							img.src = item.image;
+							img.alt = item.alt;
+							timelineImgCard.appendChild(img);
 
-						gsap.set(timelineImgCard, {
-							x: position.x,
-							y: position.y,
-							z: -1500,
-							scale: 0,
-							force3D: true,
-						});
+							const position =
+								featuredCardPos[cardIndex % featuredCardPos.length];
 
-						imagesContainer.appendChild(timelineImgCard);
+							gsap.set(timelineImgCard, {
+								x: position.x,
+								y: position.y,
+								z: -1500,
+								scale: 0,
+								force3D: true,
+							});
+
+							imagesContainer.appendChild(timelineImgCard);
+							cardIndex++;
+						}
 					}
 
 					const timelineImgCards =
@@ -162,6 +179,7 @@ export default function Timeline() {
 									0,
 									Math.min(1, scaledProgress)
 								);
+
 								const newZ = -1500 + 3000 * individualProgress;
 								const scaleProgress = Math.min(1, individualProgress * 10);
 								const scale = Math.max(0, Math.min(1, scaleProgress));
@@ -211,25 +229,34 @@ export default function Timeline() {
 	);
 
 	return (
-		<section className="timeline-work" ref={timelineContainerRef}>
-			<div className="timeline-images"></div>
-			<div className="timeline-titles">
-				{timelineWorkItems.map((item, index) => (
-					<div key={item.id} className="timeline-title-wrapper">
-						{!isMobile && index === 0 ? null : (
-							<div className="timeline-title-img">
-								<img src={item.image} alt={item.alt} />
-							</div>
-						)}
-						<h1 className="timeline-title">{item.title}</h1>
-					</div>
-				))}
+		<>
+			<div className="timeline-header-section">
+				<h2 className="timeline-header-title">
+					Your Journey to Becoming <span className="fancy-word">ArtIcon</span>{" "}
+					Starts Here
+				</h2>
 			</div>
-			<div className="timeline-work-indicator"></div>
-			<div className="timeline-work-footer">
-				<p className="mn">Articon Vault [ {timelineWorkItems.length} ]</p>
-				<p className="mn">///////////////////</p>
-			</div>
-		</section>
+			<section className="timeline-work" ref={timelineContainerRef}>
+				<div className="timeline-images"></div>
+				<div className="timeline-titles">
+					{timelineWorkItems.map((item, index) => (
+						<div key={item.id} className="timeline-title-wrapper">
+							{!isMobile && index === 0 ? null : (
+								<div className="timeline-title-img">
+									<img src={item.image} alt={item.alt} />
+								</div>
+							)}
+							<h1 className="timeline-title">{item.title}</h1>
+							<p className="timeline-step-description">{item.description}</p>
+						</div>
+					))}
+				</div>
+				<div className="timeline-work-indicator"></div>
+				<div className="timeline-work-footer">
+					<p className="mn">Articon 2025 [ {timelineWorkItems.length} ]</p>
+					<p className="mn">///////////////////</p>
+				</div>
+			</section>
+		</>
 	);
 }
