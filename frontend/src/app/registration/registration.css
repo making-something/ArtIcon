@@ -189,9 +189,19 @@
 	transition: transform 0.2s ease, background-color 0.2s ease;
 }
 
-.submit-btn:hover {
+.submit-btn:hover:not(:disabled) {
 	background-color: var(--accent-1);
 	transform: scale(1.05);
+}
+
+.submit-btn:disabled {
+	opacity: 0.6;
+	cursor: not-allowed;
+}
+
+.back-btn:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
 }
 
 /* Navigation Hint */
@@ -447,7 +457,7 @@
 	transition: border-color 0.3s ease, width 0.1s ease; /* Animate width smoothly */
 	border-radius: 0;
 
-	/* min-width: 300px; */
+	min-width: 300px;
 	width: auto;
 	box-sizing: content-box;
 }

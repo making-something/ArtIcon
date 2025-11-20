@@ -1,14 +1,18 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import "./registration.css";
-import Menu from "@/components/Menu/Menu";
+import { registerParticipant, loginParticipant } from "@/services/api";
 
 const Register = () => {
+	const router = useRouter();
 	const [phase, setPhase] = useState("register");
 	const [step, setStep] = useState(0);
 	const [isRestoring, setIsRestoring] = useState(false);
+	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [error, setError] = useState("");
 
 	const [formData, setFormData] = useState({
 		fullName: "",
@@ -74,7 +78,7 @@ const Register = () => {
 			field: "organization",
 			type: "text",
 			pre: " I represent ",
-			post: " (organization/college)",
+			post: " ",
 			placeholder: "ORG / COLLEGE NAME",
 		},
 		{
@@ -82,7 +86,7 @@ const Register = () => {
 			field: "specialization",
 			type: "select",
 			options: ["UI/UX Design", "Video Editing", "Graphic Design"],
-			pre: " and specialize in ",
+			pre: " and specialize in and want to participate in ",
 			post: " .",
 			placeholder: "CHOOSE FIELD",
 		},
@@ -114,7 +118,7 @@ const Register = () => {
 			field: "phone",
 			type: "tel",
 			pre: " You may contact me at ",
-			post: " (phone)",
+			post: " ",
 			placeholder: "PHONE NUMBER",
 		},
 		{
@@ -122,7 +126,7 @@ const Register = () => {
 			field: "email",
 			type: "email",
 			pre: " or ",
-			post: " (email) for further communication.",
+			post: " for further communication.",
 			placeholder: "EMAIL ADDRESS",
 		},
 	];
@@ -296,21 +300,60 @@ const Register = () => {
 		});
 	};
 
-	const handleSubmit = (e) => {
+	const handleSubmit = async (e) => {
 		e.preventDefault();
+		setError("");
+
 		if (phase === "register") {
 			handlePhaseTransition("password");
 		} else if (phase === "password") {
 			if (formData.password !== formData.confirmPassword) {
+				setError("Passwords do not match!");
 				alert("Passwords do not match!");
 				return;
 			}
-			const finalRegistrationData = { ...formData };
-			console.log(">>> FINAL REGISTRATION:", finalRegistrationData);
-			alert("Registration Successful!");
-			handlePhaseTransition("login");
+
+			// Submit registration to backend
+			setIsSubmitting(true);
+			try {
+				const response = await registerParticipant(formData);
+
+				if (response.success) {
+					console.log("Registration successful:", response.data);
+					alert("Registration Successful! You can now login.");
+					handlePhaseTransition("login");
+				}
+			} catch (error) {
+				console.error("Registration error:", error);
+				setError(error.message || "Registration failed. Please try again.");
+				alert(error.message || "Registration failed. Please try again.");
+			} finally {
+				setIsSubmitting(false);
+			}
 		} else if (phase === "login") {
-			alert("Logging in...");
+			// Handle login
+			setIsSubmitting(true);
+			try {
+				const response = await loginParticipant(
+					formData.loginEmail,
+					formData.loginPassword
+				);
+
+				if (response.success) {
+					console.log("Login successful:", response.participant);
+					alert("Login Successful! Redirecting to dashboard...");
+					// Redirect to dashboard or home page
+					router.push("/");
+				}
+			} catch (error) {
+				console.error("Login error:", error);
+				setError(
+					error.message || "Login failed. Please check your credentials."
+				);
+				alert(error.message || "Login failed. Please check your credentials.");
+			} finally {
+				setIsSubmitting(false);
+			}
 		}
 	};
 
@@ -430,14 +473,28 @@ const Register = () => {
 								type="button"
 								className="back-btn"
 								onClick={() => handlePhaseTransition("register", true)}
+								disabled={isSubmitting}
 							>
 								← Back
 							</button>
 						)}
-						<button type="submit" className="submit-btn">
-							{phase === "register" && "Set Password →"}
-							{phase === "password" && "Complete Registration"}
-							{phase === "login" && "Enter Visual Vault"}
+						<button
+							type="submit"
+							className="submit-btn"
+							disabled={isSubmitting}
+						>
+							{isSubmitting ? (
+								<>
+									{phase === "password" && "Registering..."}
+									{phase === "login" && "Logging in..."}
+								</>
+							) : (
+								<>
+									{phase === "register" && "Set Password →"}
+									{phase === "password" && "Complete Registration"}
+									{phase === "login" && "Enter Visual Vault"}
+								</>
+							)}
 						</button>
 					</div>
 				</form>

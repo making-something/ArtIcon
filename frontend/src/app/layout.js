@@ -6,9 +6,9 @@ export const metadata = {
 	title: "ArtIcon",
 	description: "",
 	icons: {
-		icon: "/logo.avif",
-		shortcut: "/logo.avif",
-		apple: "/logo.avif",
+		icon: "/facicon.png",
+		shortcut: "/favicon.png",
+		apple: "/favicon.png",
 	},
 };
 

@@ -1,484 +1,526 @@
-import { Request, Response } from 'express';
-import supabaseAdmin from '@/config/supabase';
-import emailService from '@/services/email.service';
-import { ParticipantInsert } from '@/types/database';
+import { Request, Response } from "express";
+import supabaseAdmin from "@/config/supabase";
+import emailService from "@/services/email.service";
+import { ParticipantInsert } from "@/types/database";
 
 export class ParticipantController {
-  /**
-   * Register a new participant
-   */
-  async register(req: Request, res: Response): Promise<void> {
-    try {
-      const {
-        name,
-        email,
-        whatsapp_no,
-        category,
-        city,
-        portfolio_url,
-      } = req.body;
+	/**
+	 * Register a new participant
+	 */
+	async register(req: Request, res: Response): Promise<void> {
+		try {
+			const {
+				fullName,
+				email,
+				phone,
+				city,
+				portfolio,
+				role,
+				experience,
+				organization,
+				specialization,
+				source,
+				password,
+			} = req.body;
 
-      // Validate required fields
-      if (!name || !email || !whatsapp_no || !category || !city || !portfolio_url) {
-        res.status(400).json({
-          success: false,
-          message: 'All fields are required',
-        });
-        return;
-      }
+			// Validate required fields
+			if (!fullName || !email || !phone || !city || !portfolio || !password) {
+				res.status(400).json({
+					success: false,
+					message: "All required fields must be provided",
+				});
+				return;
+			}
 
-      // Validate category
-      const validCategories = ['video', 'ui_ux', 'graphics'];
-      if (!validCategories.includes(category)) {
-        res.status(400).json({
-          success: false,
-          message: 'Invalid category',
-        });
-        return;
-      }
+			// Map specialization to category
+			const specializationToCategoryMap: {
+				[key: string]: "video" | "ui_ux" | "graphics";
+			} = {
+				"Video Editing": "video",
+				"UI/UX Design": "ui_ux",
+				"Graphic Design": "graphics",
+			};
 
-      // Check if email already exists
-      const { data: existingParticipant } = await supabaseAdmin
-        .from('participants')
-        .select('id')
-        .eq('email', email)
-        .single();
+			const category = specialization
+				? specializationToCategoryMap[specialization]
+				: "ui_ux";
 
-      if (existingParticipant) {
-        res.status(409).json({
-          success: false,
-          message: 'Email already registered',
-        });
-        return;
-      }
+			if (!category) {
+				res.status(400).json({
+					success: false,
+					message: "Invalid specialization",
+				});
+				return;
+			}
 
-      // Create participant
-      const participantData: ParticipantInsert = {
-        name,
-        email,
-        whatsapp_no,
-        category,
-        city,
-        portfolio_url,
-        is_present: false,
-      };
+			// Check if email already exists
+			const { data: existingParticipant } = await supabaseAdmin
+				.from("participants")
+				.select("id")
+				.eq("email", email)
+				.single();
 
-      const { data: participant, error } = await supabaseAdmin
-        .from('participants')
-        .insert(participantData)
-        .select()
-        .single();
+			if (existingParticipant) {
+				res.status(409).json({
+					success: false,
+					message: "Email already registered",
+				});
+				return;
+			}
 
-      if (error) {
-        console.error('Error creating participant:', error);
-        res.status(500).json({
-          success: false,
-          message: 'Failed to register participant',
-        });
-        return;
-      }
+			// Hash password
+			const bcrypt = await import("bcryptjs");
+			const password_hash = await bcrypt.hash(password, 10);
 
-      // Send notifications asynchronously
-      Promise.all([
-        emailService.sendRegistrationEmail(participant),
-        // Send WhatsApp registration message
-        (async () => {
-          const whatsappService = await import('@/services/whatsapp.service');
-          await whatsappService.default.sendRegistrationMessage(participant);
-        })(),
-      ]).catch((error) => {
-        console.error('Error sending notifications:', error);
-      });
+			// Create participant
+			const participantData: ParticipantInsert = {
+				name: fullName,
+				email,
+				whatsapp_no: phone,
+				category,
+				city,
+				portfolio_url: portfolio,
+				role: role || null,
+				experience: experience ? parseInt(experience) : 0,
+				organization: organization || null,
+				specialization: specialization || null,
+				source: source || null,
+				password_hash,
+				is_present: false,
+			};
 
-      res.status(201).json({
-        success: true,
-        message: 'Registration successful',
-        data: {
-          id: participant.id,
-          name: participant.name,
-          email: participant.email,
-          category: participant.category,
-        },
-      });
-    } catch (error) {
-      console.error('Error in register:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Internal server error',
-      });
-    }
-  }
+			const { data: participant, error } = await supabaseAdmin
+				.from("participants")
+				.insert(participantData)
+				.select()
+				.single();
 
-  /**
-   * Get participant by ID
-   */
-  async getById(req: Request, res: Response): Promise<void> {
-    try {
-      const { id } = req.params;
+			if (error) {
+				console.error("Error creating participant:", error);
+				res.status(500).json({
+					success: false,
+					message: "Failed to register participant",
+				});
+				return;
+			}
 
-      const { data: participant, error } = await supabaseAdmin
-        .from('participants')
-        .select('*')
-        .eq('id', id)
-        .single();
+			// Send notifications asynchronously
+			Promise.all([
+				emailService.sendRegistrationEmail(participant),
+				// Send WhatsApp registration message
+				(async () => {
+					const whatsappService = await import("@/services/whatsapp.service");
+					await whatsappService.default.sendRegistrationMessage(participant);
+				})(),
+			]).catch((error) => {
+				console.error("Error sending notifications:", error);
+			});
 
-      if (error || !participant) {
-        res.status(404).json({
-          success: false,
-          message: 'Participant not found',
-        });
-        return;
-      }
+			res.status(201).json({
+				success: true,
+				message: "Registration successful",
+				data: {
+					id: participant.id,
+					name: participant.name,
+					email: participant.email,
+					category: participant.category,
+				},
+			});
+		} catch (error) {
+			console.error("Error in register:", error);
+			res.status(500).json({
+				success: false,
+				message: "Internal server error",
+			});
+		}
+	}
 
-      res.status(200).json({
-        success: true,
-        data: participant,
-      });
-    } catch (error) {
-      console.error('Error in getById:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Internal server error',
-      });
-    }
-  }
+	/**
+	 * Get participant by ID
+	 */
+	async getById(req: Request, res: Response): Promise<void> {
+		try {
+			const { id } = req.params;
 
-  /**
-   * Get participant by email
-   */
-  async getByEmail(req: Request, res: Response): Promise<void> {
-    try {
-      const { email } = req.params;
+			const { data: participant, error } = await supabaseAdmin
+				.from("participants")
+				.select("*")
+				.eq("id", id)
+				.single();
 
-      const { data: participant, error } = await supabaseAdmin
-        .from('participants')
-        .select('*')
-        .eq('email', email)
-        .single();
+			if (error || !participant) {
+				res.status(404).json({
+					success: false,
+					message: "Participant not found",
+				});
+				return;
+			}
 
-      if (error || !participant) {
-        res.status(404).json({
-          success: false,
-          message: 'Participant not found',
-        });
-        return;
-      }
+			res.status(200).json({
+				success: true,
+				data: participant,
+			});
+		} catch (error) {
+			console.error("Error in getById:", error);
+			res.status(500).json({
+				success: false,
+				message: "Internal server error",
+			});
+		}
+	}
 
-      res.status(200).json({
-        success: true,
-        data: participant,
-      });
-    } catch (error) {
-      console.error('Error in getByEmail:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Internal server error',
-      });
-    }
-  }
+	/**
+	 * Get participant by email
+	 */
+	async getByEmail(req: Request, res: Response): Promise<void> {
+		try {
+			const { email } = req.params;
 
-  /**
-   * Get all participants
-   */
-  async getAll(req: Request, res: Response): Promise<void> {
-    try {
-      const { category, is_present } = req.query;
+			const { data: participant, error } = await supabaseAdmin
+				.from("participants")
+				.select("*")
+				.eq("email", email)
+				.single();
 
-      let query = supabaseAdmin.from('participants').select('*');
+			if (error || !participant) {
+				res.status(404).json({
+					success: false,
+					message: "Participant not found",
+				});
+				return;
+			}
 
-      if (category) {
-        query = query.eq('category', category);
-      }
+			res.status(200).json({
+				success: true,
+				data: participant,
+			});
+		} catch (error) {
+			console.error("Error in getByEmail:", error);
+			res.status(500).json({
+				success: false,
+				message: "Internal server error",
+			});
+		}
+	}
 
-      if (is_present !== undefined) {
-        query = query.eq('is_present', is_present === 'true');
-      }
+	/**
+	 * Get all participants
+	 */
+	async getAll(req: Request, res: Response): Promise<void> {
+		try {
+			const { category, is_present } = req.query;
 
-      const { data: participants, error } = await query.order('created_at', {
-        ascending: false,
-      });
+			let query = supabaseAdmin.from("participants").select("*");
 
-      if (error) {
-        console.error('Error fetching participants:', error);
-        res.status(500).json({
-          success: false,
-          message: 'Failed to fetch participants',
-        });
-        return;
-      }
+			if (category) {
+				query = query.eq("category", category);
+			}
 
-      res.status(200).json({
-        success: true,
-        data: participants,
-        count: participants.length,
-      });
-    } catch (error) {
-      console.error('Error in getAll:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Internal server error',
-      });
-    }
-  }
+			if (is_present !== undefined) {
+				query = query.eq("is_present", is_present === "true");
+			}
 
-  /**
-   * Send WhatsApp opt-in message to participant
-   */
-  async sendOptInMessage(req: Request, res: Response): Promise<void> {
-    try {
-      const { id } = req.params;
+			const { data: participants, error } = await query.order("created_at", {
+				ascending: false,
+			});
 
-      const { data: participant, error } = await supabaseAdmin
-        .from('participants')
-        .select('*')
-        .eq('id', id)
-        .single();
+			if (error) {
+				console.error("Error fetching participants:", error);
+				res.status(500).json({
+					success: false,
+					message: "Failed to fetch participants",
+				});
+				return;
+			}
 
-      if (error || !participant) {
-        res.status(404).json({
-          success: false,
-          message: 'Participant not found',
-        });
-        return;
-      }
+			res.status(200).json({
+				success: true,
+				data: participants,
+				count: participants.length,
+			});
+		} catch (error) {
+			console.error("Error in getAll:", error);
+			res.status(500).json({
+				success: false,
+				message: "Internal server error",
+			});
+		}
+	}
 
-      const whatsappService = await import('@/services/whatsapp.service');
-      await whatsappService.default.sendRegistrationMessage(participant);
+	/**
+	 * Send WhatsApp opt-in message to participant
+	 */
+	async sendOptInMessage(req: Request, res: Response): Promise<void> {
+		try {
+			const { id } = req.params;
 
-      res.status(200).json({
-        success: true,
-        message: 'WhatsApp opt-in message sent successfully',
-      });
-    } catch (error) {
-      console.error('Error in sendOptInMessage:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Internal server error',
-      });
-    }
-  }
+			const { data: participant, error } = await supabaseAdmin
+				.from("participants")
+				.select("*")
+				.eq("id", id)
+				.single();
 
-  /**
-   * Update participant presence status
-   */
-  async updatePresence(req: Request, res: Response): Promise<void> {
-    try {
-      const { id } = req.params;
-      const { is_present } = req.body;
+			if (error || !participant) {
+				res.status(404).json({
+					success: false,
+					message: "Participant not found",
+				});
+				return;
+			}
 
-      if (typeof is_present !== 'boolean') {
-        res.status(400).json({
-          success: false,
-          message: 'is_present must be a boolean',
-        });
-        return;
-      }
+			const whatsappService = await import("@/services/whatsapp.service");
+			await whatsappService.default.sendRegistrationMessage(participant);
 
-      const { data: participant, error } = await supabaseAdmin
-        .from('participants')
-        .update({ is_present })
-        .eq('id', id)
-        .select()
-        .single();
+			res.status(200).json({
+				success: true,
+				message: "WhatsApp opt-in message sent successfully",
+			});
+		} catch (error) {
+			console.error("Error in sendOptInMessage:", error);
+			res.status(500).json({
+				success: false,
+				message: "Internal server error",
+			});
+		}
+	}
 
-      if (error || !participant) {
-        res.status(404).json({
-          success: false,
-          message: 'Participant not found',
-        });
-        return;
-      }
+	/**
+	 * Update participant presence status
+	 */
+	async updatePresence(req: Request, res: Response): Promise<void> {
+		try {
+			const { id } = req.params;
+			const { is_present } = req.body;
 
-      res.status(200).json({
-        success: true,
-        message: 'Presence updated successfully',
-        data: participant,
-      });
-    } catch (error) {
-      console.error('Error in updatePresence:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Internal server error',
-      });
-    }
-  }
+			if (typeof is_present !== "boolean") {
+				res.status(400).json({
+					success: false,
+					message: "is_present must be a boolean",
+				});
+				return;
+			}
 
-  /**
-   * Get participant tasks based on category
-   */
-  async getTasks(req: Request, res: Response): Promise<void> {
-    try {
-      const { id } = req.params;
+			const { data: participant, error } = await supabaseAdmin
+				.from("participants")
+				.update({ is_present })
+				.eq("id", id)
+				.select()
+				.single();
 
-      // Get participant
-      const { data: participant, error: participantError } = await supabaseAdmin
-        .from('participants')
-        .select('category')
-        .eq('id', id)
-        .single();
+			if (error || !participant) {
+				res.status(404).json({
+					success: false,
+					message: "Participant not found",
+				});
+				return;
+			}
 
-      if (participantError || !participant) {
-        res.status(404).json({
-          success: false,
-          message: 'Participant not found',
-        });
-        return;
-      }
+			res.status(200).json({
+				success: true,
+				message: "Presence updated successfully",
+				data: participant,
+			});
+		} catch (error) {
+			console.error("Error in updatePresence:", error);
+			res.status(500).json({
+				success: false,
+				message: "Internal server error",
+			});
+		}
+	}
 
-      // Get tasks for participant's category
-      const { data: tasks, error: tasksError } = await supabaseAdmin
-        .from('tasks')
-        .select('*')
-        .eq('category', participant.category)
-        .order('created_at', { ascending: true });
+	/**
+	 * Get participant tasks based on category
+	 */
+	async getTasks(req: Request, res: Response): Promise<void> {
+		try {
+			const { id } = req.params;
 
-      if (tasksError) {
-        console.error('Error fetching tasks:', tasksError);
-        res.status(500).json({
-          success: false,
-          message: 'Failed to fetch tasks',
-        });
-        return;
-      }
+			// Get participant
+			const { data: participant, error: participantError } = await supabaseAdmin
+				.from("participants")
+				.select("category")
+				.eq("id", id)
+				.single();
 
-      res.status(200).json({
-        success: true,
-        data: tasks,
-      });
-    } catch (error) {
-      console.error('Error in getTasks:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Internal server error',
-      });
-    }
-  }
+			if (participantError || !participant) {
+				res.status(404).json({
+					success: false,
+					message: "Participant not found",
+				});
+				return;
+			}
 
-  /**
-   * Get participant statistics
-   */
-  async getStatistics(_req: Request, res: Response): Promise<void> {
-    try {
-      const { data: stats, error } = await supabaseAdmin
-        .from('participant_statistics')
-        .select('*');
+			// Get tasks for participant's category
+			const { data: tasks, error: tasksError } = await supabaseAdmin
+				.from("tasks")
+				.select("*")
+				.eq("category", participant.category)
+				.order("created_at", { ascending: true });
 
-      if (error) {
-        console.error('Error fetching statistics:', error);
-        res.status(500).json({
-          success: false,
-          message: 'Failed to fetch statistics',
-        });
-        return;
-      }
+			if (tasksError) {
+				console.error("Error fetching tasks:", tasksError);
+				res.status(500).json({
+					success: false,
+					message: "Failed to fetch tasks",
+				});
+				return;
+			}
 
-      res.status(200).json({
-        success: true,
-        data: stats,
-      });
-    } catch (error) {
-      console.error('Error in getStatistics:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Internal server error',
-      });
-    }
-  }
+			res.status(200).json({
+				success: true,
+				data: tasks,
+			});
+		} catch (error) {
+			console.error("Error in getTasks:", error);
+			res.status(500).json({
+				success: false,
+				message: "Internal server error",
+			});
+		}
+	}
 
-  /**
-   * Login participant (simple verification)
-   */
-  async login(req: Request, res: Response): Promise<void> {
-    try {
-      const { email, whatsapp_no } = req.body;
+	/**
+	 * Get participant statistics
+	 */
+	async getStatistics(_req: Request, res: Response): Promise<void> {
+		try {
+			const { data: stats, error } = await supabaseAdmin
+				.from("participant_statistics")
+				.select("*");
 
-      if (!email || !whatsapp_no) {
-        res.status(400).json({
-          success: false,
-          message: 'Email and WhatsApp number are required',
-        });
-        return;
-      }
+			if (error) {
+				console.error("Error fetching statistics:", error);
+				res.status(500).json({
+					success: false,
+					message: "Failed to fetch statistics",
+				});
+				return;
+			}
 
-      // Find participant by email and WhatsApp number
-      const { data: participant, error } = await supabaseAdmin
-        .from('participants')
-        .select('*')
-        .eq('email', email)
-        .eq('whatsapp_no', whatsapp_no)
-        .single();
+			res.status(200).json({
+				success: true,
+				data: stats,
+			});
+		} catch (error) {
+			console.error("Error in getStatistics:", error);
+			res.status(500).json({
+				success: false,
+				message: "Internal server error",
+			});
+		}
+	}
 
-      if (error || !participant) {
-        res.status(401).json({
-          success: false,
-          message: 'Invalid credentials',
-        });
-        return;
-      }
+	/**
+	 * Login participant with email and password
+	 */
+	async login(req: Request, res: Response): Promise<void> {
+		try {
+			const { email, password } = req.body;
 
-      const { signToken } = await import('@/utils/jwt');
-      const token = signToken({
-        id: participant.id,
-        email: participant.email,
-        role: 'participant',
-      });
+			if (!email || !password) {
+				res.status(400).json({
+					success: false,
+					message: "Email and password are required",
+				});
+				return;
+			}
 
-      res.status(200).json({
-        success: true,
-        message: 'Login successful',
-        token,
-        participant: {
-          id: participant.id,
-          name: participant.name,
-          email: participant.email,
-          category: participant.category,
-          city: participant.city,
-        },
-      });
-    } catch (error) {
-      console.error('Error in participant login:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Internal server error',
-      });
-    }
-  }
+			// Find participant by email
+			const { data: participant, error } = await supabaseAdmin
+				.from("participants")
+				.select("*")
+				.eq("email", email)
+				.single();
 
-  /**
-   * Check if event has started
-   */
-  async checkEventStatus(_req: Request, res: Response): Promise<void> {
-    try {
-      const { data: eventStart } = await supabaseAdmin
-        .from('event_settings')
-        .select('value')
-        .eq('key', 'event_start_date')
-        .single();
+			if (error || !participant) {
+				res.status(401).json({
+					success: false,
+					message: "Invalid credentials",
+				});
+				return;
+			}
 
-      const eventStartDate = eventStart?.value
-        ? new Date(eventStart.value)
-        : new Date(process.env.EVENT_START_DATE || '2025-11-15T09:00:00+05:30');
+			// Verify password
+			const bcrypt = await import("bcryptjs");
+			const isPasswordValid = await bcrypt.compare(
+				password,
+				participant.password_hash || ""
+			);
 
-      const now = new Date();
-      const hasStarted = now >= eventStartDate;
+			if (!isPasswordValid) {
+				res.status(401).json({
+					success: false,
+					message: "Invalid credentials",
+				});
+				return;
+			}
 
-      res.status(200).json({
-        success: true,
-        data: {
-          hasStarted,
-          eventStartDate: eventStartDate.toISOString(),
-          currentTime: now.toISOString(),
-          timeUntilStart: hasStarted ? 0 : eventStartDate.getTime() - now.getTime(),
-        },
-      });
-    } catch (error) {
-      console.error('Error in checkEventStatus:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Internal server error',
-      });
-    }
-  }
+			const { signToken } = await import("@/utils/jwt");
+			const token = signToken({
+				id: participant.id,
+				email: participant.email,
+				role: "participant",
+			});
+
+			res.status(200).json({
+				success: true,
+				message: "Login successful",
+				token,
+				participant: {
+					id: participant.id,
+					name: participant.name,
+					email: participant.email,
+					category: participant.category,
+					city: participant.city,
+				},
+			});
+		} catch (error) {
+			console.error("Error in participant login:", error);
+			res.status(500).json({
+				success: false,
+				message: "Internal server error",
+			});
+		}
+	}
+
+	/**
+	 * Check if event has started
+	 */
+	async checkEventStatus(_req: Request, res: Response): Promise<void> {
+		try {
+			const { data: eventStart } = await supabaseAdmin
+				.from("event_settings")
+				.select("value")
+				.eq("key", "event_start_date")
+				.single();
+
+			const eventStartDate = eventStart?.value
+				? new Date(eventStart.value)
+				: new Date(process.env.EVENT_START_DATE || "2025-11-15T09:00:00+05:30");
+
+			const now = new Date();
+			const hasStarted = now >= eventStartDate;
+
+			res.status(200).json({
+				success: true,
+				data: {
+					hasStarted,
+					eventStartDate: eventStartDate.toISOString(),
+					currentTime: now.toISOString(),
+					timeUntilStart: hasStarted
+						? 0
+						: eventStartDate.getTime() - now.getTime(),
+				},
+			});
+		} catch (error) {
+			console.error("Error in checkEventStatus:", error);
+			res.status(500).json({
+				success: false,
+				message: "Internal server error",
+			});
+		}
+	}
 }
 
 export default new ParticipantController();
