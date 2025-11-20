@@ -448,6 +448,20 @@ const Register = () => {
 					if (inputRefs.current[step]) inputRefs.current[step].focus();
 				}, 100);
 			}
+
+			// Animate the nav-hint to be visible
+			gsap.to(".nav-hint", {
+				opacity: 1,
+				duration: 0.5,
+				delay: 0.3,
+				ease: "power2.out",
+			});
+		} else {
+			// Hide nav-hint when form is complete or restoring
+			gsap.to(".nav-hint", {
+				opacity: 0,
+				duration: 0.3,
+			});
 		}
 	}, [step, phase, isRestoring]);
 
