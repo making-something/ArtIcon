@@ -172,7 +172,7 @@ export default function JuriesCards() {
 					</div>
 					<div className="jury-member-card">
 						<div className="jury-member-img">
-							<img src="/juries/JURY 1-01.avif" alt="Jury Member 1" />
+							<img src="/juries/01.png" alt="Jury Member 1" />
 						</div>
 					</div>
 				</div>
@@ -183,7 +183,7 @@ export default function JuriesCards() {
 					</div>
 					<div className="jury-member-card">
 						<div className="jury-member-img">
-							<img src="/juries/JURY 2-01.avif" alt="Jury Member 2" />
+							<img src="/juries/02.png" alt="Jury Member 2" />
 						</div>
 					</div>
 				</div>
@@ -194,7 +194,7 @@ export default function JuriesCards() {
 					</div>
 					<div className="jury-member-card">
 						<div className="jury-member-img">
-							<img src="/juries/JURY 3-01.avif" alt="Jury Member 3" />
+							<img src="/juries/03.png" alt="Jury Member 3" />
 						</div>
 					</div>
 				</div>
