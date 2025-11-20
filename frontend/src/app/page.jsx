@@ -15,6 +15,7 @@ import Timeline from "@/components/Timeline/Timeline";
 import EventOverview from "@/components/EventOverview/EventOverview";
 import JuriesCards from "@/components/JuriesCards/JuriesCards";
 import Clients from "@/components/Clients/Clients";
+import About from "@/components/About/About";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -79,26 +80,30 @@ const Page = () => {
 				</div>
 
 				<div style={{ ...sectionStyle, zIndex: 4 }}>
-					<ClientReviews />
+					<About />
 				</div>
 
-				<div style={{ ...sectionStyle, zIndex: 5 }}>
+				{/* <div style={{ ...sectionStyle, zIndex: 5 }}>
+					<WorkGallery />
+				</div> */}
+
+				<div style={{ ...sectionStyle, zIndex: 6 }}>
 					<Spotlight />
 				</div>
 
-				<div style={{ ...sectionStyle, zIndex: 6 }}>
+				<div style={{ ...sectionStyle, zIndex: 7 }}>
 					<JuriesCards />
 				</div>
 
-				<div style={{ ...sectionStyle, zIndex: 7 }}>
+				<div style={{ ...sectionStyle, zIndex: 8 }}>
 					<Clients />
 				</div>
 
-				<div style={{ ...sectionStyle, zIndex: 8 }}>
+				<div style={{ ...sectionStyle, zIndex: 9 }}>
 					<CTACard />
 				</div>
 
-				<div style={{ ...sectionStyle, zIndex: 9 }}>
+				<div style={{ ...sectionStyle, zIndex: 10 }}>
 					<Footer />
 				</div>
 			</main>

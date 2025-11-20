@@ -1,0 +1,101 @@
+/* WorkGallery.css - Pixel Perfect Copy from otis-valen work.css */
+
+/* --- WORK ITEMS SECTION - EXACT MATCH --- */
+.work-gallery-section {
+	position: relative;
+	width: 100%; /* Full width */
+	height: 100%; /* Auto height */
+	min-height: 100%; /* EXACT MATCH */
+	padding: 2em; /* EXACT MATCH - em units */
+	overflow-x: hidden; /* EXACT MATCH */
+	background-color: var(--bg); /* Light background */
+	color: var(--fg); /* Dark text */
+	display: flex;
+	flex-direction: column;
+	gap: 4em; /* EXACT MATCH */
+	margin-bottom: 8em; /* EXACT MATCH */
+	z-index: 10;
+}
+
+/* No separate header in otis-valen work items - header is separate section */
+.work-gallery-header {
+	display: none; /* Hide if using otis-valen structure */
+}
+
+/* Grid Layout - EXACT MATCH */
+.work-items-container {
+	display: flex;
+	flex-direction: column;
+	gap: 4em; /* EXACT MATCH */
+	width: 100%;
+}
+
+.work-row {
+	display: flex;
+	gap: 2em; /* EXACT MATCH - 2em not 3rem */
+	width: 100%;
+}
+
+.work-item {
+	position: relative;
+	flex: 1; /* EXACT MATCH */
+	will-change: transform, opacity;
+	opacity: 0; /* Hidden initially for GSAP */
+	scale: 0.75; /* Initial scale for animation */
+}
+
+.work-item-img {
+	width: 100%;
+	aspect-ratio: 5/3; /* EXACT MATCH - 5/3 not 16/10 */
+	border-radius: 1em; /* EXACT MATCH - em units */
+	overflow: hidden;
+	margin-bottom: 1em; /* EXACT MATCH */
+	background-color: transparent;
+}
+
+.work-item-img img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	transition: transform 0.3s ease;
+}
+
+.work-item:hover .work-item-img img {
+	transform: scale(1.05);
+}
+
+.work-item-content {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5em; /* EXACT MATCH */
+}
+
+.work-item-content h3 {
+	font-family: "rader", sans-serif; /* EXACT MATCH */
+	font-size: 2rem; /* EXACT MATCH - h3 size */
+	font-weight: 400; /* EXACT MATCH */
+	font-style: italic; /* EXACT MATCH */
+	text-transform: uppercase;
+	line-height: 0.95; /* EXACT MATCH */
+	margin: 0;
+}
+
+.work-item-content p {
+	font-family: "supply-mono", monospace; /* EXACT MATCH */
+	font-size: 0.875rem; /* EXACT MATCH - p.mn size */
+	font-weight: 500; /* EXACT MATCH */
+	text-transform: uppercase;
+	line-height: 1.125; /* EXACT MATCH */
+	color: var(--fg);
+}
+
+/* Mobile - EXACT MATCH */
+@media (max-width: 1000px) {
+	.work-row {
+		flex-direction: column; /* EXACT MATCH */
+	}
+
+	.work-gallery-section {
+		padding: 2em; /* Maintain padding */
+	}
+}

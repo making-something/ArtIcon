@@ -1,0 +1,465 @@
+/* components/About/About.css - PIXEL PERFECT PORT */
+
+.about-section-wrapper {
+	/* --- REFERENCE PALETTE MAPPING --- */
+	/* Mapping Otis vars to your project context or explicit hex where unique */
+	--text-main: var(--fg); /* #141414 */
+	--bg-main: var(--bg); /* #edf1e8 */
+	--accent-orange: #ed6a5a; /* Match Otis 'accent1' (Orange/Red) */
+	--accent-teal: #9bc1bc; /* Match Otis 'accent3' (Teal) */
+	--accent-yellow: #f4f1bb; /* Match Otis 'accent2' (Yellow) */
+
+	position: relative;
+	width: 100%;
+	background-color: var(--bg-main);
+	color: var(--text-main);
+	overflow: hidden;
+	z-index: 10;
+}
+
+/* --- GLOBAL TYPOGRAPHY FOR THIS SECTION --- */
+/* The reference uses a specific italic serif font ("rader"). 
+   We map this to "Barlow Condensed" with italic style to mimic the feel if rader isn't available,
+   or "Playfair Display" if you have it. Assuming Barlow Condensed for structure. */
+
+.about-section-wrapper h1,
+.about-section-wrapper h2,
+.about-section-wrapper h3 {
+	text-transform: uppercase;
+	font-family: "Barlow Condensed", sans-serif;
+	font-weight: 800; /* Thick */
+	font-style: italic; /* CRITICAL: Matches the 'rader' look */
+	line-height: 0.9;
+	letter-spacing: -0.02em;
+	margin: 0;
+}
+
+.about-section-wrapper p {
+	font-family: "Barlow Condensed", sans-serif;
+	font-size: 1.25rem;
+	font-weight: 600;
+	line-height: 1.125;
+}
+
+.about-section-wrapper p.mn {
+	text-transform: uppercase;
+	font-family: "DM Mono", monospace;
+	font-size: 0.875rem;
+	font-weight: 500;
+	letter-spacing: 0.05em;
+	font-style: normal;
+}
+
+/* --- 1. HERO SECTION --- */
+.about-hero {
+	position: relative;
+	width: 100vw;
+	height: 100svh;
+	padding: 8em 2em 6em 2em; /* Exact Ref Padding */
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: center;
+	background-color: var(--text-main); /* Dark Background */
+	color: var(--bg-main); /* Light Text */
+	overflow: hidden;
+}
+
+.about-hero-header {
+	text-align: center;
+	z-index: 2;
+}
+
+.about-hero-header h1 {
+	font-size: 7.5rem; /* Exact Ref Size */
+}
+
+.about-hero-bio {
+	width: 50%; /* Exact Ref Width */
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+	gap: 2em;
+	z-index: 2;
+}
+
+/* Portrait: Double Border Look */
+.about-hero-portrait {
+	position: absolute;
+	top: 55%;
+	left: 50%;
+	transform: translate(-50%, -50%) rotate(10deg);
+	width: 15%; /* Exact Ref Width */
+	aspect-ratio: 5/7;
+	border-radius: 1em;
+	overflow: hidden;
+	border: 0.25em solid var(--accent-teal);
+	outline: 0.25em solid var(--accent-orange);
+	z-index: 1;
+	opacity: 1; /* Reset transparency */
+	will-change: transform;
+}
+
+.about-hero-portrait img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+/* --- 2. STORY SECTION (The Orange Box) --- */
+.about-copy {
+	position: relative;
+	width: 100vw;
+	height: 100%;
+	padding: 8em 2em 8em 2em; /* Exact Ref Padding */
+	background-color: var(--bg-main);
+}
+
+.about-copy-content {
+	position: relative;
+	text-align: center;
+	width: 50%; /* Exact Ref Width */
+	margin: 0 auto;
+	display: flex;
+	flex-direction: column;
+	background-color: var(--accent-orange); /* Exact Orange Match */
+	border: 0.25em solid var(--text-main); /* Thick Black Border */
+	border-radius: 1em;
+	padding: 3em 2em;
+	gap: 2em;
+	z-index: 2;
+}
+
+.about-copy-content h3 {
+	font-family: "Barlow Condensed", sans-serif;
+	font-size: 2rem; /* Ref Size */
+	font-weight: 500;
+	font-style: italic; /* Key visual trait */
+	line-height: 1.1;
+	text-transform: uppercase;
+	color: var(--text-main);
+}
+
+.about-copy-content h3 span {
+	font-weight: 900; /* Extra Bold for keywords */
+}
+
+/* Floating Tags (Black Pills) */
+.about-tag {
+	position: absolute;
+	background-color: var(--text-main);
+	border-radius: 0.5em;
+	width: max-content;
+	z-index: 1;
+}
+
+.about-tag p {
+	text-transform: uppercase;
+	color: var(--bg-main);
+	font-family: "DM Mono", monospace;
+	font-size: 1rem;
+	padding: 0.75em 0.5em 0.5em 0.5em; /* Asymmetric padding from ref */
+	margin: 0;
+	font-weight: 500;
+	font-style: normal;
+}
+
+/* Exact Positioning from Reference */
+#tag-1 {
+	top: 50%;
+	left: 25%;
+	transform: translate(-50%, -50%) rotate(20deg);
+}
+#tag-2 {
+	top: 65%;
+	left: 10%;
+	transform: translate(-50%, -50%) rotate(-45deg);
+}
+#tag-3 {
+	top: 50%;
+	left: 75%;
+	transform: translate(-50%, -50%) rotate(5deg);
+}
+#tag-4 {
+	top: 75%;
+	left: 50%;
+	transform: translate(-50%, -50%) rotate(45deg);
+}
+#tag-5 {
+	top: 100%;
+	left: 80%;
+	transform: translate(-50%, -50%) rotate(-60deg);
+}
+
+/* --- 3. SKILLS (Typewriter Box) --- */
+.about-skills {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	padding: 4em 2em 4em 2em;
+	display: flex;
+	justify-content: center;
+	background-color: var(--bg-main);
+}
+
+.skills-copy {
+	margin: 0 auto;
+	padding: 2em;
+	width: max-content;
+	text-align: center;
+	border: 0.2em dashed var(--text-main); /* Exact Dashed Border */
+	border-radius: 1em;
+}
+
+.skills-copy p {
+	font-family: "DM Mono", monospace;
+	font-weight: 500;
+	text-transform: uppercase;
+	font-size: 0.875rem;
+	line-height: 1.125;
+	white-space: pre; /* Preserves dots layout */
+	color: var(--text-main);
+	margin: 0.5rem 0;
+}
+
+/* --- 4. STATS (Bento Grid) --- */
+.about-stats {
+	padding: 8em 2em;
+	display: flex;
+	flex-direction: column;
+	gap: 2em;
+	background-color: var(--bg-main);
+}
+
+.stats-row {
+	display: flex;
+	gap: 2em;
+	width: 100%;
+}
+
+/* Flex Ratios from Reference */
+.stats-header {
+	flex: 1;
+}
+.stats-item-1 {
+	flex: 1;
+	background-color: var(--accent-orange);
+}
+.stats-item-2 {
+	flex: 3;
+	background-color: var(--accent-teal);
+}
+.stats-item-3 {
+	flex: 2;
+	background-color: var(--text-main);
+	color: var(--bg-main);
+}
+
+.stats-item-1,
+.stats-item-2,
+.stats-item-3 {
+	aspect-ratio: 16/7;
+	padding: 2em;
+	border-radius: 1em;
+}
+
+/* Text alignment in grid */
+.stats-col {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+/* Numbers */
+.stats-col h1 {
+	font-size: 5rem; /* Ref size */
+	font-weight: 400; /* Ref uses regular weight for Rader */
+	font-style: italic;
+	line-height: 0.95;
+	text-transform: uppercase;
+}
+
+.stats-col p {
+	font-family: "Barlow Condensed", sans-serif;
+	font-size: 1.25rem;
+	font-weight: 600;
+	line-height: 1.125;
+}
+
+/* Header Text Specifics */
+.stats-header h1 {
+	font-size: 5rem; /* Matches stat numbers */
+	color: var(--text-main);
+	font-style: italic;
+	font-weight: 400;
+	margin-bottom: 1rem;
+}
+
+/* --- 5. CONTACT CTA --- */
+.about-contact {
+	position: relative;
+	width: 100%;
+	height: 100svh;
+	padding: 2em;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-color: var(--bg-main);
+}
+
+.contact-pill-btn {
+	position: relative;
+	width: 60%;
+	height: 300px;
+	border: 0.75em solid #000;
+	border-radius: 20em;
+	background: linear-gradient(
+		45deg,
+		var(--accent-orange),
+		var(--accent-yellow),
+		var(--accent-teal),
+		var(--accent-orange)
+	);
+	background-size: 400% 400%;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	gap: 8px;
+	box-shadow: 10px 10px 0px 5px #000000;
+	overflow: hidden;
+	cursor: pointer;
+	animation: gradientMove 10s ease-in-out infinite;
+	transition: transform 0.2s ease;
+}
+
+.contact-pill-btn:active {
+	transform: translate(5px, 5px);
+}
+
+.contact-pill-btn a {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+	z-index: 5;
+}
+
+/* Stripes Overlay */
+.contact-pill-btn::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 200%;
+	height: 100%;
+	background: repeating-linear-gradient(
+		45deg,
+		rgba(0, 0, 0, 0.125) 0px,
+		rgba(0, 0, 0, 0.125) 15px,
+		transparent 15px,
+		transparent 30px
+	);
+	animation: stripeMove 30s linear infinite;
+	z-index: 1;
+}
+
+.contact-text-large h1 {
+	font-size: 7rem;
+	margin: 0;
+	color: var(--text-main);
+	z-index: 2;
+	position: relative;
+}
+.contact-text-small p {
+	font-family: "DM Mono", monospace;
+	color: var(--text-main);
+	z-index: 2;
+	position: relative;
+}
+
+@keyframes gradientMove {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}
+
+@keyframes stripeMove {
+	0% {
+		transform: translateX(-50%);
+	}
+	100% {
+		transform: translateX(0%);
+	}
+}
+
+/* --- MOBILE RESPONSIVENESS --- */
+@media (max-width: 1000px) {
+	.about-hero {
+		padding: 8em 2em 4em 2em;
+	}
+	.about-hero-header h1 {
+		font-size: 4rem;
+	}
+	.about-hero-bio {
+		width: 100%;
+	}
+	.about-hero-portrait {
+		width: 25%;
+		top: 50%;
+		transform: translate(-50%, -50%) rotate(0deg);
+		opacity: 1;
+	}
+	.about-hero-portrait img {
+		position: absolute;
+		height: 110%;
+	}
+
+	.about-copy-content {
+		width: 100%;
+	}
+	.about-copy-content h3 {
+		font-size: 1.5rem;
+	}
+	.about-tag {
+		display: none;
+	}
+
+	.skills-copy {
+		padding: 0;
+		width: 100%;
+		text-align: center;
+		border: none;
+		border-radius: 0;
+	}
+
+	.stats-row {
+		flex-direction: column;
+	}
+	.stats-col {
+		width: 100%;
+		text-align: center;
+		gap: 4em;
+		aspect-ratio: auto;
+	}
+	.stats-header {
+		gap: 2em;
+		margin-bottom: 2em;
+	}
+
+	.contact-pill-btn {
+		width: 95%;
+		height: 250px;
+		border-radius: 2em;
+	}
+	.contact-text-large h1 {
+		font-size: 3rem;
+	}
+}
