@@ -29,15 +29,26 @@ async function apiRequest(endpoint, options = {}) {
 
 	try {
 		const response = await fetch(url, config);
+		
+		// Check if response is JSON
+		const contentType = response.headers.get('content-type');
+		if (!contentType || !contentType.includes('application/json')) {
+			throw new Error('Server returned non-JSON response. Please check if the backend is running.');
+		}
+		
 		const data = await response.json();
 
 		if (!response.ok) {
-			throw new Error(data.message || 'API request failed');
+			throw new Error(data.message || `API request failed with status ${response.status}`);
 		}
 
 		return data;
 	} catch (error) {
 		console.error('API Error:', error);
+		// Provide more helpful error messages
+		if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+			throw new Error('Cannot connect to server. Please ensure the backend is running on http://localhost:8000');
+		}
 		throw error;
 	}
 }
@@ -46,7 +57,7 @@ async function apiRequest(endpoint, options = {}) {
  * Participant Registration
  */
 export async function registerParticipant(formData) {
-	return apiRequest('/api/participants/register', {
+	const response = await apiRequest('/api/participants/register', {
 		method: 'POST',
 		body: JSON.stringify({
 			fullName: formData.fullName,
@@ -62,6 +73,18 @@ export async function registerParticipant(formData) {
 			password: formData.password,
 		}),
 	});
+
+	// Store token in localStorage and Cookie (Auto-login)
+	if (response.success && response.token) {
+		if (typeof window !== 'undefined') {
+			localStorage.setItem('authToken', response.token);
+			localStorage.setItem('participant', JSON.stringify(response.participant));
+			// Set cookie for middleware access (expires in 7 days)
+			document.cookie = `authToken=${response.token}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`;
+		}
+	}
+
+	return response;
 }
 
 /**
@@ -73,11 +96,13 @@ export async function loginParticipant(email, password) {
 		body: JSON.stringify({ email, password }),
 	});
 
-	// Store token in localStorage
+	// Store token in localStorage and Cookie
 	if (response.success && response.token) {
 		if (typeof window !== 'undefined') {
 			localStorage.setItem('authToken', response.token);
 			localStorage.setItem('participant', JSON.stringify(response.participant));
+			// Set cookie for middleware access (expires in 7 days)
+			document.cookie = `authToken=${response.token}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`;
 		}
 	}
 
@@ -91,6 +116,8 @@ export function logout() {
 	if (typeof window !== 'undefined') {
 		localStorage.removeItem('authToken');
 		localStorage.removeItem('participant');
+		// Remove cookie
+		document.cookie = "authToken=; path=/; max-age=0";
 	}
 }
 

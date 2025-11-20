@@ -2,8 +2,6 @@ import { Request, Response } from 'express';
 import supabaseAdmin from '@/config/supabase';
 import bcrypt from 'bcryptjs';
 import { signToken } from '@/utils/jwt';
-import emailService from '@/services/email.service';
-import whatsappService from '@/services/whatsapp.service';
 import { AdminInsert, JudgeInsert, TaskInsert, WinnerInsert } from '@/types/database';
 
 export class AdminController {
@@ -537,13 +535,8 @@ export class AdminController {
         return;
       }
 
-      // Send winner notifications asynchronously
-      Promise.all([
-        emailService.sendWinnerEmail(participant, position, category),
-        whatsappService.sendWinnerMessage(participant, position, category),
-      ]).catch((error) => {
-        console.error('Error sending winner notifications:', error);
-      });
+      // Note: Winner email functionality can be added back if needed
+      // For now, winners will be managed through the admin panel
 
       res.status(201).json({
         success: true,

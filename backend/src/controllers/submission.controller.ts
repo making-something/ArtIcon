@@ -1,7 +1,5 @@
 import { Request, Response } from 'express';
 import supabaseAdmin from '@/config/supabase';
-import emailService from '@/services/email.service';
-import whatsappService from '@/services/whatsapp.service';
 import { SubmissionInsert } from '@/types/database';
 
 export class SubmissionController {
@@ -102,13 +100,8 @@ export class SubmissionController {
       // Auto-assign to judge with least assignments
       await this.autoAssignJudge(submission.id);
 
-      // Send confirmation notifications asynchronously
-      Promise.all([
-        emailService.sendSubmissionConfirmationEmail(participant),
-        whatsappService.sendSubmissionConfirmationMessage(participant),
-      ]).catch((error) => {
-        console.error('Error sending notifications:', error);
-      });
+      // Note: Submission confirmations are handled through the UI
+      // No email notification needed for submissions
 
       res.status(201).json({
         success: true,

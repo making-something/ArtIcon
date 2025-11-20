@@ -6,6 +6,8 @@ import CTACard from "@/components/CTACard/CTACard";
 import Footer from "@/components/Footer/Footer";
 import Preloader from "@/components/Preloader/Preloader";
 import React, { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { isAuthenticated } from "@/services/api";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import JunoLanding from "@/components/JunoLanding/JunoLanding";
@@ -17,7 +19,13 @@ import Clients from "@/components/Clients/Clients";
 gsap.registerPlugin(ScrollTrigger);
 
 const Page = () => {
+	const router = useRouter();
+
 	useEffect(() => {
+		if (isAuthenticated()) {
+			router.push("/dashboard");
+		}
+
 		const onLoad = () => {
 			// Initial refresh to calculate pinned heights correctly
 			setTimeout(() => {

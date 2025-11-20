@@ -68,10 +68,10 @@ router.get('/stats/all', participantController.getStatistics.bind(participantCon
 router.patch('/:id/presence', authenticateAdmin, participantController.updatePresence.bind(participantController));
 
 /**
- * @route   POST /api/participants/:id/send-optin
- * @desc    Send WhatsApp opt-in message to participant
- * @access  Admin
+ * @route   POST /api/participants/:id/scan-qr
+ * @desc    Scan QR code to mark attendance
+ * @access  Public (should be authenticated via QR code in production)
  */
-router.post('/:id/send-optin', authenticateAdmin, participantController.sendOptInMessage.bind(participantController));
+router.post('/:id/scan-qr', participantController.scanQRCode.bind(participantController));
 
 export default router;

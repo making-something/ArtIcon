@@ -5,13 +5,6 @@ import { authenticateAdmin } from '@/middleware/auth.middleware';
 const router: IRouter = Router();
 
 /**
- * @route   POST /api/notifications/schedule
- * @desc    Schedule a notification
- * @access  Admin
- */
-router.post('/schedule', authenticateAdmin, notificationController.scheduleNotification.bind(notificationController));
-
-/**
  * @route   POST /api/notifications/send
  * @desc    Send immediate notification
  * @access  Admin
@@ -45,12 +38,5 @@ router.put('/:id', authenticateAdmin, notificationController.updateNotification.
  * @access  Admin
  */
 router.delete('/:id', authenticateAdmin, notificationController.deleteNotification.bind(notificationController));
-
-/**
- * @route   POST /api/notifications/process-pending
- * @desc    Process pending notifications (for cron job)
- * @access  Internal/Cron
- */
-router.post('/process-pending', notificationController.processPendingNotifications.bind(notificationController));
 
 export default router;

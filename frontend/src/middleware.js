@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-const allowedExactPaths = new Set(["/", "/registration"]);
+const allowedExactPaths = new Set(["/", "/registration", "/dashboard"]);
 
 const isInternalPath = (pathname) =>
 	pathname.startsWith("/_next") ||
@@ -20,6 +20,21 @@ const isAssetRequest = (pathname) => /\.[^/]+$/.test(pathname);
 export function middleware(request) {
 	const { pathname } = request.nextUrl;
 	const normalizedPath = pathname.replace(/\/+$/, "") || "/";
+
+	const authToken = request.cookies.get("authToken")?.value;
+
+	// Auth Logic
+	if (authToken) {
+		// If logged in, redirect public pages to dashboard
+		if (normalizedPath === "/" || normalizedPath === "/registration") {
+			return NextResponse.redirect(new URL("/dashboard", request.url));
+		}
+	} else {
+		// If not logged in, redirect protected pages to registration
+		if (normalizedPath === "/dashboard") {
+			return NextResponse.redirect(new URL("/registration", request.url));
+		}
+	}
 
 	if (
 		allowedExactPaths.has(normalizedPath) ||

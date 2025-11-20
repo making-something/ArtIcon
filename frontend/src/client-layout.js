@@ -11,7 +11,7 @@ export default function ClientLayout({ children }) {
 	const [isMobile, setIsMobile] = useState(false);
 
 	// Routes where Menu should be hidden
-	const hideMenuRoutes = ["/registration"];
+	const hideMenuRoutes = ["/registration", "/dashboard"];
 
 	useEffect(() => {
 		const checkMobile = () => {

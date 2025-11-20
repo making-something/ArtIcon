@@ -1,6 +1,6 @@
--- Articon2 Backend - Supabase Schema Migration
--- Aligns database schema with current code expectations
--- Review before running on production.
+-- Articon2 Backend - Complete Supabase Schema Migration
+-- This migration creates all necessary tables and structures
+-- Run this ONCE on a fresh database or use it as reference
 
 create extension if not exists "uuid-ossp";
 
@@ -21,6 +21,8 @@ begin
 end$$;
 
 -- TABLES
+
+-- Participants table with all required fields
 create table if not exists public.participants (
   id uuid primary key default uuid_generate_v4(),
   name text not null,
@@ -34,10 +36,24 @@ create table if not exists public.participants (
   whatsapp_opt_in_at timestamptz,
   whatsapp_opt_in_source text,
   whatsapp_opt_out_at timestamptz,
+  role text,
+  experience integer default 0,
+  organization text,
+  specialization text,
+  source text,
+  password_hash text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
 
+comment on column public.participants.role is 'Participant role: Student, Professional, or Freelancer';
+comment on column public.participants.experience is 'Years of experience';
+comment on column public.participants.organization is 'Organization or college name';
+comment on column public.participants.specialization is 'Field of specialization: UI/UX Design, Video Editing, or Graphic Design';
+comment on column public.participants.source is 'How they heard about the competition';
+comment on column public.participants.password_hash is 'Hashed password for authentication';
+
+-- Tasks table
 create table if not exists public.tasks (
   id uuid primary key default uuid_generate_v4(),
   category category_enum not null,
@@ -47,6 +63,7 @@ create table if not exists public.tasks (
   updated_at timestamptz not null default now()
 );
 
+-- Judges table
 create table if not exists public.judges (
   id uuid primary key default uuid_generate_v4(),
   name text not null,
@@ -57,6 +74,7 @@ create table if not exists public.judges (
   updated_at timestamptz not null default now()
 );
 
+-- Admins table
 create table if not exists public.admins (
   id uuid primary key default uuid_generate_v4(),
   email text not null unique,
@@ -65,6 +83,7 @@ create table if not exists public.admins (
   updated_at timestamptz not null default now()
 );
 
+-- Winners table
 create table if not exists public.winners (
   id uuid primary key default uuid_generate_v4(),
   participant_id uuid not null references public.participants(id) on delete cascade,
@@ -75,6 +94,7 @@ create table if not exists public.winners (
   updated_at timestamptz not null default now()
 );
 
+-- Notifications table
 create table if not exists public.notifications (
   id uuid primary key default uuid_generate_v4(),
   message text not null,
@@ -87,6 +107,7 @@ create table if not exists public.notifications (
   updated_at timestamptz not null default now()
 );
 
+-- Event settings table
 create table if not exists public.event_settings (
   id uuid primary key default uuid_generate_v4(),
   key text not null unique,
@@ -95,6 +116,7 @@ create table if not exists public.event_settings (
   updated_at timestamptz not null default now()
 );
 
+-- Submissions table with score column
 create table if not exists public.submissions (
   id uuid primary key default uuid_generate_v4(),
   participant_id uuid not null references public.participants(id) on delete cascade,
@@ -103,35 +125,37 @@ create table if not exists public.submissions (
   submitted_at timestamptz not null default now(),
   judge_id uuid references public.judges(id),
   preview_url text,
+  score integer,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   unique (participant_id, task_id)
 );
 
--- VIEWS (recreated to match backend expectations)
+comment on column public.submissions.score is 'Score assigned by judge (0-100)';
+
+-- VIEWS
 
 -- Drop and recreate participant_statistics
-DROP VIEW IF EXISTS public.participant_statistics CASCADE;
+drop view if exists public.participant_statistics cascade;
 
-CREATE VIEW public.participant_statistics AS
-SELECT
-  p.category::text AS category,
-  COUNT(*)::int AS total_participants,
-  COUNT(*) FILTER (WHERE p.is_present)::int AS present_participants
-FROM public.participants p
-GROUP BY p.category;
+create view public.participant_statistics as
+select
+  p.category::text as category,
+  count(*)::int as total_participants,
+  count(*) filter (where p.is_present)::int as present_participants
+from public.participants p
+group by p.category;
 
 -- Drop and recreate submission_statistics
-DROP VIEW IF EXISTS public.submission_statistics CASCADE;
+drop view if exists public.submission_statistics cascade;
 
-CREATE VIEW public.submission_statistics AS
-SELECT
-  t.category::text AS category,
-  COUNT(s.id)::int AS total_submissions
-FROM public.tasks t
-LEFT JOIN public.submissions s
-  ON s.task_id = t.id
-GROUP BY t.category;
+create view public.submission_statistics as
+select
+  t.category::text as category,
+  count(s.id)::int as total_submissions
+from public.tasks t
+left join public.submissions s on s.task_id = t.id
+group by t.category;
 
 -- RPC FUNCTIONS
 create or replace function public.increment_judge_count(judge_id uuid)
@@ -161,5 +185,41 @@ create index if not exists idx_participants_email on public.participants(email);
 create index if not exists idx_participants_category on public.participants(category);
 create index if not exists idx_submissions_participant on public.submissions(participant_id);
 create index if not exists idx_submissions_task on public.submissions(task_id);
+create index if not exists idx_submissions_judge on public.submissions(judge_id);
 create index if not exists idx_judges_email on public.judges(email);
 create index if not exists idx_winners_participant on public.winners(participant_id);
+
+-- TRIGGERS for updated_at columns
+create or replace function public.update_updated_at_column()
+returns trigger
+language plpgsql
+as $$
+begin
+  new.updated_at = now();
+  return new;
+end;
+$$;
+
+-- Apply triggers to all tables
+do $$
+declare
+  t text;
+begin
+  foreach t in array array['participants', 'tasks', 'judges', 'admins', 'winners', 'notifications', 'event_settings', 'submissions']
+  loop
+    execute format('
+      drop trigger if exists update_%s_updated_at on public.%s;
+      create trigger update_%s_updated_at
+        before update on public.%s
+        for each row
+        execute function public.update_updated_at_column();
+    ', t, t, t, t);
+  end loop;
+end$$;
+
+-- SUCCESS MESSAGE
+do $$
+begin
+  raise notice '✅ Migration completed successfully!';
+  raise notice 'All tables, views, functions, indexes, and triggers have been created.';
+end$$;
