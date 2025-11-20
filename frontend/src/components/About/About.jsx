@@ -192,7 +192,7 @@ const About = () => {
 			</div>
 
 			{/* SKILLS */}
-			<div className="about-skills">
+			{/* <div className="about-skills">
 				<div className="skills-copy">
 					<p>01........................UI/UX Design</p>
 					<p>02......................Video Editing</p>
@@ -200,7 +200,7 @@ const About = () => {
 					<p>04......................Creative Coding</p>
 					<p>05............................Branding</p>
 				</div>
-			</div>
+			</div> */}
 
 			{/* STATS */}
 			<div className="about-stats">
@@ -239,7 +239,7 @@ const About = () => {
 			</div>
 
 			{/* CTA */}
-			<div className="about-contact">
+			{/* <div className="about-contact">
 				<div className="contact-pill-btn">
 					<a href="/register"></a>
 					<div className="contact-text-small">
@@ -249,7 +249,7 @@ const About = () => {
 						<h1>Hit Me Up</h1>
 					</div>
 				</div>
-			</div>
+			</div> */}
 		</section>
 	);
 };

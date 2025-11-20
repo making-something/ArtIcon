@@ -13,37 +13,37 @@ const workItems = [
 		id: 1,
 		title: "Cosmic Deli",
 		category: "Character Design",
-		img: "/images/work-items/work-item-1.avif",
+		img: "/past_events/23TEWFSD.avif",
 	},
 	{
 		id: 2,
 		title: "Skull Pop 7",
 		category: "Color Exploration",
-		img: "/images/work-items/work-item-2.avif",
+		img: "/past_events/32RQEFASD.avif",
 	},
 	{
 		id: 3,
 		title: "Room 404",
 		category: "3D Composition",
-		img: "/images/work-items/work-item-3.avif",
+		img: "/past_events/43RGFXB.avif",
 	},
 	{
 		id: 4,
 		title: "Red Dot Mission",
 		category: "Narrative Design",
-		img: "/images/work-items/work-item-4.avif",
+		img: "/past_events/53rqefda.avif",
 	},
 	{
 		id: 5,
 		title: "Sweetbones",
 		category: "Editorial Illustration",
-		img: "/images/work-items/work-item-5.avif",
+		img: "/past_events/TQEGADVVDZ.avif",
 	},
 	{
 		id: 6,
 		title: "Carnival Bloom 31",
 		category: "Pattern Design",
-		img: "/images/work-items/work-item-6.avif",
+		img: "/past_events/ytjhnb.avif",
 	},
 ];
 
@@ -125,4 +125,3 @@ const WorkGallery = () => {
 };
 
 export default WorkGallery;
-
