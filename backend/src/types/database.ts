@@ -18,7 +18,8 @@ export interface Database {
 					whatsapp_no: string;
 					category: "video" | "ui_ux" | "graphics";
 					city: string;
-					portfolio_url: string;
+					portfolio_url: string | null;
+					portfolio_file_path: string | null;
 					is_present: boolean;
 					whatsapp_opt_in: boolean | null;
 					whatsapp_opt_in_at: string | null;
@@ -40,7 +41,8 @@ export interface Database {
 					whatsapp_no: string;
 					category: "video" | "ui_ux" | "graphics";
 					city: string;
-					portfolio_url: string;
+					portfolio_url?: string | null;
+					portfolio_file_path?: string | null;
 					is_present?: boolean;
 					whatsapp_opt_in?: boolean | null;
 					whatsapp_opt_in_at?: string | null;
@@ -62,7 +64,8 @@ export interface Database {
 				whatsapp_no?: string;
 				category?: "video" | "ui_ux" | "graphics";
 				city?: string;
-				portfolio_url?: string;
+				portfolio_url?: string | null;
+				portfolio_file_path?: string | null;
 				is_present?: boolean;
 				whatsapp_opt_in?: boolean | null;
 				whatsapp_opt_in_at?: string | null;

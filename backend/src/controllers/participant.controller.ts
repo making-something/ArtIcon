@@ -15,6 +15,7 @@ export class ParticipantController {
 				phone,
 				city,
 				portfolio,
+				portfolioFile,
 				role,
 				experience,
 				organization,
@@ -23,11 +24,20 @@ export class ParticipantController {
 				password,
 			} = req.body;
 
-			// Validate required fields
-			if (!fullName || !email || !phone || !city || !portfolio || !password) {
+			// Validate required fields - either portfolio URL or file must be provided
+			if (!fullName || !email || !phone || !city || !password) {
 				res.status(400).json({
 					success: false,
 					message: "All required fields must be provided",
+				});
+				return;
+			}
+
+			// Check that at least one portfolio method is provided
+			if (!portfolio && !portfolioFile) {
+				res.status(400).json({
+					success: false,
+					message: "Either portfolio URL or portfolio file must be provided",
 				});
 				return;
 			}
@@ -72,14 +82,15 @@ export class ParticipantController {
 			const bcrypt = await import("bcryptjs");
 			const password_hash = await bcrypt.hash(password, 10);
 
-			// Create participant
+			// Create participant - support both URL and file path
 			const participantData: ParticipantInsert = {
 				name: fullName,
 				email,
 				whatsapp_no: phone,
 				category,
 				city,
-				portfolio_url: portfolio,
+				portfolio_url: portfolio || null,
+				portfolio_file_path: portfolioFile || null,
 				role: role || null,
 				experience: experience ? parseInt(experience) : 0,
 				organization: organization || null,
@@ -104,12 +115,21 @@ export class ParticipantController {
 				return;
 			}
 
-			// Send registration email asynchronously
-			emailService.sendRegistrationEmail(participant).catch((error) => {
-				console.error("Error sending registration email:", error);
-			});
-
-			// Generate token for auto-login
+		// Send registration email asynchronously
+		console.log(`📧 Attempting to send registration email to: ${participant.email}`);
+		emailService.sendRegistrationEmail(participant)
+			.then((result) => {
+				if (result.success) {
+					console.log(`✅ Registration email sent successfully to ${participant.email}`);
+					console.log(`   Message ID: ${result.messageId}`);
+				} else {
+					console.error(`❌ Failed to send registration email to ${participant.email}`);
+					console.error(`   Error: ${result.error}`);
+				}
+			})
+			.catch((error) => {
+				console.error("❌ Error sending registration email:", error);
+			});			// Generate token for auto-login
 			const { signToken } = await import("@/utils/jwt");
 			const token = signToken({
 				id: participant.id,

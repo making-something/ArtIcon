@@ -3,7 +3,7 @@ nav {
 	top: 0;
 	left: 0;
 	width: 100vw;
-	padding: 0.5rem 2rem 1.25rem;
+	padding: 1rem 2rem;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
@@ -17,6 +17,7 @@ nav .nav-logo {
 	transition: opacity 0.35s ease, transform 0.35s ease;
 	display: flex;
 	align-items: center;
+	height: 3rem;
 }
 
 nav .nav-logo a {
@@ -76,6 +77,10 @@ nav .cta-label {
 		padding: 1rem 1.25rem;
 	}
 
+	nav .nav-logo {
+		height: 2.5rem;
+	}
+
 	nav .nav-logo a {
 		width: 7rem;
 	}
@@ -91,6 +96,10 @@ nav .cta-label {
 }
 
 @media (max-width: 480px) {
+	nav .nav-logo {
+		height: 2rem;
+	}
+
 	nav .nav-logo a {
 		width: 5rem;
 	}
@@ -98,7 +107,6 @@ nav .cta-label {
 	nav .nav-cta-wrapper {
 		height: 2rem;
 		padding: 0 0.75rem;
-		margin-top: -0.5rem;
 	}
 
 	nav .cta-label {

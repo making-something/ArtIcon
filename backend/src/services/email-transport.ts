@@ -1,53 +1,45 @@
 import nodemailer from 'nodemailer';
-import { SESv2Client } from '@aws-sdk/client-sesv2';
 
-// Check if AWS credentials are configured
+// Check if AWS SES SMTP credentials are configured
 const isAwsConfigured = !!(
-  process.env.AWS_REGION &&
-  process.env.AWS_ACCESS_KEY_ID &&
-  process.env.AWS_SECRET_ACCESS_KEY &&
+  process.env.AWS_SES_SMTP_HOST &&
+  process.env.AWS_SES_SMTP_USERNAME &&
+  process.env.AWS_SES_SMTP_PASSWORD &&
   process.env.AWS_SES_FROM_EMAIL
 );
 
 let transporter: nodemailer.Transporter;
 let fromEmail: string;
-let sesClient: SESv2Client | null = null;
 
 if (isAwsConfigured) {
-  console.log('✅ AWS SES configured - initializing email service');
+  console.log('✅ AWS SES SMTP configured - initializing email service');
 
-  // Create SES client
-  sesClient = new SESv2Client({
-    region: process.env.AWS_REGION,
-    credentials: {
-      accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
-      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
-    },
-  });
-
-  // Configure nodemailer to use AWS SES
+  // Configure nodemailer to use AWS SES SMTP
   transporter = nodemailer.createTransport({
-    host: `email.${process.env.AWS_REGION}.amazonaws.com`,
-    port: 465,
-    secure: true,
+    host: process.env.AWS_SES_SMTP_HOST!,
+    port: parseInt(process.env.AWS_SES_SMTP_PORT || '587'),
+    secure: false, // true for 465, false for other ports
     auth: {
-      user: process.env.AWS_ACCESS_KEY_ID!,
-      pass: process.env.AWS_SECRET_ACCESS_KEY!,
+      user: process.env.AWS_SES_SMTP_USERNAME!,
+      pass: process.env.AWS_SES_SMTP_PASSWORD!,
     },
   });
 
   fromEmail = process.env.AWS_SES_FROM_EMAIL!;
 
-  console.log(`✅ SES client initialized in region: ${process.env.AWS_REGION}`);
+  console.log(`✅ SES SMTP client initialized`);
+  console.log(`📧 SMTP Host: ${process.env.AWS_SES_SMTP_HOST}`);
   console.log(`📧 From email: ${fromEmail}`);
+  console.log(`📮 Email service ready to send via AWS SES SMTP`);
 } else {
   // Create a mock transporter that logs emails instead of sending them
-  console.warn('⚠️  AWS SES credentials not configured. Email notifications will be logged only.');
+  console.warn('⚠️  AWS SES SMTP credentials not configured. Email notifications will be logged only.');
   console.warn('   Required environment variables:');
-  console.warn('   - AWS_REGION');
-  console.warn('   - AWS_ACCESS_KEY_ID');
-  console.warn('   - AWS_SECRET_ACCESS_KEY');
+  console.warn('   - AWS_SES_SMTP_HOST');
+  console.warn('   - AWS_SES_SMTP_USERNAME');
+  console.warn('   - AWS_SES_SMTP_PASSWORD');
   console.warn('   - AWS_SES_FROM_EMAIL');
+  console.warn('   Optional: AWS_SES_SMTP_PORT (default: 587)');
 
   transporter = nodemailer.createTransport({
     streamTransport: true,
@@ -58,4 +50,4 @@ if (isAwsConfigured) {
   fromEmail = 'noreply@articon.local';
 }
 
-export { transporter, fromEmail, isAwsConfigured, sesClient };
+export { transporter, fromEmail, isAwsConfigured };

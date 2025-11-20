@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-const allowedExactPaths = new Set(["/", "/registration", "/dashboard"]);
+const allowedExactPaths = new Set(["/", "/registration", "/dashboard", "/admin", "/admin/portfolios"]);
 
 const isInternalPath = (pathname) =>
 	pathname.startsWith("/_next") ||
@@ -22,6 +22,10 @@ export function middleware(request) {
 	const normalizedPath = pathname.replace(/\/+$/, "") || "/";
 
 	const authToken = request.cookies.get("authToken")?.value;
+	
+	// Check for admin token in localStorage (handled client-side)
+	// For server-side, we'll allow admin routes and let client handle auth
+	const isAdminRoute = pathname.startsWith("/admin");
 
 	// Auth Logic
 	if (authToken) {
@@ -31,7 +35,8 @@ export function middleware(request) {
 		}
 	} else {
 		// If not logged in, redirect protected pages to registration
-		if (normalizedPath === "/dashboard") {
+		// Exception: admin routes are allowed (client-side handles auth)
+		if (normalizedPath === "/dashboard" && !isAdminRoute) {
 			return NextResponse.redirect(new URL("/registration", request.url));
 		}
 	}
@@ -39,7 +44,8 @@ export function middleware(request) {
 	if (
 		allowedExactPaths.has(normalizedPath) ||
 		isInternalPath(pathname) ||
-		isAssetRequest(pathname)
+		isAssetRequest(pathname) ||
+		isAdminRoute
 	) {
 		return NextResponse.next();
 	}

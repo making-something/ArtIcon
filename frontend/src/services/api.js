@@ -54,9 +54,52 @@ async function apiRequest(endpoint, options = {}) {
 }
 
 /**
+ * Upload Portfolio File
+ */
+export async function uploadPortfolioFile(file) {
+	const formData = new FormData();
+	formData.append('portfolio', file);
+
+	const url = `${API_BASE_URL}/api/portfolio/upload`;
+	
+	try {
+		const response = await fetch(url, {
+			method: 'POST',
+			body: formData,
+			// Don't set Content-Type header - browser will set it with boundary for multipart
+		});
+
+		const data = await response.json();
+
+		if (!response.ok) {
+			throw new Error(data.message || 'File upload failed');
+		}
+
+		return data;
+	} catch (error) {
+		console.error('File upload error:', error);
+		throw error;
+	}
+}
+
+/**
  * Participant Registration
  */
 export async function registerParticipant(formData) {
+	let portfolioFilePath = null;
+
+	// If there's a file, upload it first
+	if (formData.portfolioFile) {
+		try {
+			const uploadResponse = await uploadPortfolioFile(formData.portfolioFile);
+			if (uploadResponse.success && uploadResponse.data.filePath) {
+				portfolioFilePath = uploadResponse.data.filePath;
+			}
+		} catch (error) {
+			throw new Error('Failed to upload portfolio file: ' + error.message);
+		}
+	}
+
 	const response = await apiRequest('/api/participants/register', {
 		method: 'POST',
 		body: JSON.stringify({
@@ -64,7 +107,8 @@ export async function registerParticipant(formData) {
 			email: formData.email,
 			phone: formData.phone,
 			city: formData.city,
-			portfolio: formData.portfolio,
+			portfolio: formData.portfolio || null,
+			portfolioFile: portfolioFilePath,
 			role: formData.role,
 			experience: formData.experience,
 			organization: formData.organization,
@@ -81,6 +125,26 @@ export async function registerParticipant(formData) {
 			localStorage.setItem('participant', JSON.stringify(response.participant));
 			// Set cookie for middleware access (expires in 7 days)
 			document.cookie = `authToken=${response.token}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`;
+		}
+	}
+
+	return response;
+}
+
+/**
+ * Admin Login
+ */
+export async function loginAdmin(email, password) {
+	const response = await apiRequest('/api/admin/login', {
+		method: 'POST',
+		body: JSON.stringify({ email, password }),
+	});
+
+	// Store admin token
+	if (response.success && response.data.token) {
+		if (typeof window !== 'undefined') {
+			localStorage.setItem('adminToken', response.data.token);
+			localStorage.setItem('admin', JSON.stringify(response.data.admin));
 		}
 	}
 
@@ -110,12 +174,40 @@ export async function loginParticipant(email, password) {
 }
 
 /**
+ * Universal Login - tries admin first, then participant
+ */
+export async function login(email, password) {
+	// Try admin login first
+	try {
+		const adminResponse = await loginAdmin(email, password);
+		if (adminResponse.success) {
+			return { success: true, role: 'admin', data: adminResponse.data };
+		}
+	} catch (adminError) {
+		// If admin login fails, try participant login
+		try {
+			const participantResponse = await loginParticipant(email, password);
+			if (participantResponse.success) {
+				return { success: true, role: 'participant', data: participantResponse };
+			}
+		} catch (participantError) {
+			// Both failed, throw the participant error (more common)
+			throw participantError;
+		}
+	}
+	
+	throw new Error('Login failed. Please check your credentials.');
+}
+
+/**
  * Logout
  */
 export function logout() {
 	if (typeof window !== 'undefined') {
 		localStorage.removeItem('authToken');
 		localStorage.removeItem('participant');
+		localStorage.removeItem('adminToken');
+		localStorage.removeItem('admin');
 		// Remove cookie
 		document.cookie = "authToken=; path=/; max-age=0";
 	}
@@ -158,7 +250,10 @@ export async function checkEventStatus() {
 
 export default {
 	registerParticipant,
+	uploadPortfolioFile,
 	loginParticipant,
+	loginAdmin,
+	login,
 	logout,
 	getCurrentParticipant,
 	isAuthenticated,

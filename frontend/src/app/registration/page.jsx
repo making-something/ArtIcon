@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import "./registration.css";
-import { registerParticipant, loginParticipant } from "@/services/api";
+import { registerParticipant, login } from "@/services/api";
 
 const Register = () => {
 	const router = useRouter();
@@ -390,12 +390,16 @@ const Register = () => {
 			// Submit registration to backend
 			setIsSubmitting(true);
 			try {
+				// Show different message if uploading file
+				if (formData.portfolioFile) {
+					console.log("Uploading portfolio file...");
+				}
+				
 				const response = await registerParticipant(formData);
 
-				if (response.success) {
-					console.log("Registration successful:", response.data);
-					alert("Registration Successful! You can now login.");
-					handlePhaseTransition("login");
+			if (response.success) {
+				console.log("Registration successful:", response.data);
+				handlePhaseTransition("login");
 				}
 			} catch (error) {
 				console.error("Registration error:", error);
@@ -405,19 +409,22 @@ const Register = () => {
 				setIsSubmitting(false);
 			}
 		} else if (phase === "login") {
-			// Handle login
+			// Handle universal login (admin or participant)
 			setIsSubmitting(true);
 			try {
-				const response = await loginParticipant(
+				const response = await login(
 					formData.loginEmail,
 					formData.loginPassword
 				);
 
 				if (response.success) {
-					console.log("Login successful:", response.participant);
-					alert("Login Successful! Redirecting to dashboard...");
-					// Redirect to dashboard or home page
-					router.push("/");
+				if (response.role === 'admin') {
+					console.log("Admin login successful");
+					router.push("/admin/portfolios");
+				} else {
+					console.log("Participant login successful:", response.data.participant);
+					router.push("/dashboard");
+					}
 				}
 			} catch (error) {
 				console.error("Login error:", error);
@@ -559,7 +566,10 @@ const Register = () => {
 					<div className="page-title">
 						Register <span className="cursive-accent">Yourself</span>
 					</div>
-					<div>
+					<div className="top-nav-buttons">
+						<button className="back-nav-btn" onClick={()=>router.push("/")}>
+							← Back
+						</button>
 						{phase !== "login" && (
 							<button
 								className="login-nav-btn"

@@ -161,4 +161,15 @@ router.get(
   adminController.getDashboardStats.bind(adminController),
 );
 
+/**
+ * @route   GET /api/admin/participants/portfolios
+ * @desc    Get all participants with their portfolio information
+ * @access  Admin
+ */
+router.get(
+  "/participants/portfolios",
+  authenticateAdmin,
+  adminController.getAllParticipantsWithPortfolios.bind(adminController),
+);
+
 export default router;

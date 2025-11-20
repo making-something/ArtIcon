@@ -785,6 +785,65 @@ export class AdminController {
       });
     }
   }
+
+  /**
+   * Get all participants with their portfolio information
+   */
+  async getAllParticipantsWithPortfolios(req: Request, res: Response): Promise<void> {
+    try {
+      const { category, page = 1, limit = 50, search } = req.query;
+
+      let query = supabaseAdmin
+        .from('participants')
+        .select('id, name, email, whatsapp_no, category, city, portfolio_url, portfolio_file_path, role, experience, organization, specialization, source, is_present, created_at', { count: 'exact' });
+
+      // Filter by category if provided
+      if (category && category !== 'all') {
+        query = query.eq('category', category);
+      }
+
+      // Search filter
+      if (search && typeof search === 'string') {
+        query = query.or(`name.ilike.%${search}%,email.ilike.%${search}%,city.ilike.%${search}%`);
+      }
+
+      // Pagination
+      const pageNum = parseInt(page as string);
+      const limitNum = parseInt(limit as string);
+      const from = (pageNum - 1) * limitNum;
+      const to = from + limitNum - 1;
+
+      query = query.range(from, to).order('created_at', { ascending: false });
+
+      const { data: participants, error, count } = await query;
+
+      if (error) {
+        console.error('Error fetching participants:', error);
+        res.status(500).json({
+          success: false,
+          message: 'Failed to fetch participants',
+        });
+        return;
+      }
+
+      res.status(200).json({
+        success: true,
+        data: participants,
+        pagination: {
+          total: count || 0,
+          page: pageNum,
+          limit: limitNum,
+          totalPages: Math.ceil((count || 0) / limitNum),
+        },
+      });
+    } catch (error) {
+      console.error('Error in getAllParticipantsWithPortfolios:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Internal server error',
+      });
+    }
+  }
 }
 
 export default new AdminController();

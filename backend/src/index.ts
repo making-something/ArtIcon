@@ -11,6 +11,7 @@ import adminRoutes from "@/routes/admin.routes";
 import judgeRoutes from "@/routes/judge.routes";
 import notificationRoutes from "@/routes/notification.routes";
 import uploadRoutes from "@/routes/upload";
+import portfolioRoutes from "@/routes/portfolio.routes";
 
 import { validateEnv } from "@/config/validateEnv";
 
@@ -54,6 +55,9 @@ app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 // Serve static files from public directory
 app.use(express.static(path.join(__dirname, "../public")));
 
+// Serve uploaded files
+app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
+
 // Request logging middleware
 app.use((req: Request, _res: Response, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
@@ -85,6 +89,7 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/judge", judgeRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/upload", uploadRoutes);
+app.use("/api/portfolio", portfolioRoutes);
 
 // 404 handler
 app.use((req: Request, res: Response) => {
@@ -141,6 +146,17 @@ httpServer.listen(PORT, () => {
   console.log(`API URL: http://localhost:${PORT}`);
   console.log(`Health check: http://localhost:${PORT}/health`);
   console.log("=".repeat(50));
+}).on('error', (err: NodeJS.ErrnoException) => {
+  if (err.code === 'EADDRINUSE') {
+    console.error(`\n❌ Error: Port ${PORT} is already in use.`);
+    console.error(`\nTo fix this, run one of the following commands:`);
+    console.error(`  1. Kill the process: lsof -ti:${PORT} | xargs kill -9`);
+    console.error(`  2. Or use a different port by setting PORT environment variable\n`);
+    process.exit(1);
+  } else {
+    console.error('Server error:', err);
+    process.exit(1);
+  }
 });
 
 // Graceful shutdown

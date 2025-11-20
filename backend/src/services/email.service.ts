@@ -187,7 +187,7 @@ export class EmailService {
           </div>
 
           <div style="text-align: center; margin: 30px 0;">
-            <a href="https://articon.com/dashboard" style="background-color: #667eea; color: white; padding: 12px 30px; text-decoration: none; border-radius: 25px; font-weight: bold; display: inline-block;">
+            <a href="https://articon.multiicon.in" style="background-color: #667eea; color: white; padding: 12px 30px; text-decoration: none; border-radius: 25px; font-weight: bold; display: inline-block;">
               Access Dashboard
             </a>
           </div>
@@ -221,7 +221,7 @@ Event Information:
 - Time: 9:00 AM onwards
 - Platform: Online Dashboard
 
-Access your dashboard at: https://articon.com/dashboard
+Access your dashboard at: https://articon.multiicon.in
 
 Stay tuned for updates! We'll notify you when the event starts.
 
@@ -268,7 +268,7 @@ Good luck! 🏆
           </div>
 
           <div style="text-align: center; margin: 30px 0;">
-            <a href="https://articon.com/dashboard" style="background-color: #667eea; color: white; padding: 12px 30px; text-decoration: none; border-radius: 25px; font-weight: bold; display: inline-block;">
+            <a href="https://articon.multiicon.in" style="background-color: #667eea; color: white; padding: 12px 30px; text-decoration: none; border-radius: 25px; font-weight: bold; display: inline-block;">
               Access Dashboard
             </a>
           </div>
@@ -308,7 +308,7 @@ Event Details:
 Please Wait:
 The event will start at the scheduled time. Please check your email for a QR code that you'll need to scan at the event for attendance.
 
-Access your dashboard: https://articon.com/dashboard
+Access your dashboard: https://articon.multiicon.in
 
 We can't wait to see what you create! 🚀
     `;
@@ -409,7 +409,7 @@ Thank you for your understanding. We wish you all the best in your creative jour
           </div>
 
           <div style="text-align: center; margin: 30px 0;">
-            <a href="https://articon.com/dashboard" style="background-color: #f5576c; color: white; padding: 12px 30px; text-decoration: none; border-radius: 25px; font-weight: bold; display: inline-block;">
+            <a href="https://articon.multiicon.in" style="background-color: #f5576c; color: white; padding: 12px 30px; text-decoration: none; border-radius: 25px; font-weight: bold; display: inline-block;">
               View Dashboard
             </a>
           </div>
@@ -452,7 +452,7 @@ Preparation Checklist:
 - Have your login credentials handy
 - Get a good night's rest!
 
-Dashboard: https://articon.com/dashboard
+Dashboard: https://articon.multiicon.in
 
 See you tomorrow! Best of luck! 🍀
     `;
