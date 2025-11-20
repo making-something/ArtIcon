@@ -1,18 +1,53 @@
 /* Import Cursive Font */
 @import url("https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap");
 
+/* Navigation Hint */
+.nav-hint {
+	position: fixed;
+	bottom: 3rem;
+	right: 3rem;
+	font-family: "DM Mono", monospace;
+	font-size: 0.8rem;
+	color: var(--base-300);
+	opacity: 0;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	pointer-events: none;
+}
+
+.enter-key-icon {
+	border: 1px solid var(--base-300);
+	padding: 0.2rem 0.4rem;
+	border-radius: 4px;
+}
+
+/* WRAPPER to prevent CSS Bleeding from Home Page */
+.register-wrapper {
+	/* Reset standard properties to ensure Home CSS doesn't interfere */
+	all: initial;
+	font-family: "Barlow Condensed", sans-serif; /* Re-apply font */
+	box-sizing: border-box;
+}
+
+.register-wrapper * {
+	box-sizing: border-box;
+}
+
 .register-page {
 	position: relative;
 	width: 100vw;
 	height: 100svh;
-	background-color: var(--base-400); /* Dark BG */
-	color: var(--base-100); /* Light Text */
+	/* Force Dark Background with !important to override any global body styles */
+	background-color: var(--base-400) !important;
+	color: var(--base-100) !important; /* Force Light Text */
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
-	align-items: flex-start;
-	padding: 0 10vw;
+	align-items: center;
+	padding: 0 5vw;
 	overflow: hidden;
+	z-index: 1; /* Ensure it sits on top */
 }
 
 /* --- TOP BAR --- */
@@ -26,7 +61,7 @@
 	justify-content: space-between;
 	align-items: center;
 	z-index: 10;
-	pointer-events: none; /* Let clicks pass through empty areas */
+	pointer-events: none;
 }
 
 .page-title {
@@ -40,10 +75,10 @@
 
 .cursive-accent {
 	font-family: "Dancing Script", cursive;
-	text-transform: none; /* Cursive usually looks bad in all-caps */
+	text-transform: none;
 	font-weight: 400;
 	font-size: 1.8rem;
-	color: var(--accent-3); /* Or var(--base-100) */
+	color: var(--accent-3);
 	margin-left: 0.5rem;
 }
 
@@ -72,21 +107,32 @@
 	position: relative;
 	width: 100%;
 	max-width: 1400px;
-	margin: 0 auto;
-	padding-top: 4rem; /* Space for top bar */
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+}
+
+.form-scroll-container {
+	width: 100%;
+	max-height: calc(100vh - 250px);
+	overflow-y: auto;
+	padding-right: 1rem;
+	-ms-overflow-style: none;
+	scrollbar-width: none;
+}
+
+.form-scroll-container::-webkit-scrollbar {
+	display: none;
 }
 
 /* The Sentence Flow */
 .form-sentence {
 	font-family: "Barlow Condensed", sans-serif;
 	font-weight: 600;
-	font-size: clamp(
-		1.8rem,
-		3.5vw,
-		3.5rem
-	); /* Slightly smaller to fit more text */
+	font-size: clamp(1.8rem, 3.5vw, 3.5rem);
 	line-height: 1.6;
 	text-transform: uppercase;
+	color: var(--base-100); /* Ensure text color is explicit */
 }
 
 .sentence-part {
@@ -99,80 +145,108 @@
 	opacity: 1;
 }
 
-/* Input Styling */
+/* --- INPUT STYLING (Specific Classes to beat Global CSS) --- */
 .input-wrapper {
 	display: inline-block;
 	position: relative;
 	margin: 0 0.2em;
 }
 
-.register-input {
-	background: transparent;
-	border: none;
-	border-bottom: 2px solid var(--base-300);
-	color: var(--accent-3);
+/* High Specificity Selectors */
+.register-page .register-input,
+.register-page .register-select {
+	background: transparent !important;
+	border: none !important;
+	border-bottom: 2px solid var(--base-300) !important;
+	color: var(--accent-3) !important; /* Force Highlight Color */
 	font-family: "Barlow Condensed", sans-serif;
 	font-size: inherit;
 	font-weight: 900;
 	text-transform: uppercase;
 	padding: 0 0.2rem;
 	outline: none;
-	transition: border-color 0.3s ease;
-	border-radius: 0; /* Fix for iOS */
+	transition: border-color 0.3s ease, width 0.1s ease;
+	border-radius: 0;
+	min-width: 100px;
+	width: auto;
+	box-sizing: content-box;
 }
 
-.register-input:focus {
-	border-bottom-color: var(--base-100);
+.register-page .register-input:focus,
+.register-page .register-select:focus {
+	border-bottom-color: var(--base-100) !important;
 }
 
-.register-input::placeholder {
+.register-page .register-input::placeholder {
 	color: var(--base-300);
 	opacity: 0.3;
 	font-weight: 400;
 }
 
-/* Dynamic Input Widths based on content expectation */
-.register-input[name="fullName"] {
-	width: 300px;
-}
-.register-input[name="city"] {
-	width: 200px;
-}
-.register-input[name="role"] {
-	width: 300px;
-}
-.register-input[name="experience"] {
-	width: 80px;
-	text-align: center;
-}
-.register-input[name="organization"] {
-	width: 400px;
-}
-.register-input[name="specialization"] {
-	width: 350px;
-}
-.register-input[name="source"] {
-	width: 250px;
-}
-.register-input[name="portfolio"] {
-	width: 500px;
-}
-.register-input[name="phone"] {
-	width: 250px;
-}
-.register-input[name="email"],
-.register-input[name="loginEmail"] {
-	width: 400px;
-}
-.register-input[type="password"] {
-	width: 300px;
+/* Hidden Sizer */
+.input-sizer-ghost {
+	position: absolute;
+	top: -9999px;
+	left: -9999px;
+	visibility: hidden;
+	white-space: pre;
+	font-family: "Barlow Condensed", sans-serif;
+	font-size: clamp(1.8rem, 3.5vw, 3.5rem);
+	font-weight: 900;
+	text-transform: uppercase;
+	padding: 0 0.2rem;
+	pointer-events: none;
 }
 
-/* Submit Button */
+/* Dropdown Specifics */
+.register-select {
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+	cursor: pointer;
+	background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%238c7e77%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E") !important;
+	background-repeat: no-repeat !important;
+	background-position: right 0 top 50% !important;
+	background-size: 0.65rem auto !important;
+	padding-right: 1.5rem !important;
+}
+
+.register-select option {
+	background-color: var(--base-400);
+	color: var(--base-100);
+	font-size: 1rem;
+}
+
+/* Back & Submit Buttons */
+.back-btn {
+	background: transparent;
+	border: none;
+	color: var(--base-300);
+	font-family: "Barlow Condensed", sans-serif;
+	font-weight: 600;
+	text-transform: uppercase;
+	font-size: 1rem;
+	cursor: pointer;
+	margin-bottom: 1rem;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	padding: 0;
+}
+
+.back-btn:hover {
+	color: var(--base-100);
+}
+
 .submit-wrapper {
-	margin-top: 3rem;
+	margin-top: 2rem;
+	width: 100%;
+	display: flex;
+	align-items: center;
+	gap: 2rem;
 	opacity: 0;
 	transform: translateY(20px);
+	pointer-events: none;
 }
 
 .submit-btn {
@@ -189,311 +263,62 @@
 	transition: transform 0.2s ease, background-color 0.2s ease;
 }
 
-.submit-btn:hover:not(:disabled) {
+.submit-btn:hover {
 	background-color: var(--accent-1);
 	transform: scale(1.05);
 }
 
-.submit-btn:disabled {
-	opacity: 0.6;
-	cursor: not-allowed;
-}
-
-.back-btn:disabled {
-	opacity: 0.5;
-	cursor: not-allowed;
-}
-
-/* Navigation Hint */
-.nav-hint {
-	position: fixed;
-	bottom: 3rem;
-	right: 3rem;
-	font-family: "DM Mono", monospace;
-	font-size: 0.8rem;
-	color: var(--base-300);
-	opacity: 0;
-	display: flex;
-	align-items: center;
+/* Portfolio */
+.portfolio-wrapper {
+	display: inline-flex;
+	align-items: baseline;
 	gap: 0.5rem;
-	pointer-events: none;
-}
-
-.enter-key-icon {
-	border: 1px solid var(--base-300);
-	padding: 0.2rem 0.4rem;
-	border-radius: 4px;
-}
-
-/* Mobile Adjustments */
-@media (max-width: 1000px) {
-	.register-page {
-		padding: 0 1.5rem;
-		padding-top: 15vh;
-		justify-content: flex-start;
-		overflow-y: auto; /* Allow scroll on mobile if form is long */
-	}
-
-	.register-top-bar {
-		padding: 1.5rem;
-		background: linear-gradient(to bottom, var(--base-400), transparent);
-	}
-
-	.page-title {
-		font-size: 1.2rem;
-	}
-	.cursive-accent {
-		font-size: 1.5rem;
-	}
-
-	.form-sentence {
-		font-size: 1.8rem;
-	}
-
-	.register-input {
-		width: 100% !important;
-		display: block;
-		margin: 0.5rem 0;
-	}
-
-	.input-wrapper {
-		display: block;
-		width: 100%;
-		margin: 0;
-	}
-
-	.nav-hint {
-		display: none; /* Hide hint on mobile */
-	}
-}
-
-/* ... Existing CSS ... */
-
-/* --- SELECT DROPDOWN STYLING --- */
-.register-select {
-	-webkit-appearance: none; /* Remove default arrow on Safari/Chrome */
-	-moz-appearance: none;
-	appearance: none;
-	background: transparent;
-	border: none;
-	border-bottom: 2px solid var(--base-300);
-	color: var(--accent-3);
-	font-family: "Barlow Condensed", sans-serif;
-	font-size: inherit;
-	font-weight: 900;
-	text-transform: uppercase;
-	padding: 0 0.2rem;
-	outline: none;
-	cursor: pointer;
-	border-radius: 0;
-	transition: border-color 0.3s ease;
-
-	/* Add a custom tiny arrow or just rely on context */
-	background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%238c7e77%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
-	background-repeat: no-repeat;
-	background-position: right 0 top 50%;
-	background-size: 0.65rem auto;
-	padding-right: 1.5rem; /* Space for arrow */
-}
-
-.register-select:focus {
-	border-bottom-color: var(--base-100);
-}
-
-/* Style the dropdown options for Dark Mode */
-.register-select option {
-	background-color: var(--base-400);
-	color: var(--base-100);
-	font-family: "Barlow Condensed", sans-serif;
-	font-size: 1rem;
-	padding: 10px;
-}
-
-/* --- INPUT WIDTH UPDATES --- */
-.register-input[name="experience"] {
-	width: 60px;
-	text-align: center;
-}
-
-/* Adjust select widths */
-.register-select[name="role"] {
-	width: 220px;
-}
-.register-select[name="specialization"] {
-	width: 300px;
-}
-.register-select[name="source"] {
-	width: 280px;
-}
-
-.register-page {
 	position: relative;
-	width: 100vw;
-	height: 100svh;
-	background-color: var(--base-400);
-	color: var(--base-100);
-	display: flex;
-	flex-direction: column;
-	/* CHANGED: Removed justify-content: center to prevent top clipping */
-	/* CHANGED: Allow scrolling if form gets too long */
-	overflow-y: auto;
-	overflow-x: hidden;
-	/* CHANGED: Add padding top to strictly reserve space for Navbar */
-	padding: 140px 10vw 4rem 10vw;
 }
 
-.register-container {
-	position: relative;
-	width: 100%;
-	max-width: 1400px;
-	/* CHANGED: 'margin: auto' centers it vertically when small, 
-     but allows scrolling when tall */
-	margin: auto;
-}
-
-/* ... Previous imports and styles ... */
-
-/* --- LAYOUT UPDATES --- */
-
-.register-page {
-	position: relative;
-	width: 100vw;
-	height: 100svh;
-	background-color: var(--base-400);
-	color: var(--base-100);
-	display: flex;
-	flex-direction: column;
-	justify-content: center; /* Re-center vertically */
-	align-items: center;
-	padding: 0 5vw;
-	overflow: hidden; /* Prevent body scroll, we handle it inside container */
-}
-
-.register-container {
-	position: relative;
-	width: 100%;
-	max-width: 1400px;
-	display: flex;
-	flex-direction: column;
-	align-items: flex-start;
-	/* No margin auto needed here as flex parent handles centering */
-}
-
-/* --- NEW: SAFE AREA CONTAINER --- */
-/* This container holds the paragraph and scrolls internally if text is too long */
-.form-scroll-container {
-	width: 100%;
-	/* Height calc: 100vh - TopBar(100px) - BottomButtonArea(150px) */
-	max-height: calc(100vh - 250px);
-	overflow-y: auto; /* Enable scroll inside this box */
-	padding-right: 1rem; /* Prevent text hitting scrollbar */
-
-	/* Hide Scrollbar for Chrome/Safari/Opera */
-	-ms-overflow-style: none; /* IE and Edge */
-	scrollbar-width: none; /* Firefox */
-}
-
-.form-scroll-container::-webkit-scrollbar {
+.hidden-file-input {
 	display: none;
 }
 
-/* --- BACK BUTTON --- */
-.back-btn {
+.file-upload-btn {
 	background: transparent;
-	border: none;
+	border: 1px solid var(--base-300);
 	color: var(--base-300);
-	font-family: "Barlow Condensed", sans-serif;
-	font-weight: 600;
-	text-transform: uppercase;
-	font-size: 1rem;
+	width: 2rem;
+	height: 2rem;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	cursor: pointer;
-	margin-bottom: 1rem;
-	display: flex;
-	align-items: center;
-	gap: 0.5rem;
-	transition: color 0.3s ease;
-	padding: 0;
+	transition: all 0.3s ease;
+	transform: translateY(5px);
 }
 
-.back-btn:hover {
-	color: var(--base-100);
+.file-upload-btn:hover {
+	border-color: var(--accent-3);
+	color: var(--accent-3);
+	background-color: rgba(255, 255, 255, 0.05);
 }
 
-/* --- SUBMIT AREA --- */
-.submit-wrapper {
-	margin-top: 2rem;
-	width: 100%;
-	display: flex;
-	align-items: center;
-	gap: 2rem; /* Space between Back button and Submit */
-	opacity: 0;
-	transform: translateY(20px);
-	pointer-events: none; /* Disabled until visible */
+.file-upload-btn svg {
+	width: 1rem;
+	height: 1rem;
+	fill: currentColor;
 }
 
-/* Mobile Fixes */
+.register-input.has-file {
+	color: var(--accent-1) !important;
+	font-style: italic;
+}
+
+/* Mobile */
 @media (max-width: 1000px) {
 	.form-scroll-container {
-		max-height: calc(100vh - 200px); /* Adjust for mobile headers */
+		max-height: calc(100vh - 200px);
 	}
 	.register-page {
 		padding-top: 4rem;
 		justify-content: flex-start;
 	}
-}
-
-.register-input,
-.register-select {
-	background: transparent;
-	border: none;
-	border-bottom: 2px solid var(--base-300);
-	color: var(--accent-3);
-	font-family: "Barlow Condensed", sans-serif;
-	font-size: inherit;
-	font-weight: 900;
-	text-transform: uppercase;
-	padding: 0 0.2rem;
-	outline: none;
-	transition: border-color 0.3s ease, width 0.1s ease; /* Animate width smoothly */
-	border-radius: 0;
-
-	min-width: 300px;
-	width: auto;
-	box-sizing: content-box;
-}
-
-.register-select {
-	min-width: 300px;
-}
-
-.register-input:focus,
-.register-select:focus {
-	border-bottom-color: var(--base-100);
-}
-
-.register-input::placeholder {
-	color: var(--base-300);
-	opacity: 0.3;
-	font-weight: 400;
-}
-
-.input-sizer-ghost {
-	position: absolute;
-	top: -9999px;
-	left: -9999px;
-	visibility: hidden;
-	white-space: pre;
-	font-family: "Barlow Condensed", sans-serif;
-	font-size: clamp(1.8rem, 3.5vw, 3.5rem); /* Must match .form-sentence size */
-	font-weight: 900;
-	text-transform: uppercase;
-	padding: 0 0.2rem;
-	height: auto;
-	width: auto;
-	pointer-events: none;
-}
-
-/* Adjust spacing for select arrow */
-.register-select {
-	padding-right: 1.5rem;
 }
