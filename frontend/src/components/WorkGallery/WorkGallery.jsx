@@ -100,6 +100,11 @@ const WorkGallery = () => {
 
 	return (
 		<div ref={containerRef} className="work-gallery-page">
+			{/* Header */}
+			<div className="work-gallery-header">
+				<h1>PAST EVENTS</h1>
+			</div>
+
 			{/* Work Items */}
 			<section className="work-items">
 				{rows.map((row, rowIndex) => (

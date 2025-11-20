@@ -4,7 +4,7 @@
 	/* --- REFERENCE PALETTE MAPPING --- */
 	/* Mapping Otis vars to your project context or explicit hex where unique */
 	--text-main: var(--fg); /* #141414 */
-	--bg-main: var(--bg); /* #edf1e8 */
+	--bg-main: var(--base-100); /* #edf1e8 */
 	--accent-orange: #ed6a5a; /* Match Otis 'accent1' (Orange/Red) */
 	--accent-teal: #9bc1bc; /* Match Otis 'accent3' (Teal) */
 	--accent-yellow: #f4f1bb; /* Match Otis 'accent2' (Yellow) */
@@ -172,30 +172,30 @@
 	white-space: nowrap;
 }
 
-/* Positioning from Reference - Adjusted to stay near content */
+/* Positioning - Closer to content area */
 #tag-1 {
-	top: 20%;
-	left: 20%;
+	top: 25%;
+	left: 28%;
 	transform: translate(-50%, -50%); /* Base centering only */
 }
 #tag-2 {
 	top: 50%;
-	left: 10%;
+	left: 18%;
 	transform: translate(-50%, -50%);
 }
 #tag-3 {
-	top: 25%;
-	left: 80%;
+	top: 30%;
+	left: 72%;
 	transform: translate(-50%, -50%);
 }
 #tag-4 {
-	top: 70%;
-	left: 75%;
+	top: 65%;
+	left: 68%;
 	transform: translate(-50%, -50%);
 }
 #tag-5 {
-	top: 75%;
-	left: 30%;
+	top: 80%;
+	left: 22%;
 	transform: translate(-50%, -50%);
 }
 

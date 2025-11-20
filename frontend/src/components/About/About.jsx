@@ -14,7 +14,7 @@ const About = () => {
 		() => {
 			const isDesktop = window.innerWidth > 1000;
 
-			// 1. STATS ANIMATION (Pop In)
+			// 1. STATS ANIMATION (Pop In) - Reduced pop effect
 			const setupStatsAnimation = () => {
 				const statElements = [
 					containerRef.current?.querySelector(".stats-item-1"),
@@ -23,7 +23,7 @@ const About = () => {
 				].filter(Boolean);
 
 				if (statElements.length > 0) {
-					gsap.set(statElements, { scale: 0 });
+					gsap.set(statElements, { scale: 0.8, opacity: 0 });
 
 					ScrollTrigger.create({
 						trigger: ".about-stats",
@@ -32,9 +32,10 @@ const About = () => {
 						onEnter: () => {
 							gsap.to(statElements, {
 								scale: 1,
-								duration: 1.2,
-								stagger: 0.2,
-								ease: "back.out(1.7)",
+								opacity: 1,
+								duration: 1,
+								stagger: 0.15,
+								ease: "back.out(1.2)",
 								force3D: true,
 							});
 						},
@@ -45,44 +46,54 @@ const About = () => {
 			// Set up stats animation after a short delay
 			setTimeout(setupStatsAnimation, 150);
 
-			// 2. FLOATING TAGS PARALLAX - Always run for visual effect
+			// 2. FLOATING TAGS PARALLAX - Start from below, reduced X-axis movement
 			// Wait a bit for DOM to be ready, then set up animations
 			const setupTagAnimations = () => {
 				const tagElements = [
 					{
 						id: "#tag-1",
-						initialY: 0,
-						targetY: -300,
-						initialR: 20,
-						targetR: -45,
+						initialY: 80,
+						targetY: -200,
+						initialX: 0,
+						targetX: -20,
+						initialR: 15,
+						targetR: -30,
 					},
 					{
 						id: "#tag-2",
-						initialY: 0,
-						targetY: -150,
-						initialR: -45,
-						targetR: 70,
+						initialY: 80,
+						targetY: -120,
+						initialX: 0,
+						targetX: 15,
+						initialR: -30,
+						targetR: 45,
 					},
 					{
 						id: "#tag-3",
-						initialY: 0,
-						targetY: -400,
+						initialY: 80,
+						targetY: -250,
+						initialX: 0,
+						targetX: -25,
 						initialR: 5,
-						targetR: 120,
+						targetR: 80,
 					},
 					{
 						id: "#tag-4",
-						initialY: 0,
-						targetY: -350,
-						initialR: 45,
-						targetR: -60,
+						initialY: 80,
+						targetY: -220,
+						initialX: 0,
+						targetX: 20,
+						initialR: 30,
+						targetR: -40,
 					},
 					{
 						id: "#tag-5",
-						initialY: 0,
-						targetY: -200,
-						initialR: -60,
-						targetR: 100,
+						initialY: 80,
+						targetY: -150,
+						initialX: 0,
+						targetX: -15,
+						initialR: -40,
+						targetR: 65,
 					},
 				];
 
@@ -94,6 +105,7 @@ const About = () => {
 						// Override CSS transform with GSAP
 						gsap.set(element, {
 							y: tag.initialY,
+							x: tag.initialX,
 							rotation: tag.initialR,
 							force3D: true,
 							transformOrigin: "center center",
@@ -101,8 +113,9 @@ const About = () => {
 
 						// Create parallax animation - constrained to about-copy section
 						gsap.to(element, {
-							y: isDesktop ? tag.targetY * 0.6 : tag.targetY * 0.2, // Reduced movement
-							rotation: tag.targetR * 0.7, // Reduced rotation
+							y: isDesktop ? tag.targetY * 0.5 : tag.targetY * 0.2, // Reduced Y movement
+							x: isDesktop ? tag.targetX : 0, // Minimal X movement on desktop, none on mobile
+							rotation: tag.targetR * 0.6, // Reduced rotation
 							ease: "none",
 							force3D: true,
 							scrollTrigger: {
