@@ -227,11 +227,8 @@ export default function Timeline() {
 			</div>
 			<div className="timeline-work-indicator"></div>
 			<div className="timeline-work-footer">
-				<p className="mn">Visual Vault [ {timelineWorkItems.length} ]</p>
+				<p className="mn">Articon Vault [ {timelineWorkItems.length} ]</p>
 				<p className="mn">///////////////////</p>
-				<p className="mn">
-					<a href="/work">Browse Full Collection</a>
-				</p>
 			</div>
 		</section>
 	);

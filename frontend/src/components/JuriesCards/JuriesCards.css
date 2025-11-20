@@ -116,6 +116,11 @@
 
 /* Mobile Responsive */
 @media (max-width: 1000px) {
+	.juries-hero {
+		height: auto;
+		padding: 6rem 1rem 1rem 1rem;
+	}
+
 	.juries-hero h1 {
 		width: 100%;
 		font-size: clamp(2.5rem, 10vw, 4rem);
@@ -123,15 +128,15 @@
 
 	.juries {
 		height: auto;
-		min-height: 250svh;
+		min-height: 100svh;
 		flex-direction: column;
 		align-items: center;
-		padding: 2rem 1rem;
+		padding: 0 1rem 2rem 1rem;
 	}
 
 	.jury-member {
 		max-width: 400px;
-		height: 400px;
+		height: 320px;
 		transform: translateY(0%) !important;
 	}
 
@@ -154,6 +159,6 @@
 	}
 
 	.jury-member {
-		height: 350px;
+		height: 270px;
 	}
 }
