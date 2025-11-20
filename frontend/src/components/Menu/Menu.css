@@ -14,21 +14,23 @@ nav {
 /* --- LOGO --- */
 nav .nav-logo {
 	pointer-events: auto; /* Re-enable clicks for logo */
-	margin-top: -3rem;
 	transition: opacity 0.35s ease, transform 0.35s ease;
+	display: flex;
+	align-items: center;
 }
 
 nav .nav-logo a {
 	display: block;
 	width: 10rem; /* Adjust size as needed */
 	height: auto;
+	display: flex;
+	align-items: center;
 }
 
 nav .nav-logo img {
-	width: 130%;
+	width: 100%;
 	height: auto;
 	object-fit: contain;
-	
 }
 
 nav .nav-scroll-hidden {
@@ -50,7 +52,6 @@ nav .nav-cta-wrapper {
 	border-radius: 2rem;
 	cursor: pointer;
 	overflow: hidden;
-	margin-top: -3rem; /* Match logo lift to keep alignment */
 	transition: opacity 0.35s ease, transform 0.35s ease;
 }
 
@@ -90,7 +91,6 @@ nav .cta-label {
 }
 
 @media (max-width: 480px) {
-
 	nav .nav-logo a {
 		width: 5rem;
 	}

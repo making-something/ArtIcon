@@ -74,8 +74,6 @@ const Page = () => {
 					<ClientReviews />
 				</div>
 
-				{/* Spotlight comes after pinned ClientReviews. 
-                    We give it a higher z-index and solid background to cover the previous section cleanly. */}
 				<div style={{ ...sectionStyle, zIndex: 5 }}>
 					<Spotlight />
 				</div>
