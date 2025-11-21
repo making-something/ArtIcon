@@ -1,5 +1,5 @@
 import express, { Application, Request, Response } from "express";
-import cors from "cors";
+import cors, { CorsOptions } from "cors";
 import { createServer } from "http";
 import { Server as SocketServer } from "socket.io";
 import path from "path";
@@ -25,29 +25,80 @@ const PORT = process.env.PORT || 8000;
 // Create HTTP server
 const httpServer = createServer(app);
 
-// Initialize Socket.IO for real-time updates
-const allowedOrigins = [
-  process.env.FRONTEND_URL || "http://localhost:3000",
+// Normalize and collect allowed origins for CORS/Socket.IO
+const normalizeOrigin = (origin: string) => origin.replace(/\/+$/, "");
+
+const parseOrigins = (origins?: string) => {
+  if (!origins) {
+    return [];
+  }
+
+  return origins
+    .split(/[\s,]+/)
+    .map((origin) => normalizeOrigin(origin.trim()))
+    .filter(Boolean);
+};
+
+const managedOrigins = [
+  "https://articon.noobokay.me",
+  "https://articon-fi0kyqyas-dhairya3391s-projects.vercel.app",
+];
+
+const defaultOrigins = [
   "http://localhost:3000",
   "http://localhost:5500",
   "http://127.0.0.1:5500",
 ];
 
+const envOrigins = parseOrigins(process.env.FRONTEND_URL);
+
+const allowedOrigins = Array.from(
+  new Set([...envOrigins, ...managedOrigins, ...defaultOrigins]),
+);
+
+if (process.env.NODE_ENV !== "test") {
+  if (envOrigins.length === 0) {
+    console.warn(
+      "No FRONTEND_URL configured; only localhost origins will be allowed.",
+    );
+  } else {
+    console.log(
+      `CORS allowed origins: ${allowedOrigins
+        .map((origin) => origin || "(empty)")
+        .join(", ")}`,
+    );
+  }
+}
+
+const corsOptions: CorsOptions = {
+  origin: (origin, callback) => {
+    if (!origin) {
+      return callback(null, true);
+    }
+
+    const sanitizedOrigin = normalizeOrigin(origin);
+
+    if (allowedOrigins.includes(sanitizedOrigin)) {
+      return callback(null, true);
+    }
+
+    return callback(new Error(`Origin ${origin} not allowed by CORS`));
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+};
+
 const io = new SocketServer(httpServer, {
   cors: {
     origin: allowedOrigins,
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     credentials: true,
   },
 });
 
 // Middleware
-app.use(
-  cors({
-    origin: allowedOrigins,
-    credentials: true,
-  }),
-);
+app.use(cors(corsOptions));
+app.options(/.*/, cors(corsOptions));
 
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));

@@ -4,7 +4,6 @@ export function validateEnv() {
     'SUPABASE_ANON_KEY',
     'SUPABASE_SERVICE_ROLE_KEY',
     'JWT_SECRET',
-    'FRONTEND_URL',
   ];
 
   const missing = requiredVars.filter((key) => !process.env[key]);
