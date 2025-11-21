@@ -547,15 +547,14 @@ const JunoLanding = () => {
 									data-animate-type="scramble"
 									data-animate-delay="0.5"
 								>
-									<span>&#9654;</span> 30th November 2025 | 9:00 AM - 7:30 PM
+									<span>&#9654;</span> 30th November 2025
 								</p>
 								<p
 									className="mono"
 									data-animate-type="scramble"
 									data-animate-delay="0.5"
 								>
-									<span>&#9654;</span> Multiicon, 4th Floor | Up to 100
-									Participants
+									<span>&#9654;</span> Multiicon | Up to 100 Participants
 								</p>
 							</div>
 						</div>

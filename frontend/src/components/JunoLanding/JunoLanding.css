@@ -52,6 +52,8 @@
 
 .hero .hero-content .hero-footer-copy {
 	width: 35%;
+	position: relative;
+	top: -1rem;
 }
 
 .hero .hero-content .hero-footer-tags {
@@ -443,14 +445,24 @@ p {
 
 p.md {
 	font-size: 1.5rem;
+	line-height: 1.2;
 }
 
-.hero .hero-footer-copy p.md .fancy-word {
-	font-family: "Dancing Script", cursive;
-	font-weight: 600;
-	font-style: normal;
-	text-transform: lowercase;
-	color: var(--accent-9, #ed6a5a);
+.hero-footer-copy p.md {
+	margin: 0;
+	padding: 0;
+}
+
+.hero-footer-copy .fancy-word {
+	font-family: "Dancing Script", cursive !important;
+	font-weight: 600 !important;
+	font-style: normal !important;
+	font-size: 2rem;
+	text-transform: lowercase !important;
+	color: var(--accent-9, #ed6a5a) !important;
+	display: inline;
+	vertical-align: baseline;
+	line-height: inherit;
 }
 
 p.mono {
@@ -511,7 +523,9 @@ p.mono span {
 	}
 
 	.hero .hero-content .hero-footer-copy {
-		display: none;
+		display: block;
+		width: 100%;
+		top: 0;
 	}
 
 	.hero .hero-content .hero-footer-tags {
@@ -794,7 +808,7 @@ p.mono span {
 
 	.home-services .cards {
 		position: relative;
-		background-color: var(--base-100);
+		background-color: var(--base-100) !important;
 		width: 100%;
 		height: max-content;
 	}
@@ -830,6 +844,41 @@ p.mono span {
 	.home-services .flip-card-back {
 		transform: none !important;
 		position: relative;
+		background-color: #fff !important;
+		padding: 1.5rem;
+		padding-bottom: 3rem;
+		border-radius: 8px;
+		overflow: visible;
+	}
+
+	.home-services .flip-card-back .card-back-icon {
+		display: none;
+	}
+
+	.home-services .card {
+		background-color: #fff !important;
+		border: none !important;
+		box-shadow: none !important;
+	}
+
+	.home-services .card-wrapper {
+		background-color: #fff !important;
+		border: none !important;
+		box-shadow: none !important;
+	}
+
+	.home-services .flip-card-inner {
+		background-color: #fff !important;
+		border: none !important;
+		box-shadow: none !important;
+	}
+
+	.home-services .flip-card-back .card-title {
+		background-color: transparent !important;
+	}
+
+	.home-services .flip-card-back .card-copy {
+		background-color: transparent !important;
 	}
 
 	.home-services-bottom-bar .container {
@@ -960,5 +1009,134 @@ p.mono span {
 	.home-about .home-about-card {
 		min-height: 200px;
 		width: 100%;
+	}
+
+	/* MOBILE FLIP CARDS FIX - FINAL OVERRIDES */
+	.home-services {
+		background-color: var(--base-100) !important;
+		height: auto !important;
+		min-height: 100vh !important;
+		overflow: visible !important;
+		position: relative !important;
+		padding: 4rem 0 !important;
+	}
+
+	.home-services .cards {
+		display: block !important;
+		position: relative !important;
+		opacity: 1 !important;
+		visibility: visible !important;
+		height: auto !important;
+		z-index: 1 !important;
+		width: 100% !important;
+		background-color: transparent !important;
+		top: auto !important;
+		left: auto !important;
+		margin: 0 !important;
+		padding: 2rem 0 !important;
+	}
+
+	.home-services .cards-container {
+		display: flex !important;
+		flex-direction: column !important;
+		align-items: center !important;
+		opacity: 1 !important;
+		visibility: visible !important;
+		width: 100% !important;
+		margin: 0 !important;
+		padding: 0 !important;
+	}
+
+	.home-services .card {
+		display: block !important;
+		opacity: 1 !important;
+		visibility: visible !important;
+		background-color: transparent !important;
+		border: none !important;
+		box-shadow: none !important;
+		margin: 0 auto 2rem auto !important;
+		max-width: 400px !important;
+		width: 90% !important;
+		position: relative !important;
+		left: 0 !important;
+		right: 0 !important;
+		transform: none !important;
+	}
+
+	.home-services .card-wrapper {
+		display: block !important;
+		opacity: 1 !important;
+		visibility: visible !important;
+		background-color: transparent !important;
+		position: static !important;
+		transform: none !important;
+		top: auto !important;
+		left: auto !important;
+		width: 100% !important;
+		height: auto !important;
+	}
+
+	.home-services .flip-card-inner {
+		display: block !important;
+		opacity: 1 !important;
+		visibility: visible !important;
+		background-color: transparent !important;
+		transform: none !important;
+	}
+
+	.home-services .flip-card-back {
+		display: block !important;
+		opacity: 1 !important;
+		visibility: visible !important;
+		background-color: #fff !important;
+		padding: 1.5rem !important;
+		padding-bottom: 3.5rem !important;
+		border-radius: 8px !important;
+		position: relative !important;
+		transform: none !important;
+		border: none !important;
+		box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15) !important;
+	}
+
+	.home-services .flip-card-back .card-title,
+	.home-services .flip-card-back .card-copy,
+	.home-services .flip-card-back .card-copy p {
+		color: var(--base-300) !important;
+	}
+
+	.home-services .flip-card-back .card-title:last-child {
+		margin-bottom: 0 !important;
+		padding-bottom: 0 !important;
+	}
+
+	/* HERO CARDS MOBILE FIX */
+	.hero .hero-cards .card .hero-card-inner {
+		display: flex !important;
+		flex-direction: column !important;
+		justify-content: center !important;
+		align-items: center !important;
+		gap: 0 !important;
+		padding: 1rem !important;
+	}
+
+	.hero .hero-cards .card svg {
+		height: 30px !important;
+		width: 30px !important;
+		margin: auto !important;
+		position: relative !important;
+		top: 10% !important;
+	}
+
+	.hero .hero-cards .card .card-title {
+		width: 100% !important;
+		justify-content: center !important;
+	}
+
+	.hero .hero-cards .card .card-title p.mono:last-child {
+		display: none !important;
+	}
+
+	.hero .hero-cards .card .card-title:last-child {
+		display: none !important;
 	}
 }
