@@ -430,20 +430,21 @@
 		height: 110%;
 	}
 
+	.about-copy {
+		padding: 4em 2em 4em 2em;
+	}
+
 	.about-copy-content {
 		width: 100%;
+		padding: 2em 1.5em;
+		gap: 1.5em;
+		z-index: 10;
 	}
 	.about-copy-content h3 {
 		font-size: 1.5rem;
 	}
 	.about-tag {
-		display: block; /* Keep tags visible on mobile */
-		position: relative; /* Stack them normally on mobile */
-		margin: 1em auto;
-		width: max-content;
-		top: auto;
-		left: auto;
-		transform: none;
+		display: none;
 	}
 
 	.about-tag p {

@@ -11,7 +11,7 @@
 .timeline-header-title {
 	font-family: "Barlow Condensed";
 	font-size: clamp(2rem, 4vw, 4rem);
-	font-weight: 400;
+	font-weight: 500;
 	font-style: italic;
 	text-transform: uppercase;
 	color: var(--fg, #141414);
@@ -22,7 +22,7 @@
 .timeline-header-title .fancy-word {
 	font-family: "Dancing Script", cursive;
 	font-size: clamp(2.5rem, 5vw, 5rem);
-	font-weight: 400;
+	font-weight: 600;
 	font-style: normal;
 	text-transform: lowercase;
 	color: var(--accent-9);
