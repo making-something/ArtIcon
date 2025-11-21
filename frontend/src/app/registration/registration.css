@@ -47,6 +47,160 @@
 	--accent-5: #2f72a9 !important;
 }
 
+/* Error Popup */
+.error-popup {
+	position: fixed;
+	top: 120px;
+	left: 50%;
+	transform: translateX(-50%);
+	z-index: 10000;
+	animation: slideDown 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes slideDown {
+	from {
+		opacity: 0;
+		transform: translateX(-50%) translateY(-20px);
+	}
+	to {
+		opacity: 1;
+		transform: translateX(-50%) translateY(0);
+	}
+}
+
+.error-popup-content {
+	background: linear-gradient(135deg, #ff3d33 0%, #ff6e14 100%);
+	color: white;
+	padding: 1rem 2rem;
+	border-radius: 12px;
+	box-shadow: 0 10px 40px rgba(255, 61, 51, 0.4);
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	min-width: 300px;
+	max-width: 500px;
+	backdrop-filter: blur(10px);
+	border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.error-icon {
+	width: 24px;
+	height: 24px;
+	flex-shrink: 0;
+	animation: shake 0.5s ease;
+}
+
+@keyframes shake {
+	0%,
+	100% {
+		transform: translateX(0);
+	}
+	25% {
+		transform: translateX(-5px);
+	}
+	75% {
+		transform: translateX(5px);
+	}
+}
+
+.error-popup-content p {
+	margin: 0;
+	font-family: "Barlow Condensed", sans-serif;
+	font-size: 1rem;
+	font-weight: 600;
+	letter-spacing: 0.02em;
+	line-height: 1.4;
+}
+
+/* Password Input Wrapper */
+.password-input-wrapper {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	width: auto;
+}
+
+.password-input {
+	padding-right: 2.5rem !important;
+}
+
+.toggle-password-btn {
+	position: absolute;
+	right: 0;
+	top: 50%;
+	transform: translateY(-50%);
+	background: transparent;
+	border: none;
+	cursor: pointer;
+	padding: 0.5rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--base-300);
+	transition: color 0.2s ease;
+	outline: none;
+}
+
+.toggle-password-btn:hover {
+	color: var(--base-100);
+}
+
+.toggle-password-btn:focus {
+	outline: none;
+}
+
+.toggle-password-btn svg {
+	width: 20px;
+	height: 20px;
+	stroke-width: 2;
+}
+
+/* Error Popup Responsive */
+@media (max-width: 768px) {
+	.error-popup {
+		top: 100px;
+		left: 1rem;
+		right: 1rem;
+		transform: none;
+		width: calc(100% - 2rem);
+	}
+
+	.error-popup-content {
+		padding: 0.85rem 1.5rem;
+		min-width: auto;
+		width: 100%;
+	}
+
+	.error-icon {
+		width: 20px;
+		height: 20px;
+	}
+
+	.error-popup-content p {
+		font-size: 0.9rem;
+	}
+}
+
+@media (max-width: 480px) {
+	.error-popup {
+		top: 90px;
+	}
+
+	.error-popup-content {
+		padding: 0.75rem 1.25rem;
+		gap: 0.75rem;
+	}
+
+	.error-popup-content p {
+		font-size: 0.85rem;
+	}
+
+	.toggle-password-btn svg {
+		width: 18px;
+		height: 18px;
+	}
+}
+
 .register-page {
 	/* Layout styles */
 	position: relative;

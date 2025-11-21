@@ -547,14 +547,14 @@ const JunoLanding = () => {
 									data-animate-type="scramble"
 									data-animate-delay="0.5"
 								>
-									<span>&#9654;</span> 30th November 2025
+									<span>&#9654;</span> 7th December
 								</p>
 								<p
 									className="mono"
 									data-animate-type="scramble"
 									data-animate-delay="0.5"
 								>
-									<span>&#9654;</span> Multiicon | Up to 100 Participants
+									<span>&#9654;</span> 100 Artists
 								</p>
 							</div>
 						</div>

@@ -13,15 +13,17 @@ const Register = () => {
 	const [isRestoring, setIsRestoring] = useState(false);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [error, setError] = useState("");
+	const [fieldError, setFieldError] = useState("");
+	const [showErrorPopup, setShowErrorPopup] = useState(false);
+	const [showPassword, setShowPassword] = useState(false);
+	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+	const [showLoginPassword, setShowLoginPassword] = useState(false);
 
 	const [formData, setFormData] = useState({
 		fullName: "",
 		city: "",
 		role: "",
-		experience: "", // Changed default to empty string so placeholder shows initially
-		organization: "",
 		specialization: "",
-		source: "",
 		portfolio: "", // Stores the Link text OR the Filename
 		portfolioFile: null,
 		phone: "",
@@ -70,22 +72,6 @@ const Register = () => {
 		},
 		{
 			id: 3,
-			field: "experience",
-			type: "number",
-			pre: " with ",
-			post: " years of experience.",
-			placeholder: "0",
-		},
-		{
-			id: 4,
-			field: "organization",
-			type: "text",
-			pre: " I represent ",
-			post: " ",
-			placeholder: "ORG / COLLEGE NAME",
-		},
-		{
-			id: 5,
 			field: "specialization",
 			type: "select",
 			options: ["UI/UX Design", "Video Editing", "Graphic Design"],
@@ -94,22 +80,7 @@ const Register = () => {
 			placeholder: "CHOOSE FIELD",
 		},
 		{
-			id: 6,
-			field: "source",
-			type: "select",
-			options: [
-				"Social Media (IG/LinkedIn)",
-				"Friend / Referral",
-				"Google Search",
-				"College Announcement",
-				"Other",
-			],
-			pre: " I came to know about this competition through ",
-			post: " .",
-			placeholder: "SELECT SOURCE",
-		},
-		{
-			id: 7,
+			id: 4,
 			field: "portfolio",
 			type: "text",
 			pre: " I am submitting my portfolio/project work attached/uploaded here: ",
@@ -117,7 +88,7 @@ const Register = () => {
 			placeholder: "LINK OR ATTACH FILE",
 		},
 		{
-			id: 8,
+			id: 5,
 			field: "phone",
 			type: "tel",
 			pre: " You may contact me at ",
@@ -125,7 +96,7 @@ const Register = () => {
 			placeholder: "PHONE NUMBER",
 		},
 		{
-			id: 9,
+			id: 6,
 			field: "email",
 			type: "email",
 			pre: " AND ",
@@ -219,11 +190,91 @@ const Register = () => {
 		});
 	}, [step, phase, isRestoring]);
 
+	// --- VALIDATION FUNCTIONS ---
+	const showError = (message) => {
+		setFieldError(message);
+		setShowErrorPopup(true);
+		setTimeout(() => {
+			setShowErrorPopup(false);
+		}, 3000);
+	};
+
+	const validateField = (field, value) => {
+		// Full Name - Only letters and spaces, at least 2 words
+		if (field === "fullName") {
+			if (!/^[a-zA-Z\s]+$/.test(value)) {
+				showError("Name can only contain letters and spaces");
+				return false;
+			}
+			if (value.trim().split(/\s+/).length < 2) {
+				showError("Please enter your full name (first and last name)");
+				return false;
+			}
+		}
+
+		// City - Only letters and spaces
+		if (field === "city") {
+			if (!/^[a-zA-Z\s]+$/.test(value)) {
+				showError("City name can only contain letters and spaces");
+				return false;
+			}
+		}
+
+		// Phone - Only numbers, exactly 10 digits
+		if (field === "phone") {
+			if (!/^\d{10}$/.test(value)) {
+				showError("Phone number must be exactly 10 digits");
+				return false;
+			}
+		}
+
+		// Email - Valid email format
+		if (field === "email" || field === "loginEmail") {
+			const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+			if (!emailRegex.test(value)) {
+				showError("Please enter a valid email address");
+				return false;
+			}
+		}
+
+		// Portfolio - Must be a valid URL or file
+		if (field === "portfolio") {
+			if (!formData.portfolioFile) {
+				// If no file, check if it's a valid URL
+				const urlRegex =
+					/^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
+				if (!urlRegex.test(value)) {
+					showError("Please enter a valid URL or attach a file");
+					return false;
+				}
+			}
+		}
+
+		// Password - Minimum 6 characters
+		if (field === "password" || field === "loginPassword") {
+			if (value.length < 6) {
+				showError("Password must be at least 6 characters long");
+				return false;
+			}
+		}
+
+		return true;
+	};
+
 	// --- HANDLERS ---
 
 	const handleChange = (e, field, type, index) => {
 		let value = e.target.value;
-		if (field === "experience" && value < 0) value = 0;
+
+		// Phone number - Only allow digits, max 10
+		if (field === "phone") {
+			value = value.replace(/\D/g, "").slice(0, 10);
+		}
+
+		// Full Name and City - Only allow letters and spaces
+		if (field === "fullName" || field === "city") {
+			value = value.replace(/[^a-zA-Z\s]/g, "");
+		}
 
 		// If typing in portfolio, clear the file object (user switched to link mode)
 		if (field === "portfolio") {
@@ -305,28 +356,40 @@ const Register = () => {
 	const handleKeyDown = (e, index) => {
 		if (e.key === "Enter") {
 			e.preventDefault();
-			if (e.target.value.trim() !== "") {
-				// Scroll logic: Ensure next field is in view
-				if (scrollContainerRef.current) {
-					// Small timeout to allow render, then scroll slightly if needed
-					setTimeout(() => {
-						const nextEl = inputRefs.current[index + 1];
-						if (nextEl)
-							nextEl.scrollIntoView({ behavior: "smooth", block: "center" });
-					}, 100);
-				}
+			const currentStep = currentSteps[index];
+			const value = e.target.value.trim();
 
-				if (index < currentSteps.length - 1) {
-					setStep(index + 1);
-				} else {
-					setStep(index + 1);
-					gsap.to(submitRef.current, {
-						opacity: 1,
-						y: 0,
-						duration: 0.5,
-						pointerEvents: "auto",
-					});
-				}
+			// Check if field is empty
+			if (value === "") {
+				showError("This field is required");
+				return;
+			}
+
+			// Validate the field before progressing
+			if (!validateField(currentStep.field, value)) {
+				return;
+			}
+
+			// Scroll logic: Ensure next field is in view
+			if (scrollContainerRef.current) {
+				// Small timeout to allow render, then scroll slightly if needed
+				setTimeout(() => {
+					const nextEl = inputRefs.current[index + 1];
+					if (nextEl)
+						nextEl.scrollIntoView({ behavior: "smooth", block: "center" });
+				}, 100);
+			}
+
+			if (index < currentSteps.length - 1) {
+				setStep(index + 1);
+			} else {
+				setStep(index + 1);
+				gsap.to(submitRef.current, {
+					opacity: 1,
+					y: 0,
+					duration: 0.5,
+					pointerEvents: "auto",
+				});
 			}
 		}
 	};
@@ -379,11 +442,34 @@ const Register = () => {
 		setError("");
 
 		if (phase === "register") {
+			// Validate all registration fields before moving to password
+			const fieldsToValidate = [
+				{ field: "fullName", value: formData.fullName },
+				{ field: "city", value: formData.city },
+				{ field: "phone", value: formData.phone },
+				{ field: "email", value: formData.email },
+				{ field: "portfolio", value: formData.portfolio },
+			];
+
+			for (const { field, value } of fieldsToValidate) {
+				if (!value.trim()) {
+					showError("Please fill in all required fields");
+					return;
+				}
+				if (!validateField(field, value)) {
+					return;
+				}
+			}
+
 			handlePhaseTransition("password");
 		} else if (phase === "password") {
+			// Validate password fields
+			if (!validateField("password", formData.password)) {
+				return;
+			}
+
 			if (formData.password !== formData.confirmPassword) {
-				setError("Passwords do not match!");
-				alert("Passwords do not match!");
+				showError("Passwords do not match!");
 				return;
 			}
 
@@ -394,21 +480,28 @@ const Register = () => {
 				if (formData.portfolioFile) {
 					console.log("Uploading portfolio file...");
 				}
-				
+
 				const response = await registerParticipant(formData);
 
-			if (response.success) {
-				console.log("Registration successful:", response.data);
-				handlePhaseTransition("login");
+				if (response.success) {
+					console.log("Registration successful:", response.data);
+					handlePhaseTransition("login");
 				}
 			} catch (error) {
 				console.error("Registration error:", error);
-				setError(error.message || "Registration failed. Please try again.");
-				alert(error.message || "Registration failed. Please try again.");
+				showError(error.message || "Registration failed. Please try again.");
 			} finally {
 				setIsSubmitting(false);
 			}
 		} else if (phase === "login") {
+			// Validate login fields
+			if (!validateField("loginEmail", formData.loginEmail)) {
+				return;
+			}
+			if (!validateField("loginPassword", formData.loginPassword)) {
+				return;
+			}
+
 			// Handle universal login (admin or participant)
 			setIsSubmitting(true);
 			try {
@@ -418,20 +511,22 @@ const Register = () => {
 				);
 
 				if (response.success) {
-				if (response.role === 'admin') {
-					console.log("Admin login successful");
-					router.push("/admin/portfolios");
-				} else {
-					console.log("Participant login successful:", response.data.participant);
-					router.push("/dashboard");
+					if (response.role === "admin") {
+						console.log("Admin login successful");
+						router.push("/admin/portfolios");
+					} else {
+						console.log(
+							"Participant login successful:",
+							response.data.participant
+						);
+						router.push("/dashboard");
 					}
 				}
 			} catch (error) {
 				console.error("Login error:", error);
-				setError(
+				showError(
 					error.message || "Login failed. Please check your credentials."
 				);
-				alert(error.message || "Login failed. Please check your credentials.");
 			} finally {
 				setIsSubmitting(false);
 			}
@@ -472,93 +567,6 @@ const Register = () => {
 		}
 	}, [step, phase, isRestoring]);
 
-	// --- RENDER HELPER FOR INPUTS ---
-	const renderInput = (item, index) => {
-		// 1. DROPDOWN
-		if (item.type === "select") {
-			return (
-				<select
-					ref={(el) => (inputRefs.current[index] = el)}
-					name={item.field}
-					className="register-select"
-					value={formData[item.field]}
-					onChange={(e) => handleChange(e, item.field, item.type, index)}
-					onKeyDown={(e) => handleKeyDown(e, index)}
-					required
-				>
-					<option value="" disabled>
-						{item.placeholder}
-					</option>
-					{item.options.map((opt) => (
-						<option key={opt} value={opt}>
-							{opt}
-						</option>
-					))}
-				</select>
-			);
-		}
-
-		// 2. PORTFOLIO (Mixed: Text + File)
-		if (item.field === "portfolio") {
-			return (
-				<div className="portfolio-wrapper">
-					<input
-						ref={(el) => (inputRefs.current[index] = el)}
-						type="text"
-						name={item.field}
-						className={`register-input ${
-							formData.portfolioFile ? "has-file" : ""
-						}`}
-						placeholder={item.placeholder}
-						value={formData[item.field]}
-						onChange={(e) => handleChange(e, item.field, item.type, index)}
-						onKeyDown={(e) => handleKeyDown(e, index)}
-						autoComplete="off"
-						required
-					/>
-
-					{/* Attachment Trigger */}
-					<label
-						htmlFor="portfolio-upload"
-						className="file-upload-btn"
-						title="Upload PDF or Image"
-					>
-						{/* SVG Paperclip Icon */}
-						<svg viewBox="0 0 24 24">
-							<path d="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5a2.5 2.5 0 0 1 5 0v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5a2.5 2.5 0 0 0 5 0V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6h-1.5z" />
-						</svg>
-					</label>
-
-					{/* Hidden File Input */}
-					<input
-						id="portfolio-upload"
-						type="file"
-						className="hidden-file-input"
-						accept="application/pdf, image/png, image/jpeg, image/webp"
-						onChange={handleFileChange}
-						ref={fileInputRef}
-					/>
-				</div>
-			);
-		}
-
-		return (
-			<input
-				ref={(el) => (inputRefs.current[index] = el)}
-				type={item.type}
-				name={item.field}
-				className="register-input"
-				placeholder={item.placeholder}
-				value={formData[item.field]}
-				onChange={(e) => handleChange(e, item.field, item.type, index)}
-				onKeyDown={(e) => handleKeyDown(e, index)}
-				autoComplete="off"
-				min={item.field === "experience" ? "0" : undefined}
-				required
-			/>
-		);
-	};
-
 	return (
 		<>
 			<div className="register-wrapper">
@@ -567,7 +575,7 @@ const Register = () => {
 						Register <span className="cursive-accent">Yourself</span>
 					</div>
 					<div className="top-nav-buttons">
-						<button className="back-nav-btn" onClick={()=>router.push("/")}>
+						<button className="back-nav-btn" onClick={() => router.push("/")}>
 							← Back
 						</button>
 						{phase !== "login" && (
@@ -589,6 +597,26 @@ const Register = () => {
 					</div>
 				</div>
 			</div>
+
+			{/* Error Popup */}
+			{showErrorPopup && (
+				<div className="error-popup">
+					<div className="error-popup-content">
+						<svg
+							className="error-icon"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							strokeWidth="2"
+						>
+							<circle cx="12" cy="12" r="10" />
+							<line x1="12" y1="8" x2="12" y2="12" />
+							<line x1="12" y1="16" x2="12.01" y2="16" />
+						</svg>
+						<p>{fieldError}</p>
+					</div>
+				</div>
+			)}
 
 			<div
 				className="register-page"
@@ -688,6 +716,77 @@ const Register = () => {
 															ref={fileInputRef}
 														/>
 													</div>
+												) : item.type === "password" ? (
+													<div className="password-input-wrapper">
+														<input
+															ref={(el) => (inputRefs.current[index] = el)}
+															type={
+																item.field === "password"
+																	? showPassword
+																		? "text"
+																		: "password"
+																	: item.field === "confirmPassword"
+																	? showConfirmPassword
+																		? "text"
+																		: "password"
+																	: item.field === "loginPassword"
+																	? showLoginPassword
+																		? "text"
+																		: "password"
+																	: "password"
+															}
+															name={item.field}
+															className="register-input password-input"
+															placeholder={item.placeholder}
+															value={formData[item.field]}
+															onChange={(e) =>
+																handleChange(e, item.field, item.type, index)
+															}
+															onKeyDown={(e) => handleKeyDown(e, index)}
+															autoComplete="off"
+															required
+														/>
+														<button
+															type="button"
+															className="toggle-password-btn"
+															onClick={() => {
+																if (item.field === "password") {
+																	setShowPassword(!showPassword);
+																} else if (item.field === "confirmPassword") {
+																	setShowConfirmPassword(!showConfirmPassword);
+																} else if (item.field === "loginPassword") {
+																	setShowLoginPassword(!showLoginPassword);
+																}
+															}}
+															tabIndex={-1}
+														>
+															{(item.field === "password" && showPassword) ||
+															(item.field === "confirmPassword" &&
+																showConfirmPassword) ||
+															(item.field === "loginPassword" &&
+																showLoginPassword) ? (
+																<svg
+																	viewBox="0 0 24 24"
+																	fill="none"
+																	stroke="currentColor"
+																	strokeWidth="2"
+																>
+																	<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+																	<circle cx="12" cy="12" r="3" />
+																</svg>
+															) : (
+																<svg
+																	viewBox="0 0 24 24"
+																	fill="none"
+																	stroke="currentColor"
+																	strokeWidth="2"
+																>
+																	<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+																	<line x1="1" y1="1" x2="23" y2="23" />
+																</svg>
+															)}
+														</button>
+													</div>
 												) : (
 													<input
 														ref={(el) => (inputRefs.current[index] = el)}
@@ -701,7 +800,6 @@ const Register = () => {
 														}
 														onKeyDown={(e) => handleKeyDown(e, index)}
 														autoComplete="off"
-														min={item.field === "experience" ? "0" : undefined}
 														required
 													/>
 												)}

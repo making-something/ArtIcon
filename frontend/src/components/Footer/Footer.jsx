@@ -231,7 +231,9 @@ const Footer = () => {
 						))}
 					</div>
 				</div>
-
+				<div className="copyright-info">
+					<p className="mn">//////////////</p>
+				</div>
 				<div className="explosion-container" ref={explosionRef}></div>
 			</div>
 		</footer>
