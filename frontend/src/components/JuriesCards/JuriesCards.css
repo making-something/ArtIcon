@@ -180,13 +180,18 @@
 		flex-direction: column;
 		align-items: center;
 		padding: 0 1rem 2rem 1rem;
+		margin-top: -1px;
 	}
 
 	.jury-member {
 		max-width: 400px;
+		width: 100%;
 		height: auto;
 		min-height: 450px;
 		transform: translateY(0%) !important;
+		display: flex;
+		justify-content: center;
+		align-items: center;
 	}
 
 	.jury-member-name-initial h1 {
@@ -196,11 +201,12 @@
 
 	.jury-member-card {
 		width: 350px;
-		transform: translate(-50%, -50%) scale(1) rotate(0deg) !important;
+		max-width: 100%;
 		position: relative;
 		top: auto;
 		left: auto;
 		transform: none !important;
+		margin: 0 auto;
 	}
 
 	.jury-member-img {

@@ -231,26 +231,7 @@ const Footer = () => {
 						))}
 					</div>
 				</div>
-				<div className="copyright-info">
-					<p className="mn">
-						Built by{" "}
-						<a
-							href="https://pow.noobokay.me"
-							target="_blank"
-							rel="noreferrer noopener"
-						>
-							Dhairya
-						</a>
-						<> & </>
-						<a
-							href="https://github.com/NILAY1556"
-							target="_blank"
-							rel="noreferrer noopener"
-						>
-							Nilay
-						</a>
-					</p>
-				</div>
+
 				<div className="explosion-container" ref={explosionRef}></div>
 			</div>
 		</footer>

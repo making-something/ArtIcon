@@ -152,7 +152,35 @@
 @media (max-width: 1000px) {
 	.clients .grid {
 		width: 95%;
-		height: 50%;
+		height: auto;
+		flex-direction: column;
+	}
+
+	.clients .grid-row {
+		width: 100%;
+		flex-direction: column;
+		height: auto;
+		border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+	}
+
+	.clients .grid-row:nth-child(1) {
+		flex: none;
+	}
+
+	.clients .grid-row:nth-child(2) {
+		flex: none;
+		border-bottom: none;
+	}
+
+	.clients .grid-item {
+		width: 100%;
+		height: auto;
+		padding: 3rem 2rem;
+		border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+	}
+
+	.clients .grid-item:last-child {
+		border-bottom: none;
 	}
 
 	.clients .logo-wrapper {

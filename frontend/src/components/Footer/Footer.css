@@ -223,11 +223,17 @@
 	.otis-footer .footer-row {
 		flex-direction: column;
 		margin-bottom: 2em;
+		gap: 4em;
 	}
 
 	.otis-footer .footer-col {
 		align-items: center;
 		text-align: center;
+	}
+
+	.otis-footer .footer-col-heading img {
+		width: 180px;
+		height: auto;
 	}
 
 	.otis-footer .footer-col .footer-social-item {

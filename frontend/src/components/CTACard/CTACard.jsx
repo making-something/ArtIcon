@@ -12,7 +12,8 @@ const CTACard = () => {
 					<div className="cta-col">
 						<Copy animateOnScroll={true}>
 							<p className="sm">
-								Kyu Banoge ArtIcon? <br /> Kyunki Ye Mauka Baar-Baar Nahi Aata!
+								Know The Game Before You Play! <br /> Read The Rules, Own The
+								Stage!
 							</p>
 						</Copy>
 					</div>
@@ -20,7 +21,7 @@ const CTACard = () => {
 					<div className="cta-col">
 						<Copy animateOnScroll={true}>
 							<p className="lg">
-								Jab Creativity aur Competition milte hai, tab banta hai Icon!
+								Every Great Creation Starts With Understanding The Guidelines!
 							</p>
 						</Copy>
 

@@ -85,7 +85,7 @@
 
 	.spotlight #marquee-2 .marquee,
 	.spotlight #marquee-4 .marquee {
-		transform: translate3d(-35%, -50%, 0);
+		transform: translate3d(-50%, -50%, 0);
 	}
 
 	.spotlight .marquee-img-item h1 {
