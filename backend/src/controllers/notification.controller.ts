@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import supabaseAdmin from '@/config/supabase';
 import emailService from '@/services/email.service';
+import { whatsappService } from '@/services/whatsapp.service';
 import { NotificationInsert } from '@/types/database';
 
 export class NotificationController {
@@ -68,9 +69,10 @@ export class NotificationController {
         return;
       }
 
-      // Send email notifications
-      // Note: Individual emails should be sent per participant
+      // Send email and WhatsApp notifications
+      // Note: Individual messages should be sent per participant
       for (const participant of participants) {
+        // Send email
         await emailService.sendEmail({
           to: participant.email,
           subject: '📢 Articon Hackathon Update',
@@ -84,6 +86,14 @@ export class NotificationController {
             </div>
           `,
           text: `Hi ${participant.name}!\n\n${message}\n\nStay tuned for more updates! 🚀`,
+        });
+
+        // Send WhatsApp (using hello_world template for now)
+        await whatsappService.sendRegistrationMessage(
+          participant.whatsapp_no,
+          participant.name
+        ).catch((error) => {
+          console.error(`Failed to send WhatsApp to ${participant.whatsapp_no}:`, error);
         });
       }
 
@@ -267,6 +277,139 @@ export class NotificationController {
       });
     } catch (error) {
       console.error('Error in deleteNotification:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Internal server error',
+      });
+    }
+  }
+
+  /**
+   * Send portfolio approval notification
+   */
+  async sendPortfolioApprovalNotification(req: Request, res: Response): Promise<void> {
+    try {
+      const { participant_ids, event_name, event_date } = req.body;
+
+      if (!participant_ids || !Array.isArray(participant_ids) || participant_ids.length === 0) {
+        res.status(400).json({
+          success: false,
+          message: 'participant_ids array is required',
+        });
+        return;
+      }
+
+      // Get participants
+      const { data: participants, error } = await supabaseAdmin
+        .from('participants')
+        .select('*')
+        .in('id', participant_ids);
+
+      if (error || !participants || participants.length === 0) {
+        res.status(404).json({
+          success: false,
+          message: 'No participants found',
+        });
+        return;
+      }
+
+      const eventDateObj = event_date ? new Date(event_date) : new Date();
+
+      // Send approval notifications
+      for (const participant of participants) {
+        // Send email
+        await emailService.sendPortfolioSelectedEmail(participant, eventDateObj)
+          .catch((error) => {
+            console.error(`Failed to send approval email to ${participant.email}:`, error);
+          });
+
+        // Send WhatsApp (using hello_world template for now)
+        await whatsappService.sendApprovalMessage(
+          participant.whatsapp_no,
+          participant.name,
+          event_name || 'Articon Hackathon',
+          eventDateObj
+        ).catch((error) => {
+          console.error(`Failed to send approval WhatsApp to ${participant.whatsapp_no}:`, error);
+        });
+      }
+
+      res.status(200).json({
+        success: true,
+        message: 'Portfolio approval notifications sent successfully',
+        data: {
+          recipientCount: participants.length,
+        },
+      });
+    } catch (error) {
+      console.error('Error in sendPortfolioApprovalNotification:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Internal server error',
+      });
+    }
+  }
+
+  /**
+   * Send event reminder notification
+   */
+  async sendEventReminderNotification(req: Request, res: Response): Promise<void> {
+    try {
+      const { event_name, event_date, days_until_event } = req.body;
+
+      if (!event_name || !event_date) {
+        res.status(400).json({
+          success: false,
+          message: 'event_name and event_date are required',
+        });
+        return;
+      }
+
+      const eventDateObj = new Date(event_date);
+      const daysUntil = days_until_event || 2;
+
+      // Get all participants (or you can filter based on approval status)
+      const { data: participants, error } = await supabaseAdmin
+        .from('participants')
+        .select('*');
+
+      if (error || !participants || participants.length === 0) {
+        res.status(404).json({
+          success: false,
+          message: 'No participants found',
+        });
+        return;
+      }
+
+      // Send reminder notifications
+      for (const participant of participants) {
+        // Send email
+        await emailService.sendEventReminderEmail(participant, eventDateObj)
+          .catch((error) => {
+            console.error(`Failed to send reminder email to ${participant.email}:`, error);
+          });
+
+        // Send WhatsApp (using hello_world template for now)
+        await whatsappService.sendEventReminderMessage(
+          participant.whatsapp_no,
+          participant.name,
+          event_name,
+          eventDateObj,
+          daysUntil
+        ).catch((error) => {
+          console.error(`Failed to send reminder WhatsApp to ${participant.whatsapp_no}:`, error);
+        });
+      }
+
+      res.status(200).json({
+        success: true,
+        message: 'Event reminder notifications sent successfully',
+        data: {
+          recipientCount: participants.length,
+        },
+      });
+    } catch (error) {
+      console.error('Error in sendEventReminderNotification:', error);
       res.status(500).json({
         success: false,
         message: 'Internal server error',

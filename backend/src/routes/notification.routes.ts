@@ -39,4 +39,18 @@ router.put('/:id', authenticateAdmin, notificationController.updateNotification.
  */
 router.delete('/:id', authenticateAdmin, notificationController.deleteNotification.bind(notificationController));
 
+/**
+ * @route   POST /api/notifications/portfolio-approval
+ * @desc    Send portfolio approval notification (email + WhatsApp)
+ * @access  Admin
+ */
+router.post('/portfolio-approval', authenticateAdmin, notificationController.sendPortfolioApprovalNotification.bind(notificationController));
+
+/**
+ * @route   POST /api/notifications/event-reminder
+ * @desc    Send event reminder notification (email + WhatsApp)
+ * @access  Admin
+ */
+router.post('/event-reminder', authenticateAdmin, notificationController.sendEventReminderNotification.bind(notificationController));
+
 export default router;

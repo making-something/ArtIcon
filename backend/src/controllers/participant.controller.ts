@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import supabaseAdmin from "@/config/supabase";
 import emailService from "@/services/email.service";
+import { whatsappService } from "@/services/whatsapp.service";
 import { ParticipantInsert } from "@/types/database";
 
 export class ParticipantController {
@@ -129,6 +130,22 @@ export class ParticipantController {
 			})
 			.catch((error) => {
 				console.error("❌ Error sending registration email:", error);
+			});
+
+		// Send registration WhatsApp message asynchronously
+		console.log(`📱 Attempting to send registration WhatsApp to: ${participant.whatsapp_no}`);
+		whatsappService.sendRegistrationMessage(participant.whatsapp_no, participant.name)
+			.then((result) => {
+				if (result.success) {
+					console.log(`✅ Registration WhatsApp sent successfully to ${participant.whatsapp_no}`);
+					console.log(`   Message ID: ${result.messageId}`);
+				} else {
+					console.error(`❌ Failed to send registration WhatsApp to ${participant.whatsapp_no}`);
+					console.error(`   Error: ${result.error}`);
+				}
+			})
+			.catch((error) => {
+				console.error("❌ Error sending registration WhatsApp:", error);
 			});			// Generate token for auto-login
 			const { signToken } = await import("@/utils/jwt");
 			const token = signToken({
