@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
-import supabaseAdmin from '@/config/supabase';
+import { databaseService } from '@/services/database.service';
 import { SubmissionInsert } from '@/types/database';
+import db from '@/config/database';
 
 export class SubmissionController {
   /**
@@ -20,13 +21,9 @@ export class SubmissionController {
       }
 
       // Validate participant exists
-      const { data: participant, error: participantError } = await supabaseAdmin
-        .from('participants')
-        .select('*')
-        .eq('id', participant_id)
-        .single();
+      const participant = await databaseService.getParticipantById(participant_id);
 
-      if (participantError || !participant) {
+      if (!participant) {
         res.status(404).json({
           success: false,
           message: 'Participant not found',
@@ -35,13 +32,9 @@ export class SubmissionController {
       }
 
       // Validate task exists
-      const { data: task, error: taskError } = await supabaseAdmin
-        .from('tasks')
-        .select('*')
-        .eq('id', task_id)
-        .single();
+      const task = await databaseService.getTaskById(task_id);
 
-      if (taskError || !task) {
+      if (!task) {
         res.status(404).json({
           success: false,
           message: 'Task not found',
@@ -59,12 +52,8 @@ export class SubmissionController {
       }
 
       // Check if submission already exists
-      const { data: existingSubmission } = await supabaseAdmin
-        .from('submissions')
-        .select('id')
-        .eq('participant_id', participant_id)
-        .eq('task_id', task_id)
-        .single();
+      const stmt = db.prepare('SELECT id FROM submissions WHERE participant_id = ? AND task_id = ?');
+      const existingSubmission = stmt.get(participant_id, task_id);
 
       if (existingSubmission) {
         res.status(409).json({
@@ -82,23 +71,7 @@ export class SubmissionController {
         preview_url: drive_link, // Can be processed later
       };
 
-      const { data: submission, error } = await supabaseAdmin
-        .from('submissions')
-        .insert(submissionData)
-        .select()
-        .single();
-
-      if (error) {
-        console.error('Error creating submission:', error);
-        res.status(500).json({
-          success: false,
-          message: 'Failed to create submission',
-        });
-        return;
-      }
-
-      // Auto-assign to judge with least assignments
-      await this.autoAssignJudge(submission.id);
+      const submission = await databaseService.createSubmission(submissionData);
 
       // Note: Submission confirmations are handled through the UI
       // No email notification needed for submissions
@@ -146,18 +119,12 @@ export class SubmissionController {
         updateData.score = score;
       }
 
-      const { data: submission, error } = await supabaseAdmin
-        .from('submissions')
-        .update(updateData)
-        .eq('id', id)
-        .select()
-        .single();
+      const submission = await databaseService.updateSubmission(id, updateData);
 
-      if (error || !submission) {
-        console.error('Update submission error:', error);
+      if (!submission) {
         res.status(404).json({
           success: false,
-          message: error ? `Database error: ${error.message}` : 'Submission not found',
+          message: 'Submission not found',
         });
         return;
       }
@@ -183,18 +150,9 @@ export class SubmissionController {
     try {
       const { id } = req.params;
 
-      const { data: submission, error } = await supabaseAdmin
-        .from('submissions')
-        .select(`
-          *,
-          participant:participants(*),
-          task:tasks(*),
-          judge:judges(id, name, email)
-        `)
-        .eq('id', id)
-        .single();
+      const submission = await databaseService.getSubmissionById(id);
 
-      if (error || !submission) {
+      if (!submission) {
         res.status(404).json({
           success: false,
           message: 'Submission not found',
@@ -220,41 +178,80 @@ export class SubmissionController {
    */
   async getAll(req: Request, res: Response): Promise<void> {
     try {
-      const { participant_id, task_id, judge_id, category } = req.query;
+      const { participant_id, task_id, category } = req.query;
 
-      let query = supabaseAdmin
-        .from('submissions')
-        .select(`
-          *,
-          participant:participants(*),
-          task:tasks(*),
-          judge:judges(id, name, email)
-        `);
+      // Build base query
+      let query = `
+        SELECT
+          s.*,
+          p.id as participant_id, p.name as participant_name, p.email as participant_email,
+          p.whatsapp_no as participant_whatsapp_no, p.category as participant_category, p.city as participant_city,
+          p.portfolio_url as participant_portfolio_url, p.portfolio_file_path as participant_portfolio_file_path,
+          p.is_present as participant_is_present, p.role as participant_role, p.experience as participant_experience,
+          p.organization as participant_organization, p.specialization as participant_specialization, p.source as participant_source,
+          p.password_hash as participant_password_hash, p.created_at as participant_created_at, p.updated_at as participant_updated_at,
+          t.id as task_id, t.category as task_category, t.title as task_title, t.description as task_description,
+          t.created_at as task_created_at, t.updated_at as task_updated_at
+        FROM submissions s
+        LEFT JOIN participants p ON s.participant_id = p.id
+        LEFT JOIN tasks t ON s.task_id = t.id
+        WHERE 1=1
+      `;
+      const params: any[] = [];
 
       if (participant_id) {
-        query = query.eq('participant_id', participant_id);
+        query += ' AND s.participant_id = ?';
+        params.push(participant_id);
       }
 
       if (task_id) {
-        query = query.eq('task_id', task_id);
+        query += ' AND s.task_id = ?';
+        params.push(task_id);
       }
 
-      if (judge_id) {
-        query = query.eq('judge_id', judge_id);
-      }
+      query += ' ORDER BY s.submitted_at DESC';
 
-      const { data: submissions, error } = await query.order('submitted_at', {
-        ascending: false,
-      });
+      const stmt = db.prepare(query);
+      const rows = stmt.all(...params) as any[];
 
-      if (error) {
-        console.error('Error fetching submissions:', error);
-        res.status(500).json({
-          success: false,
-          message: 'Failed to fetch submissions',
-        });
-        return;
-      }
+      const submissions = rows.map(row => ({
+        id: row.id,
+        participant_id: row.participant_id,
+        task_id: row.task_id,
+        drive_link: row.drive_link,
+        submitted_at: row.submitted_at,
+        preview_url: row.preview_url,
+        score: row.score,
+        created_at: row.created_at,
+        updated_at: row.updated_at,
+        participant: {
+          id: row.participant_id,
+          name: row.participant_name,
+          email: row.participant_email,
+          whatsapp_no: row.participant_whatsapp_no,
+          category: row.participant_category,
+          city: row.participant_city,
+          portfolio_url: row.participant_portfolio_url,
+          portfolio_file_path: row.participant_portfolio_file_path,
+          is_present: !!row.participant_is_present,
+          role: row.participant_role,
+          experience: row.participant_experience,
+          organization: row.participant_organization,
+          specialization: row.participant_specialization,
+          source: row.participant_source,
+          password_hash: row.participant_password_hash,
+          created_at: row.participant_created_at,
+          updated_at: row.participant_updated_at,
+        },
+        task: {
+          id: row.task_id,
+          category: row.task_category,
+          title: row.task_title,
+          description: row.task_description,
+          created_at: row.task_created_at,
+          updated_at: row.task_updated_at,
+        },
+      }));
 
       // Filter by category if provided
       let filteredSubmissions = submissions;
@@ -285,23 +282,37 @@ export class SubmissionController {
     try {
       const { participant_id } = req.params;
 
-      const { data: submissions, error } = await supabaseAdmin
-        .from('submissions')
-        .select(`
-          *,
-          task:tasks(*)
-        `)
-        .eq('participant_id', participant_id)
-        .order('submitted_at', { ascending: false });
+      const stmt = db.prepare(`
+        SELECT
+          s.*,
+          t.* as task_data
+        FROM submissions s
+        LEFT JOIN tasks t ON s.task_id = t.id
+        WHERE s.participant_id = ?
+        ORDER BY s.submitted_at DESC
+      `);
 
-      if (error) {
-        console.error('Error fetching submissions:', error);
-        res.status(500).json({
-          success: false,
-          message: 'Failed to fetch submissions',
-        });
-        return;
-      }
+      const rows = stmt.all(participant_id) as any[];
+
+      const submissions = rows.map(row => ({
+        id: row.id,
+        participant_id: row.participant_id,
+        task_id: row.task_id,
+        drive_link: row.drive_link,
+        submitted_at: row.submitted_at,
+        preview_url: row.preview_url,
+        score: row.score,
+        created_at: row.created_at,
+        updated_at: row.updated_at,
+        task: {
+          id: row.task_id,
+          category: row.category,
+          title: row.title,
+          description: row.description,
+          created_at: row.created_at,
+          updated_at: row.updated_at,
+        },
+      }));
 
       res.status(200).json({
         success: true,
@@ -317,46 +328,7 @@ export class SubmissionController {
     }
   }
 
-  /**
-   * Get submissions assigned to a judge
-   */
-  async getByJudge(req: Request, res: Response): Promise<void> {
-    try {
-      const { judge_id } = req.params;
-
-      const { data: submissions, error } = await supabaseAdmin
-        .from('submissions')
-        .select(`
-          *,
-          participant:participants(*),
-          task:tasks(*)
-        `)
-        .eq('judge_id', judge_id)
-        .order('submitted_at', { ascending: false });
-
-      if (error) {
-        console.error('Error fetching submissions:', error);
-        res.status(500).json({
-          success: false,
-          message: 'Failed to fetch submissions',
-        });
-        return;
-      }
-
-      res.status(200).json({
-        success: true,
-        data: submissions,
-        count: submissions.length,
-      });
-    } catch (error) {
-      console.error('Error in getByJudge:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Internal server error',
-      });
-    }
-  }
-
+  
   /**
    * Delete submission
    */
@@ -364,12 +336,9 @@ export class SubmissionController {
     try {
       const { id } = req.params;
 
-      const { error } = await supabaseAdmin
-        .from('submissions')
-        .delete()
-        .eq('id', id);
+      const success = await databaseService.deleteSubmission(id);
 
-      if (error) {
+      if (!success) {
         res.status(404).json({
           success: false,
           message: 'Submission not found',
@@ -395,18 +364,7 @@ export class SubmissionController {
    */
   async getStatistics(_req: Request, res: Response): Promise<void> {
     try {
-      const { data: stats, error } = await supabaseAdmin
-        .from('submission_statistics')
-        .select('*');
-
-      if (error) {
-        console.error('Error fetching statistics:', error);
-        res.status(500).json({
-          success: false,
-          message: 'Failed to fetch statistics',
-        });
-        return;
-      }
+      const stats = await databaseService.getSubmissionStatistics();
 
       res.status(200).json({
         success: true,
@@ -414,132 +372,6 @@ export class SubmissionController {
       });
     } catch (error) {
       console.error('Error in getStatistics:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Internal server error',
-      });
-    }
-  }
-
-  /**
-   * Auto-assign submission to judge with least assignments
-   */
-  private async autoAssignJudge(submissionId: string): Promise<void> {
-    try {
-      // Get judge with least assignments
-      const { data: judges, error: judgeError } = await supabaseAdmin
-        .from('judges')
-        .select('*')
-        .order('assigned_count', { ascending: true })
-        .limit(1);
-
-      if (judgeError || !judges || judges.length === 0) {
-        console.error('No judges available for assignment');
-        return;
-      }
-
-      const selectedJudge = judges[0];
-
-      // Assign submission to judge
-      const { error: updateError } = await supabaseAdmin
-        .from('submissions')
-        .update({ judge_id: selectedJudge.id })
-        .eq('id', submissionId);
-
-      if (updateError) {
-        console.error('Error assigning judge:', updateError);
-        return;
-      }
-
-      // Increment judge's assigned count
-      await supabaseAdmin
-        .from('judges')
-        .update({ assigned_count: selectedJudge.assigned_count + 1 })
-        .eq('id', selectedJudge.id);
-
-      console.log(`Submission ${submissionId} assigned to judge ${selectedJudge.name}`);
-    } catch (error) {
-      console.error('Error in autoAssignJudge:', error);
-    }
-  }
-
-  /**
-   * Manually reassign submission to a different judge
-   */
-  async reassignJudge(req: Request, res: Response): Promise<void> {
-    try {
-      const { id } = req.params;
-      const { judge_id } = req.body;
-
-      if (!judge_id) {
-        res.status(400).json({
-          success: false,
-          message: 'judge_id is required',
-        });
-        return;
-      }
-
-      // Get current submission
-      const { data: submission, error: submissionError } = await supabaseAdmin
-        .from('submissions')
-        .select('judge_id')
-        .eq('id', id)
-        .single();
-
-      if (submissionError || !submission) {
-        res.status(404).json({
-          success: false,
-          message: 'Submission not found',
-        });
-        return;
-      }
-
-      // Validate new judge exists
-      const { data: newJudge, error: judgeError } = await supabaseAdmin
-        .from('judges')
-        .select('*')
-        .eq('id', judge_id)
-        .single();
-
-      if (judgeError || !newJudge) {
-        res.status(404).json({
-          success: false,
-          message: 'Judge not found',
-        });
-        return;
-      }
-
-      const oldJudgeId = submission.judge_id;
-
-      // Update submission
-      const { data: updatedSubmission, error: updateError } = await supabaseAdmin
-        .from('submissions')
-        .update({ judge_id })
-        .eq('id', id)
-        .select()
-        .single();
-
-      if (updateError) {
-        res.status(500).json({
-          success: false,
-          message: 'Failed to reassign judge',
-        });
-        return;
-      }
-
-      // Update judge counts
-      if (oldJudgeId) {
-        await supabaseAdmin.rpc('decrement_judge_count', { judge_id: oldJudgeId });
-      }
-      await supabaseAdmin.rpc('increment_judge_count', { judge_id });
-
-      res.status(200).json({
-        success: true,
-        message: 'Judge reassigned successfully',
-        data: updatedSubmission,
-      });
-    } catch (error) {
-      console.error('Error in reassignJudge:', error);
       res.status(500).json({
         success: false,
         message: 'Internal server error',

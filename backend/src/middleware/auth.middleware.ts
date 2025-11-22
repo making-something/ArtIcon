@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 interface JwtPayload {
   id: string;
   email: string;
-  role: 'admin' | 'judge' | 'participant';
+  role: 'admin' | 'participant';
 }
 
 declare global {
@@ -73,38 +73,12 @@ export const authenticateAdmin = (req: Request, res: Response, next: NextFunctio
   });
 };
 
-export const authenticateJudge = (req: Request, res: Response, next: NextFunction): void => {
-  authenticateToken(req, res, () => {
-    if (req.user?.role !== 'judge') {
-      res.status(403).json({
-        success: false,
-        message: 'Judge access required',
-      });
-      return;
-    }
-    next();
-  });
-};
-
 export const authenticateParticipant = (req: Request, res: Response, next: NextFunction): void => {
   authenticateToken(req, res, () => {
     if (req.user?.role !== 'participant') {
       res.status(403).json({
         success: false,
         message: 'Participant access required',
-      });
-      return;
-    }
-    next();
-  });
-};
-
-export const authenticateAdminOrJudge = (req: Request, res: Response, next: NextFunction): void => {
-  authenticateToken(req, res, () => {
-    if (req.user?.role !== 'admin' && req.user?.role !== 'judge') {
-      res.status(403).json({
-        success: false,
-        message: 'Admin or Judge access required',
       });
       return;
     }

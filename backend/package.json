@@ -19,14 +19,17 @@
     "hackathon",
     "express",
     "typescript",
-    "supabase"
+    "sqlite"
   ],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@aws-sdk/client-ses": "^3.936.0",
     "@aws-sdk/client-sesv2": "^3.927.0",
+    "@types/axios": "^0.14.4",
+    "axios": "^1.13.2",
     "bcryptjs": "^3.0.3",
+    "better-sqlite3": "^12.4.5",
     "cors": "^2.8.5",
     "date-fns": "^4.1.0",
     "dotenv": "^17.2.3",
@@ -42,8 +45,8 @@
     "zod": "^4.1.12"
   },
   "devDependencies": {
-    "@supabase/supabase-js": "^2.79.0",
     "@types/bcryptjs": "^3.0.0",
+    "@types/better-sqlite3": "^7.6.13",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.5",
     "@types/jsonwebtoken": "^9.0.10",
@@ -52,7 +55,6 @@
     "@types/nodemailer": "^7.0.3",
     "eslint": "^9.39.1",
     "nodemon": "^3.1.10",
-    "supabase": "^2.54.11",
     "tsc-alias": "^1.8.16",
     "tsx": "^4.20.6",
     "typescript": "^5"

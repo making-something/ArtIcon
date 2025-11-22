@@ -38,12 +38,6 @@ router.get('/', submissionController.getAll.bind(submissionController));
  */
 router.get('/participant/:participant_id', submissionController.getByParticipant.bind(submissionController));
 
-/**
- * @route   GET /api/submissions/judge/:judge_id
- * @desc    Get submissions assigned to a judge
- * @access  Admin/Judge
- */
-router.get('/judge/:judge_id', submissionController.getByJudge.bind(submissionController));
 
 /**
  * @route   DELETE /api/submissions/:id
@@ -59,11 +53,5 @@ router.delete('/:id', submissionController.delete.bind(submissionController));
  */
 router.get('/stats/all', submissionController.getStatistics.bind(submissionController));
 
-/**
- * @route   PATCH /api/submissions/:id/reassign
- * @desc    Reassign submission to a different judge
- * @access  Admin
- */
-router.patch('/:id/reassign', submissionController.reassignJudge.bind(submissionController));
 
 export default router;

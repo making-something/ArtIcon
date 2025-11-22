@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import supabaseAdmin from "@/config/supabase";
 import emailService from "@/services/email.service";
 import { whatsappService } from "@/services/whatsapp.service";
+import { databaseService } from "@/services/database.service";
 import { ParticipantInsert } from "@/types/database";
 
 export class ParticipantController {
@@ -65,11 +65,7 @@ export class ParticipantController {
 			}
 
 			// Check if email already exists
-			const { data: existingParticipant } = await supabaseAdmin
-				.from("participants")
-				.select("id")
-				.eq("email", email)
-				.single();
+			const existingParticipant = await databaseService.getParticipantByEmail(email);
 
 			if (existingParticipant) {
 				res.status(409).json({
@@ -101,14 +97,10 @@ export class ParticipantController {
 				is_present: false,
 			};
 
-			const { data: participant, error } = await supabaseAdmin
-				.from("participants")
-				.insert(participantData)
-				.select()
-				.single();
+			const participant = await databaseService.createParticipant(participantData);
 
-			if (error) {
-				console.error("Error creating participant:", error);
+			if (!participant) {
+				console.error("Error creating participant");
 				res.status(500).json({
 					success: false,
 					message: "Failed to register participant",
@@ -182,13 +174,9 @@ export class ParticipantController {
 		try {
 			const { id } = req.params;
 
-			const { data: participant, error } = await supabaseAdmin
-				.from("participants")
-				.select("*")
-				.eq("id", id)
-				.single();
+			const participant = await databaseService.getParticipantById(id);
 
-			if (error || !participant) {
+			if (!participant) {
 				res.status(404).json({
 					success: false,
 					message: "Participant not found",
@@ -216,13 +204,9 @@ export class ParticipantController {
 		try {
 			const { email } = req.params;
 
-			const { data: participant, error } = await supabaseAdmin
-				.from("participants")
-				.select("*")
-				.eq("email", email)
-				.single();
+			const participant = await databaseService.getParticipantByEmail(email);
 
-			if (error || !participant) {
+			if (!participant) {
 				res.status(404).json({
 					success: false,
 					message: "Participant not found",
@@ -250,28 +234,15 @@ export class ParticipantController {
 		try {
 			const { category, is_present } = req.query;
 
-			let query = supabaseAdmin.from("participants").select("*");
-
+			const filters: any = {};
 			if (category) {
-				query = query.eq("category", category);
+				filters.category = category as any;
 			}
-
 			if (is_present !== undefined) {
-				query = query.eq("is_present", is_present === "true");
+				filters.is_present = is_present === "true";
 			}
 
-			const { data: participants, error } = await query.order("created_at", {
-				ascending: false,
-			});
-
-			if (error) {
-				console.error("Error fetching participants:", error);
-				res.status(500).json({
-					success: false,
-					message: "Failed to fetch participants",
-				});
-				return;
-			}
+			const { participants } = await databaseService.getParticipants(filters);
 
 			res.status(200).json({
 				success: true,
@@ -295,13 +266,9 @@ export class ParticipantController {
 			const { id } = req.params;
 
 			// Get participant
-			const { data: participant, error: fetchError } = await supabaseAdmin
-				.from("participants")
-				.select("*")
-				.eq("id", id)
-				.single();
+			const participant = await databaseService.getParticipantById(id);
 
-			if (fetchError || !participant) {
+			if (!participant) {
 				res.status(404).json({
 					success: false,
 					message: "Participant not found",
@@ -310,14 +277,9 @@ export class ParticipantController {
 			}
 
 			// Update is_present to true
-			const { data: updatedParticipant, error: updateError } = await supabaseAdmin
-				.from("participants")
-				.update({ is_present: true })
-				.eq("id", id)
-				.select()
-				.single();
+			const updatedParticipant = await databaseService.updateParticipant(id, { is_present: true });
 
-			if (updateError || !updatedParticipant) {
+			if (!updatedParticipant) {
 				res.status(500).json({
 					success: false,
 					message: "Failed to update presence",
@@ -359,14 +321,9 @@ export class ParticipantController {
 				return;
 			}
 
-			const { data: participant, error } = await supabaseAdmin
-				.from("participants")
-				.update({ is_present })
-				.eq("id", id)
-				.select()
-				.single();
+			const participant = await databaseService.updateParticipant(id, { is_present });
 
-			if (error || !participant) {
+			if (!participant) {
 				res.status(404).json({
 					success: false,
 					message: "Participant not found",
@@ -396,13 +353,9 @@ export class ParticipantController {
 			const { id } = req.params;
 
 			// Get participant
-			const { data: participant, error: participantError } = await supabaseAdmin
-				.from("participants")
-				.select("category")
-				.eq("id", id)
-				.single();
+			const participant = await databaseService.getParticipantById(id);
 
-			if (participantError || !participant) {
+			if (!participant) {
 				res.status(404).json({
 					success: false,
 					message: "Participant not found",
@@ -411,20 +364,7 @@ export class ParticipantController {
 			}
 
 			// Get tasks for participant's category
-			const { data: tasks, error: tasksError } = await supabaseAdmin
-				.from("tasks")
-				.select("*")
-				.eq("category", participant.category)
-				.order("created_at", { ascending: true });
-
-			if (tasksError) {
-				console.error("Error fetching tasks:", tasksError);
-				res.status(500).json({
-					success: false,
-					message: "Failed to fetch tasks",
-				});
-				return;
-			}
+			const tasks = await databaseService.getAllTasks(participant.category);
 
 			res.status(200).json({
 				success: true,
@@ -444,18 +384,7 @@ export class ParticipantController {
 	 */
 	async getStatistics(_req: Request, res: Response): Promise<void> {
 		try {
-			const { data: stats, error } = await supabaseAdmin
-				.from("participant_statistics")
-				.select("*");
-
-			if (error) {
-				console.error("Error fetching statistics:", error);
-				res.status(500).json({
-					success: false,
-					message: "Failed to fetch statistics",
-				});
-				return;
-			}
+			const stats = await databaseService.getParticipantStatistics();
 
 			res.status(200).json({
 				success: true,
@@ -486,13 +415,9 @@ export class ParticipantController {
 			}
 
 			// Find participant by email
-			const { data: participant, error } = await supabaseAdmin
-				.from("participants")
-				.select("*")
-				.eq("email", email)
-				.single();
+			const participant = await databaseService.getParticipantByEmail(email);
 
-			if (error || !participant) {
+			if (!participant) {
 				res.status(401).json({
 					success: false,
 					message: "Invalid credentials",
@@ -548,14 +473,9 @@ export class ParticipantController {
 	 */
 	async checkEventStatus(_req: Request, res: Response): Promise<void> {
 		try {
-			const { data: eventStart } = await supabaseAdmin
-				.from("event_settings")
-				.select("value")
-				.eq("key", "event_start_date")
-				.single();
-
-			const eventStartDate = eventStart?.value
-				? new Date(eventStart.value)
+			const settings = await databaseService.getEventSettings();
+			const eventStartDate = settings["event_start_date"]
+				? new Date(settings["event_start_date"])
 				: new Date(process.env.EVENT_START_DATE || "2025-11-15T09:00:00+05:30");
 
 			const now = new Date();

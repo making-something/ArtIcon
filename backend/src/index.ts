@@ -8,15 +8,17 @@ import path from "path";
 import participantRoutes from "@/routes/participant.routes";
 import submissionRoutes from "@/routes/submission.routes";
 import adminRoutes from "@/routes/admin.routes";
-import judgeRoutes from "@/routes/judge.routes";
 import notificationRoutes from "@/routes/notification.routes";
-import uploadRoutes from "@/routes/upload";
 import portfolioRoutes from "@/routes/portfolio.routes";
-
-import { validateEnv } from "@/config/validateEnv";
+import migrationRunner from "@/config/migration-runner";
 
 // Validate required environment variables
-validateEnv();
+
+// Initialize database migrations
+migrationRunner.runMigrations().catch((error) => {
+  console.error('❌ Database migration failed:', error);
+  process.exit(1);
+});
 
 // Initialize Express app
 const app: Application = express();
@@ -137,9 +139,7 @@ app.get("/health", (_req: Request, res: Response) => {
 app.use("/api/participants", participantRoutes);
 app.use("/api/submissions", submissionRoutes);
 app.use("/api/admin", adminRoutes);
-app.use("/api/judge", judgeRoutes);
 app.use("/api/notifications", notificationRoutes);
-app.use("/api/upload", uploadRoutes);
 app.use("/api/portfolio", portfolioRoutes);
 
 // 404 handler
@@ -172,11 +172,6 @@ io.on("connection", (socket) => {
   socket.on("join-admin", () => {
     socket.join("admin-room");
     console.log("Admin joined:", socket.id);
-  });
-
-  socket.on("join-judge", (judgeId: string) => {
-    socket.join(`judge-${judgeId}`);
-    console.log(`Judge ${judgeId} joined:`, socket.id);
   });
 
   socket.on("disconnect", () => {

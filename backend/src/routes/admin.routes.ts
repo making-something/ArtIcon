@@ -18,38 +18,6 @@ router.post("/login", adminController.login.bind(adminController));
  */
 router.post("/create", authenticateAdmin, adminController.createAdmin.bind(adminController));
 
-/**
- * @route   POST /api/admin/judges
- * @desc    Create judge account
- * @access  Admin
- */
-router.post(
-  "/judges",
-  authenticateAdmin,
-  adminController.createJudge.bind(adminController),
-);
-
-/**
- * @route   GET /api/admin/judges
- * @desc    Get all judges
- * @access  Admin
- */
-router.get(
-  "/judges",
-  authenticateAdmin,
-  adminController.getAllJudges.bind(adminController),
-);
-
-/**
- * @route   DELETE /api/admin/judges/:id
- * @desc    Delete judge
- * @access  Admin
- */
-router.delete(
-  "/judges/:id",
-  authenticateAdmin,
-  adminController.deleteJudge.bind(adminController),
-);
 
 /**
  * @route   POST /api/admin/tasks

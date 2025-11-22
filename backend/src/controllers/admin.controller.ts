@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
-import supabaseAdmin from '@/config/supabase';
 import bcrypt from 'bcryptjs';
 import { signToken } from '@/utils/jwt';
-import { AdminInsert, JudgeInsert, TaskInsert, WinnerInsert } from '@/types/database';
+import { databaseService } from '@/services/database.service';
+import { AdminInsert, TaskInsert } from '@/types/database';
 
 export class AdminController {
   /**
@@ -21,13 +21,9 @@ export class AdminController {
       }
 
       // Get admin by email
-      const { data: admin, error } = await supabaseAdmin
-        .from('admins')
-        .select('*')
-        .eq('email', email)
-        .single();
+      const admin = await databaseService.getAdminByEmail(email);
 
-      if (error || !admin) {
+      if (!admin) {
         res.status(401).json({
           success: false,
           message: 'Invalid credentials',
@@ -88,11 +84,7 @@ export class AdminController {
       }
 
       // Check if admin already exists
-      const { data: existingAdmin } = await supabaseAdmin
-        .from('admins')
-        .select('id')
-        .eq('email', email)
-        .single();
+      const existingAdmin = await databaseService.getAdminByEmail(email);
 
       if (existingAdmin) {
         res.status(409).json({
@@ -111,14 +103,10 @@ export class AdminController {
         password_hash: passwordHash,
       };
 
-      const { data: admin, error } = await supabaseAdmin
-        .from('admins')
-        .insert(adminData)
-        .select()
-        .single();
+      const admin = await databaseService.createAdmin(adminData);
 
-      if (error) {
-        console.error('Error creating admin:', error);
+      if (!admin) {
+        console.error('Error creating admin');
         res.status(500).json({
           success: false,
           message: 'Failed to create admin',
@@ -143,146 +131,7 @@ export class AdminController {
     }
   }
 
-  /**
-   * Create judge account
-   */
-  async createJudge(req: Request, res: Response): Promise<void> {
-    try {
-      const { name, email, password } = req.body;
-
-      if (!name || !email || !password) {
-        res.status(400).json({
-          success: false,
-          message: 'Name, email and password are required',
-        });
-        return;
-      }
-
-      // Check if judge already exists
-      const { data: existingJudge } = await supabaseAdmin
-        .from('judges')
-        .select('id')
-        .eq('email', email)
-        .single();
-
-      if (existingJudge) {
-        res.status(409).json({
-          success: false,
-          message: 'Judge already exists',
-        });
-        return;
-      }
-
-      // Hash password
-      const passwordHash = await bcrypt.hash(password, 10);
-
-      // Create judge
-      const judgeData: JudgeInsert = {
-        name,
-        email,
-        password_hash: passwordHash,
-        assigned_count: 0,
-      };
-
-      const { data: judge, error } = await supabaseAdmin
-        .from('judges')
-        .insert(judgeData)
-        .select()
-        .single();
-
-      if (error) {
-        console.error('Error creating judge:', error);
-        res.status(500).json({
-          success: false,
-          message: 'Failed to create judge',
-        });
-        return;
-      }
-
-      res.status(201).json({
-        success: true,
-        message: 'Judge created successfully',
-        data: {
-          id: judge.id,
-          name: judge.name,
-          email: judge.email,
-        },
-      });
-    } catch (error) {
-      console.error('Error in createJudge:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Internal server error',
-      });
-    }
-  }
-
-  /**
-   * Get all judges
-   */
-  async getAllJudges(_req: Request, res: Response): Promise<void> {
-    try {
-      const { data: judges, error } = await supabaseAdmin
-        .from('judges')
-        .select('id, name, email, assigned_count, created_at')
-        .order('assigned_count', { ascending: true });
-
-      if (error) {
-        console.error('Error fetching judges:', error);
-        res.status(500).json({
-          success: false,
-          message: 'Failed to fetch judges',
-        });
-        return;
-      }
-
-      res.status(200).json({
-        success: true,
-        data: judges,
-        count: judges.length,
-      });
-    } catch (error) {
-      console.error('Error in getAllJudges:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Internal server error',
-      });
-    }
-  }
-
-  /**
-   * Delete judge
-   */
-  async deleteJudge(req: Request, res: Response): Promise<void> {
-    try {
-      const { id } = req.params;
-
-      const { error } = await supabaseAdmin
-        .from('judges')
-        .delete()
-        .eq('id', id);
-
-      if (error) {
-        res.status(404).json({
-          success: false,
-          message: 'Judge not found',
-        });
-        return;
-      }
-
-      res.status(200).json({
-        success: true,
-        message: 'Judge deleted successfully',
-      });
-    } catch (error) {
-      console.error('Error in deleteJudge:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Internal server error',
-      });
-    }
-  }
-
+  
   /**
    * Create task
    */
@@ -315,14 +164,10 @@ export class AdminController {
         description,
       };
 
-      const { data: task, error } = await supabaseAdmin
-        .from('tasks')
-        .insert(taskData)
-        .select()
-        .single();
+      const task = await databaseService.createTask(taskData);
 
-      if (error) {
-        console.error('Error creating task:', error);
+      if (!task) {
+        console.error('Error creating task');
         res.status(500).json({
           success: false,
           message: 'Failed to create task',
@@ -364,14 +209,9 @@ export class AdminController {
       if (title) updateData.title = title;
       if (description) updateData.description = description;
 
-      const { data: task, error } = await supabaseAdmin
-        .from('tasks')
-        .update(updateData)
-        .eq('id', id)
-        .select()
-        .single();
+      const task = await databaseService.updateTask(id, updateData);
 
-      if (error || !task) {
+      if (!task) {
         res.status(404).json({
           success: false,
           message: 'Task not found',
@@ -400,12 +240,9 @@ export class AdminController {
     try {
       const { id } = req.params;
 
-      const { error } = await supabaseAdmin
-        .from('tasks')
-        .delete()
-        .eq('id', id);
+      const success = await databaseService.deleteTask(id);
 
-      if (error) {
+      if (!success) {
         res.status(404).json({
           success: false,
           message: 'Task not found',
@@ -433,24 +270,7 @@ export class AdminController {
     try {
       const { category } = req.query;
 
-      let query = supabaseAdmin.from('tasks').select('*');
-
-      if (category) {
-        query = query.eq('category', category);
-      }
-
-      const { data: tasks, error } = await query.order('created_at', {
-        ascending: true,
-      });
-
-      if (error) {
-        console.error('Error fetching tasks:', error);
-        res.status(500).json({
-          success: false,
-          message: 'Failed to fetch tasks',
-        });
-        return;
-      }
+      const tasks = await databaseService.getAllTasks(category as any);
 
       res.status(200).json({
         success: true,
@@ -482,13 +302,9 @@ export class AdminController {
       }
 
       // Validate participant exists
-      const { data: participant, error: participantError } = await supabaseAdmin
-        .from('participants')
-        .select('*')
-        .eq('id', participant_id)
-        .single();
+      const participant = await databaseService.getParticipantById(participant_id);
 
-      if (participantError || !participant) {
+      if (!participant) {
         res.status(404).json({
           success: false,
           message: 'Participant not found',
@@ -496,13 +312,9 @@ export class AdminController {
         return;
       }
 
-      // Check if winner already exists
-      const { data: existingWinner } = await supabaseAdmin
-        .from('winners')
-        .select('id')
-        .eq('participant_id', participant_id)
-        .eq('category', category)
-        .single();
+      // Check if winner already exists for this category
+      const existingWinners = await databaseService.getAllWinners(category);
+      const existingWinner = existingWinners.find(w => w.participant_id === participant_id);
 
       if (existingWinner) {
         res.status(409).json({
@@ -513,21 +325,15 @@ export class AdminController {
       }
 
       // Create winner
-      const winnerData: WinnerInsert = {
+      const winner = await databaseService.createWinner({
         participant_id,
         position,
         category,
         announcement_text,
-      };
+      });
 
-      const { data: winner, error } = await supabaseAdmin
-        .from('winners')
-        .insert(winnerData)
-        .select()
-        .single();
-
-      if (error) {
-        console.error('Error creating winner:', error);
+      if (!winner) {
+        console.error('Error creating winner');
         res.status(500).json({
           success: false,
           message: 'Failed to announce winner',
@@ -559,29 +365,7 @@ export class AdminController {
     try {
       const { category } = req.query;
 
-      let query = supabaseAdmin
-        .from('winners')
-        .select(`
-          *,
-          participant:participants(*)
-        `);
-
-      if (category) {
-        query = query.eq('category', category);
-      }
-
-      const { data: winners, error } = await query.order('position', {
-        ascending: true,
-      });
-
-      if (error) {
-        console.error('Error fetching winners:', error);
-        res.status(500).json({
-          success: false,
-          message: 'Failed to fetch winners',
-        });
-        return;
-      }
+      const winners = await databaseService.getAllWinners(category as any);
 
       res.status(200).json({
         success: true,
@@ -604,12 +388,9 @@ export class AdminController {
     try {
       const { id } = req.params;
 
-      const { error } = await supabaseAdmin
-        .from('winners')
-        .delete()
-        .eq('id', id);
+      const success = await databaseService.deleteWinner(id);
 
-      if (error) {
+      if (!success) {
         res.status(404).json({
           success: false,
           message: 'Winner not found',
@@ -645,39 +426,10 @@ export class AdminController {
         return;
       }
 
-      // Check if setting exists
-      const { data: existingSetting } = await supabaseAdmin
-        .from('event_settings')
-        .select('id')
-        .eq('key', key)
-        .single();
+      const setting = await databaseService.updateEventSetting(key, value);
 
-      let setting;
-      let error;
-
-      if (existingSetting) {
-        // Update existing setting
-        const result = await supabaseAdmin
-          .from('event_settings')
-          .update({ value })
-          .eq('key', key)
-          .select()
-          .single();
-        setting = result.data;
-        error = result.error;
-      } else {
-        // Create new setting
-        const result = await supabaseAdmin
-          .from('event_settings')
-          .insert({ key, value })
-          .select()
-          .single();
-        setting = result.data;
-        error = result.error;
-      }
-
-      if (error) {
-        console.error('Error updating event settings:', error);
+      if (!setting) {
+        console.error('Error updating event settings');
         res.status(500).json({
           success: false,
           message: 'Failed to update event settings',
@@ -704,28 +456,11 @@ export class AdminController {
    */
   async getEventSettings(_req: Request, res: Response): Promise<void> {
     try {
-      const { data: settings, error } = await supabaseAdmin
-        .from('event_settings')
-        .select('*');
-
-      if (error) {
-        console.error('Error fetching event settings:', error);
-        res.status(500).json({
-          success: false,
-          message: 'Failed to fetch event settings',
-        });
-        return;
-      }
-
-      // Convert array to object for easier access
-      const settingsObject: any = {};
-      settings.forEach((setting) => {
-        settingsObject[setting.key] = setting.value;
-      });
+      const settings = await databaseService.getEventSettings();
 
       res.status(200).json({
         success: true,
-        data: settingsObject,
+        data: settings,
       });
     } catch (error) {
       console.error('Error in getEventSettings:', error);
@@ -741,41 +476,11 @@ export class AdminController {
    */
   async getDashboardStats(_req: Request, res: Response): Promise<void> {
     try {
-      // Get total participants
-      const { count: totalParticipants } = await supabaseAdmin
-        .from('participants')
-        .select('*', { count: 'exact', head: true });
-
-      // Get present participants
-      const { count: presentParticipants } = await supabaseAdmin
-        .from('participants')
-        .select('*', { count: 'exact', head: true })
-        .eq('is_present', true);
-
-      // Get total submissions
-      const { count: totalSubmissions } = await supabaseAdmin
-        .from('submissions')
-        .select('*', { count: 'exact', head: true });
-
-      // Get category breakdown
-      const { data: categoryStats } = await supabaseAdmin
-        .from('participant_statistics')
-        .select('*');
-
-      // Get submission statistics
-      const { data: submissionStats } = await supabaseAdmin
-        .from('submission_statistics')
-        .select('*');
+      const stats = await databaseService.getDashboardStats();
 
       res.status(200).json({
         success: true,
-        data: {
-          totalParticipants: totalParticipants || 0,
-          presentParticipants: presentParticipants || 0,
-          totalSubmissions: totalSubmissions || 0,
-          categoryStats: categoryStats || [],
-          submissionStats: submissionStats || [],
-        },
+        data: stats,
       });
     } catch (error) {
       console.error('Error in getDashboardStats:', error);
@@ -793,47 +498,31 @@ export class AdminController {
     try {
       const { category, page = 1, limit = 50, search } = req.query;
 
-      let query = supabaseAdmin
-        .from('participants')
-        .select('id, name, email, whatsapp_no, category, city, portfolio_url, portfolio_file_path, role, experience, organization, specialization, source, is_present, created_at', { count: 'exact' });
-
-      // Filter by category if provided
+      const filters: any = {};
       if (category && category !== 'all') {
-        query = query.eq('category', category);
+        filters.category = category as any;
       }
-
-      // Search filter
       if (search && typeof search === 'string') {
-        query = query.or(`name.ilike.%${search}%,email.ilike.%${search}%,city.ilike.%${search}%`);
+        filters.search = search;
+      }
+      if (page && limit) {
+        filters.page = parseInt(page as string);
+        filters.limit = parseInt(limit as string);
       }
 
-      // Pagination
+      const { participants, total } = await databaseService.getParticipants(filters);
+
       const pageNum = parseInt(page as string);
       const limitNum = parseInt(limit as string);
-      const from = (pageNum - 1) * limitNum;
-      const to = from + limitNum - 1;
-
-      query = query.range(from, to).order('created_at', { ascending: false });
-
-      const { data: participants, error, count } = await query;
-
-      if (error) {
-        console.error('Error fetching participants:', error);
-        res.status(500).json({
-          success: false,
-          message: 'Failed to fetch participants',
-        });
-        return;
-      }
 
       res.status(200).json({
         success: true,
         data: participants,
         pagination: {
-          total: count || 0,
+          total,
           page: pageNum,
           limit: limitNum,
-          totalPages: Math.ceil((count || 0) / limitNum),
+          totalPages: Math.ceil(total / limitNum),
         },
       });
     } catch (error) {
