@@ -1,0 +1,278 @@
+.marquee-container {
+	position: relative;
+	width: 100%;
+	overflow: hidden;
+	display: flex;
+	align-items: center;
+	padding: 1.5rem 0;
+	background: linear-gradient(
+		90deg,
+		transparent 0%,
+		rgba(237, 106, 90, 0.03) 25%,
+		rgba(237, 106, 90, 0.05) 50%,
+		rgba(237, 106, 90, 0.03) 75%,
+		transparent 100%
+	);
+	background-size: 200% 100%;
+	animation: shimmer 8s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+	0%,
+	100% {
+		background-position: 0% 0%;
+	}
+	50% {
+		background-position: 100% 0%;
+	}
+}
+
+.marquee-content {
+	width: 100%;
+	overflow: hidden;
+	white-space: nowrap;
+}
+
+.marquee-track {
+	display: inline-flex;
+	gap: 3rem;
+	animation: marquee 25s linear infinite;
+	will-change: transform;
+}
+
+.marquee-track:hover {
+	animation-play-state: paused;
+}
+
+@keyframes marquee {
+	0% {
+		transform: translateX(0);
+	}
+	100% {
+		transform: translateX(-50%);
+	}
+}
+
+.marquee-date,
+.marquee-countdown {
+	font-family: "Big Shoulders Display", sans-serif;
+	font-size: 3rem;
+	font-weight: 400;
+	text-transform: uppercase;
+	color: var(--base-300);
+	letter-spacing: 0.05em;
+	position: relative;
+	display: inline-block;
+	transition: all 0.3s ease;
+}
+
+.marquee-date {
+	color: var(--base-300);
+}
+
+.marquee-countdown {
+	font-variant-numeric: tabular-nums;
+	display: inline-flex;
+	align-items: flex-start;
+	gap: 0.5rem;
+}
+
+.countdown-unit {
+	display: inline-flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 0.25rem;
+	animation: pulse 2s ease-in-out infinite;
+}
+
+.countdown-number {
+	font-size: 3rem;
+	font-weight: 400;
+	line-height: 1;
+	color: var(--base-300);
+}
+
+.countdown-label {
+	font-size: 0.75rem;
+	font-weight: 600;
+	letter-spacing: 0.1em;
+	color: var(--accent-9);
+	opacity: 0.7;
+	text-transform: uppercase;
+}
+
+.countdown-separator {
+	font-size: 3rem;
+	color: var(--base-300);
+	opacity: 0.5;
+	align-self: flex-start;
+	line-height: 1;
+}
+
+@keyframes pulse {
+	0%,
+	100% {
+		opacity: 1;
+		transform: scale(1);
+	}
+	50% {
+		opacity: 0.85;
+		transform: scale(0.98);
+	}
+}
+
+.marquee-symbol {
+	font-size: 1.5rem;
+	color: var(--accent-9);
+	opacity: 0.6;
+	display: inline-flex;
+	align-items: center;
+	align-self: center;
+}
+
+/* Fade overlays */
+.marquee-fade-left,
+.marquee-fade-right {
+	position: absolute;
+	top: 0;
+	width: 150px;
+	height: 100%;
+	pointer-events: none;
+	z-index: 2;
+}
+
+.marquee-fade-left {
+	left: 0;
+	background: linear-gradient(
+		to right,
+		var(--base-100) 0%,
+		rgba(249, 244, 235, 0.8) 30%,
+		transparent 100%
+	);
+}
+
+.marquee-fade-right {
+	right: 0;
+	background: linear-gradient(
+		to left,
+		var(--base-100) 0%,
+		rgba(249, 244, 235, 0.8) 30%,
+		transparent 100%
+	);
+}
+
+/* Responsive */
+@media (max-width: 1400px) and (min-width: 1001px) {
+	.marquee-date {
+		font-size: 1.8rem;
+	}
+
+	.countdown-number {
+		font-size: 1.8rem;
+	}
+
+	.countdown-separator {
+		font-size: 1.8rem;
+	}
+
+	.countdown-label {
+		font-size: 0.65rem;
+	}
+
+	.marquee-symbol {
+		font-size: 1.3rem;
+	}
+
+	.marquee-fade-left,
+	.marquee-fade-right {
+		width: 80px;
+	}
+}
+
+@media (max-width: 1200px) and (min-width: 1001px) {
+	.marquee-date {
+		font-size: 1.5rem;
+	}
+
+	.countdown-number {
+		font-size: 1.5rem;
+	}
+
+	.countdown-separator {
+		font-size: 1.5rem;
+	}
+
+	.countdown-label {
+		font-size: 0.6rem;
+	}
+
+	.marquee-symbol {
+		font-size: 1.2rem;
+	}
+
+	.marquee-track {
+		gap: 2.5rem;
+	}
+}
+
+@media (max-width: 1000px) {
+	.marquee-date {
+		font-size: 1.25rem;
+	}
+
+	.countdown-number {
+		font-size: 1.25rem;
+	}
+
+	.countdown-separator {
+		font-size: 1.25rem;
+	}
+
+	.countdown-label {
+		font-size: 0.55rem;
+	}
+
+	.marquee-symbol {
+		font-size: 1rem;
+	}
+
+	.marquee-track {
+		gap: 2rem;
+	}
+
+	.marquee-fade-left,
+	.marquee-fade-right {
+		width: 60px;
+	}
+}
+
+@media (max-width: 600px) {
+	.marquee-date {
+		font-size: 1rem;
+	}
+
+	.countdown-number {
+		font-size: 1rem;
+	}
+
+	.countdown-separator {
+		font-size: 1rem;
+	}
+
+	.countdown-label {
+		font-size: 0.5rem;
+	}
+
+	.marquee-symbol {
+		font-size: 0.8rem;
+	}
+
+	.marquee-track {
+		gap: 1.5rem;
+	}
+
+	.marquee-fade-left,
+	.marquee-fade-right {
+		width: 40px;
+	}
+}

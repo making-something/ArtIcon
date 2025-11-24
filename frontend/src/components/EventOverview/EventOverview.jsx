@@ -18,17 +18,21 @@ const EventOverview = () => {
 			gsap.delayedCall(0.1, () => {
 				const wordHighlightBgColor = "191, 188, 180";
 				const keywords = [
-					"ai",
-					"tools",
-					"hackathon",
-					"art",
 					"ui/ux",
 					"video",
+					"graphics",
 					"design",
-					"ideas",
 					"articon",
-					"fusion",
-					"festival",
+					"hackathon",
+					"creativity",
+					"theme",
+					"ai",
+					"tools",
+					"compete",
+					"champion",
+					"versatility",
+					"storytelling",
+					"innovation",
 				];
 
 				// Process text and create word elements
@@ -149,16 +153,22 @@ const EventOverview = () => {
 			<div className="event-overview-container">
 				<div className="event-overview-copy-container">
 					<div className="event-overview-anime-text">
-						<p>So, Creators… Get your AI tools, Devices & imagination ready!</p>
 						<p>
-							Yeh koi simple competition nahi!! Yeh hai Hackathon of Creativity
-							jaha art, design aur AI milke future banate hain! Har UI/UX
-							master, video magician aur design genius yaha apne ideas ko life
-							dene wala hai.
+							What if you could design a UI/UX masterpiece, edit a stunning
+							video, and craft breathtaking graphics — all in one day, under one
+							theme?
 						</p>
 						<p>
-							ArtIcon 2025, Gujarat's fusion festival of design, logic &
-							futuristic art!
+							Welcome to ArtIcon 2025, Gujarat's premier creativity hackathon
+							where 100 talented creators compete in a fusion of design, art,
+							and AI tools. This isn't just another competition — it's a
+							full-day creative marathon that tests your versatility,
+							storytelling, and innovation.
+						</p>
+						<p>
+							Three categories. One unified theme. 10.5 hours of pure
+							creativity. Are you ready to prove you're the ultimate creative
+							champion?
 						</p>
 					</div>
 				</div>

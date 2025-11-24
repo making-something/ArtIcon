@@ -15,26 +15,52 @@ const FAQ = () => {
 		{
 			question: "Is this an online or offline event?",
 			answer:
-				"Offline! Pure vibes, live energy, and actual face-to-face creative chaos at Golden Acre.",
+				"This is a fully offline event held at Multiicon's 4th Floor. You'll experience live energy, real-time collaboration vibes, and face-to-face creative competition!",
 		},
 		{
-			question: "Can I participate in more than one category?",
+			question: "Do I need to complete all three categories?",
 			answer:
-				"You can choose one and slay it. But for the Main ArtIcon Title, you'll need to ace all three!",
+				"Yes! To compete for the Main ArtIcon Trophy, you must complete all three tasks (UI/UX, Graphic Design, and Video Editing) under one unified theme. This tests your versatility as a complete creative professional.",
 		},
 		{
 			question: "Are AI tools allowed?",
 			answer:
-				"Yes! It's encouraged, bas use it smartly. AI se assist lo, replace nahi!",
+				"Absolutely! AI tools are encouraged to enhance your creativity and productivity. Use them smartly to amplify your ideas, but remember — the creativity and storytelling should be yours!",
 		},
 		{
-			question: "Do I need to bring my own equipment?",
+			question: "What equipment do I need to bring?",
 			answer:
-				"Yes!! Laptop, software, and imagination sab apna laana hai. Power points hum denge.",
+				"Bring your laptop with all necessary software pre-installed (design tools, video editors, etc.), chargers, and any other creative tools you prefer. We'll provide power outlets and WiFi. Make sure your software is licensed and ready to use!",
 		},
 		{
-			question: "Will food be provided?",
-			answer: "Of course! Creatives can't design on empty stomachs.",
+			question: "Will food and refreshments be provided?",
+			answer:
+				"Yes! We'll provide meals and refreshments throughout the day. Creatives can't design on empty stomachs, so we've got you covered!",
+		},
+		{
+			question: "How will the judging work?",
+			answer:
+				"Three expert jury members will evaluate your work based on: (1) Creativity and originality, (2) Consistency across all three tasks, and (3) How well you tell a cohesive story through different mediums. It's not just about individual excellence — it's about unified creative vision!",
+		},
+		{
+			question: "What if I'm not experienced in all three categories?",
+			answer:
+				"That's the challenge! ArtIcon is designed to push you out of your comfort zone and help you grow as a versatile creative. Use AI tools, learn on the go, and give it your best shot. You might surprise yourself!",
+		},
+		{
+			question: "Can I work in a team?",
+			answer:
+				"No, this is a solo challenge. You'll work independently to showcase your individual versatility and creative skills across all three disciplines.",
+		},
+		{
+			question: "What happens if I don't finish all three tasks?",
+			answer:
+				"You must complete all three tasks to be eligible for the Main ArtIcon Trophy. However, partial submissions may still be considered for category-specific runner-up prizes.",
+		},
+		{
+			question: "How do I register and what's the deadline?",
+			answer:
+				"Click the 'Register Now' button on this website and fill out the form. Registration is limited to 100 participants, so register early! The deadline will be announced on our social media channels.",
 		},
 	];
 
@@ -113,7 +139,9 @@ const FAQ = () => {
 						>
 							<div className="faq-question" onClick={() => toggleFAQ(index)}>
 								<span>{faq.question}</span>
-								<span className="faq-icon">{openIndex === index ? "−" : "+"}</span>
+								<span className="faq-icon">
+									{openIndex === index ? "−" : "+"}
+								</span>
 							</div>
 							<div className="faq-answer">
 								<div className="faq-answer-content">
@@ -130,4 +158,3 @@ const FAQ = () => {
 };
 
 export default FAQ;
-

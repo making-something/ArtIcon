@@ -13,37 +13,37 @@ const workItems = [
 		id: 1,
 		title: "DesignSprint",
 		category: "UI/UX Hackathon at Darshan University",
-		img: "/past_events/23TEWFSD.avif",
+		img: "/past_events/23refadz.avif",
 	},
 	{
 		id: 2,
 		title: "CodeCraft Fusion",
 		category: "Design & Dev Hackathon at Atmiya University",
-		img: "/past_events/32RQEFASD.avif",
+		img: "/past_events/SDXVC.avif",
 	},
 	{
 		id: 3,
 		title: "Creative Clash",
 		category: "Graphics Battle at Darshan University",
-		img: "/past_events/43RGFXB.avif",
+		img: "/past_events/53rqefda.avif",
 	},
 	{
 		id: 4,
 		title: "ArtTech Summit",
 		category: "Video Editing Marathon at Atmiya University",
-		img: "/past_events/53rqefda.avif",
+		img: "/past_events/hsjc.avif",
 	},
 	{
 		id: 5,
 		title: "PixelWars Gujarat",
 		category: "Multi-Category Hackathon at Darshan University",
-		img: "/past_events/TQEGADVVDZ.avif",
+		img: "/past_events/43RGFXB.avif",
 	},
 	{
 		id: 6,
 		title: "Innovation Fest 2024",
 		category: "Design Thinking Workshop at Atmiya University",
-		img: "/past_events/ytjhnb.avif",
+		img: "/past_events/3rfedcx.avif",
 	},
 ];
 

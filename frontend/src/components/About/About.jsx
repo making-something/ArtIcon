@@ -173,17 +173,16 @@ const About = () => {
 			<div className="about-copy">
 				<div className="about-copy-content">
 					<h3>
-						<span>ArtIcon 2025</span> — Where <span>Art</span> Meets{" "}
-						<span>Innovation</span>. A full-day creative <span>HACKATHON</span>{" "}
-						bringing together up to <span>100 CREATORS</span>, artists, and
-						innovators at <span>Multiicon</span> on{" "}
-						<span>30th November 2025</span>.
+						Here's the challenge: On <span>November 30th, 2025</span>, you'll
+						receive one creative <span>THEME</span> at <span>9:00 AM</span>.
 					</h3>
 					<h3>
-						From <span>9:00 AM to 7:30 PM</span>, dive into three creative
-						challenges — <span>UI/UX</span>, <span>GRAPHICS</span>, and{" "}
-						<span>VIDEO EDITING</span>. Complete all three under one theme to
-						claim the <span>MAIN ARTICON TROPHY</span>!
+						You have until <span>7:30 PM</span> to create three complete
+						projects — a <span>UI/UX DESIGN</span>, a{" "}
+						<span>GRAPHIC DESIGN</span>, and a <span>VIDEO EDIT</span> — all
+						telling the same story through different mediums. Use{" "}
+						<span>AI TOOLS</span> to amplify your creativity and compete for the{" "}
+						<span>MAIN ARTICON TROPHY</span>!
 					</h3>
 				</div>
 
@@ -206,47 +205,65 @@ const About = () => {
 			</div>
 
 			{/* SKILLS */}
-			{/* <div className="about-skills">
+			<div className="about-skills">
 				<div className="skills-copy">
-					<p>01........................UI/UX Design</p>
-					<p>02......................Video Editing</p>
-					<p>03..........................Graphic Design</p>
-					<p>04......................Creative Coding</p>
-					<p>05............................Branding</p>
+					<p>
+						This is a solo challenge held at Multiicon's 4th Floor, where you'll
+						work independently to showcase your versatility across all three
+						creative disciplines. Think of it as a creative triathlon — you're
+						not just a specialist, you're proving you're a complete creative
+						powerhouse.
+					</p>
+					<p>
+						Three expert jury members will evaluate your submissions based on
+						creativity, consistency across all three tasks, and how well you
+						tell a cohesive story through different mediums. The key to winning?
+						It's not just about individual excellence — it's about creating a
+						unified creative vision that shines through UI/UX, graphics, and
+						video.
+					</p>
+					<p>
+						Whether you're a designer, video editor, or creative enthusiast,
+						this is your chance to push your boundaries, learn new skills, and
+						prove you can master multiple creative domains in a single day!
+					</p>
 				</div>
-			</div> */}
+			</div>
 
 			{/* STATS */}
 			<div className="about-stats">
 				<div className="stats-row">
 					<div className="stats-col stats-header">
 						<h1>
-							I don’t love
+							Rewards & I don’t love
 							<br />
-							numbers, but they
+							Recognition
 							<br />
-							love me
+							Await You
 						</h1>
-						<p>Key stats that make ArtIcon 2025 unforgettable</p>
+						<p>Win big prizes and recognition for your creativity</p>
 					</div>
 					<div className="stats-col stats-item-1">
-						<h1>100</h1>
+						<h1>₹10,000</h1>
 						<p className="desc">
-							Creative minds, artists, and innovators competing together
+							Cash Prize + Trophy + 6-Month Internship at Multiicon for Overall
+							Winner
 						</p>
 					</div>
 				</div>
 				<div className="stats-row">
 					<div className="stats-col stats-item-2">
-						<h1>10.5 Hrs</h1>
+						<h1>₹5,000</h1>
 						<p className="desc">
-							Non-stop creativity from 9:00 AM to 7:30 PM on November 30th
+							Cash Prize + Trophy for Runner-Up in each category (UI/UX, Video,
+							Graphic)
 						</p>
 					</div>
 					<div className="stats-col stats-item-3">
-						<h1>3 Jury</h1>
+						<h1>Free Goodies</h1>
 						<p className="desc">
-							Expert judges evaluating creativity, consistency & storytelling
+							E-Certificate, Badge, Sticker Pack, Phone Stand & Bag for all
+							participants
 						</p>
 					</div>
 				</div>

@@ -155,6 +155,114 @@
 	line-height: 1.2;
 }
 
+/* Large Desktop Responsive (1600px+) */
+@media (min-width: 1601px) {
+	.jury-member-card {
+		width: 700px;
+	}
+
+	.jury-member-img {
+		width: 700px;
+		height: 700px;
+	}
+
+	.jury-member-info p {
+		font-size: 2rem;
+		padding: 2rem 1rem;
+	}
+
+	.jury-member-name-initial h1 {
+		font-size: clamp(10rem, 22vw, 22rem);
+	}
+}
+
+/* Medium-Large Desktop Responsive (1400px - 1600px) */
+@media (max-width: 1600px) and (min-width: 1401px) {
+	.jury-member-card {
+		width: 600px;
+	}
+
+	.jury-member-img {
+		width: 600px;
+		height: 600px;
+	}
+
+	.jury-member-info p {
+		font-size: 1.65rem;
+	}
+
+	.jury-member-name-initial h1 {
+		font-size: clamp(9rem, 20vw, 18rem);
+	}
+}
+
+/* Small Desktop Responsive (1000px - 1400px) */
+@media (max-width: 1400px) and (min-width: 1001px) {
+	.juries-hero h1 {
+		font-size: clamp(2.5rem, 10vw, 10rem);
+	}
+
+	.juries-hero p {
+		font-size: clamp(1.75rem, 3.5vw, 3.5rem);
+		max-width: 1000px;
+	}
+
+	.jury-member-card {
+		width: 500px;
+		max-width: 85%;
+	}
+
+	.jury-member-img {
+		width: 500px;
+		height: 500px;
+	}
+
+	.jury-member-info p {
+		font-size: 1.5rem;
+		padding: 1.25rem 1rem;
+	}
+
+	.jury-member-name-initial h1 {
+		font-size: clamp(7rem, 18vw, 16rem);
+	}
+}
+
+/* Medium Desktop Responsive (1200px - 1400px) */
+@media (max-width: 1400px) and (min-width: 1201px) {
+	.jury-member-card {
+		width: 480px;
+	}
+
+	.jury-member-img {
+		width: 480px;
+		height: 480px;
+	}
+
+	.jury-member-info p {
+		font-size: 1.4rem;
+	}
+}
+
+/* Small Desktop Responsive (1000px - 1200px) */
+@media (max-width: 1200px) and (min-width: 1001px) {
+	.jury-member-card {
+		width: 420px;
+	}
+
+	.jury-member-img {
+		width: 420px;
+		height: 420px;
+	}
+
+	.jury-member-info p {
+		font-size: 1.3rem;
+	}
+
+	.jury-member-name-initial h1 {
+		font-size: clamp(6rem, 16vw, 14rem);
+	}
+}
+
 /* Mobile Responsive */
 @media (max-width: 1000px) {
 	.juries-hero {

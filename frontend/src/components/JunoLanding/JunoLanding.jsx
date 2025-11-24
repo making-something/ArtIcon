@@ -3,6 +3,7 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SplitType from "split-type";
+import Marquee from "../Marquee/Marquee";
 import "./JunoLanding.css";
 import { MdHeight } from "react-icons/md";
 
@@ -531,33 +532,6 @@ const JunoLanding = () => {
 								ArtIcon
 							</h1>
 						</div>
-						<div className="hero-footer">
-							<div className="hero-footer-copy">
-								<p
-									className="md"
-									data-animate-type="line-reveal"
-									data-animate-delay="0.25"
-								>
-									Intelligence In <span className="fancy-word">Creation</span>!
-								</p>
-							</div>
-							<div className="hero-footer-tags">
-								<p
-									className="mono"
-									data-animate-type="scramble"
-									data-animate-delay="0.5"
-								>
-									<span>&#9654;</span> 7th December
-								</p>
-								<p
-									className="mono"
-									data-animate-type="scramble"
-									data-animate-delay="0.5"
-								>
-									<span>&#9654;</span> 100 Artists
-								</p>
-							</div>
-						</div>
 					</div>
 					<div className="hero-cards">
 						<div className="card" id="hero-card-1">
@@ -639,6 +613,20 @@ const JunoLanding = () => {
 								</div>
 							</div>
 						</div>
+					</div>
+				</div>
+				<div className="hero-marquee-wrapper">
+					<div className="hero-tagline-container">
+						<p
+							className="md"
+							data-animate-type="line-reveal"
+							data-animate-delay="0.25"
+						>
+							Intelligence In <span className="fancy-word">Creation</span>
+						</p>
+					</div>
+					<div className="hero-marquee-container">
+						<Marquee />
 					</div>
 				</div>
 			</section>

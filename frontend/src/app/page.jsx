@@ -18,6 +18,8 @@ import Clients from "@/components/Clients/Clients";
 import About from "@/components/About/About";
 import WorkGallery from "@/components/WorkGallery/WorkGallery";
 import FAQ from "@/components/FAQ/FAQ";
+import ScrollToTop from "@/components/ScrollToTop/ScrollToTop";
+import HowItWorks from "@/components/HowItWorks/HowItWorks";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -84,23 +86,23 @@ const Page = () => {
 				</div>
 
 				<div style={{ ...sectionStyle, zIndex: 5 }}>
-					<WorkGallery />
+					<HowItWorks />
 				</div>
 
 				<div style={{ ...sectionStyle, zIndex: 6 }}>
-					<Spotlight />
+					<WorkGallery />
 				</div>
 
 				<div style={{ ...sectionStyle, zIndex: 7 }}>
-					<JuriesCards />
+					<Spotlight />
 				</div>
 
 				<div style={{ ...sectionStyle, zIndex: 8 }}>
-					<Clients />
+					<JuriesCards />
 				</div>
 
 				<div style={{ ...sectionStyle, zIndex: 9 }}>
-					<CTACard />
+					<Clients />
 				</div>
 
 				<div style={{ ...sectionStyle, zIndex: 10 }}>
@@ -108,9 +110,14 @@ const Page = () => {
 				</div>
 
 				<div style={{ ...sectionStyle, zIndex: 11 }}>
+					<CTACard />
+				</div>
+
+				<div style={{ ...sectionStyle, zIndex: 12 }}>
 					<Footer />
 				</div>
 			</main>
+			<ScrollToTop />
 		</>
 	);
 };
