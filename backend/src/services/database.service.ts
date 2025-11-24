@@ -37,6 +37,7 @@ class DatabaseService {
     category?: Category;
     is_present?: boolean;
     search?: string;
+    approval_status?: string;
     page?: number;
     limit?: number;
   } = {}): Promise<{ participants: Participant[]; total: number }> {
@@ -51,6 +52,11 @@ class DatabaseService {
     if (filters.is_present !== undefined) {
       query += ' AND is_present = ?';
       params.push(filters.is_present ? 1 : 0);
+    }
+
+    if (filters.approval_status && filters.approval_status !== 'all') {
+      query += ' AND approval_status = ?';
+      params.push(filters.approval_status);
     }
 
     if (filters.search) {
@@ -263,6 +269,10 @@ class DatabaseService {
         specialization: row.participant_specialization,
         source: row.participant_source,
         password_hash: row.participant_password_hash,
+        approval_status: row.participant_approval_status,
+        approved_at: row.participant_approved_at,
+        rejected_at: row.participant_rejected_at,
+        admin_notes: row.participant_admin_notes,
         created_at: row.participant_created_at,
         updated_at: row.participant_updated_at,
       },
@@ -484,18 +494,22 @@ class DatabaseService {
         id: row.participant_id,
         name: row.participant_name,
         email: row.participant_email,
-        whatsapp_no: row.whatsapp_no,
+        whatsapp_no: row.participant_whatsapp_no,
         category: row.participant_category,
-        city: row.city,
-        portfolio_url: row.portfolio_url,
-        portfolio_file_path: row.portfolio_file_path,
-        is_present: row.is_present,
-        role: row.role,
-        experience: row.experience,
-        organization: row.organization,
-        specialization: row.specialization,
-        source: row.source,
-        password_hash: row.password_hash,
+        city: row.participant_city,
+        portfolio_url: row.participant_portfolio_url,
+        portfolio_file_path: row.participant_portfolio_file_path,
+        is_present: row.participant_is_present,
+        role: row.participant_role,
+        experience: row.participant_experience,
+        organization: row.participant_organization,
+        specialization: row.participant_specialization,
+        source: row.participant_source,
+        password_hash: row.participant_password_hash,
+        approval_status: row.participant_approval_status,
+        approved_at: row.participant_approved_at,
+        rejected_at: row.participant_rejected_at,
+        admin_notes: row.participant_admin_notes,
         created_at: row.participant_created_at,
         updated_at: row.participant_updated_at,
       },
@@ -561,18 +575,22 @@ class DatabaseService {
         id: row.participant_id,
         name: row.participant_name,
         email: row.participant_email,
-        whatsapp_no: row.whatsapp_no,
+        whatsapp_no: row.participant_whatsapp_no,
         category: row.participant_category,
-        city: row.city,
-        portfolio_url: row.portfolio_url,
-        portfolio_file_path: row.portfolio_file_path,
-        is_present: row.is_present,
-        role: row.role,
-        experience: row.experience,
-        organization: row.organization,
-        specialization: row.specialization,
-        source: row.source,
-        password_hash: row.password_hash,
+        city: row.participant_city,
+        portfolio_url: row.participant_portfolio_url,
+        portfolio_file_path: row.participant_portfolio_file_path,
+        is_present: row.participant_is_present,
+        role: row.participant_role,
+        experience: row.participant_experience,
+        organization: row.participant_organization,
+        specialization: row.participant_specialization,
+        source: row.participant_source,
+        password_hash: row.participant_password_hash,
+        approval_status: row.participant_approval_status,
+        approved_at: row.participant_approved_at,
+        rejected_at: row.participant_rejected_at,
+        admin_notes: row.participant_admin_notes,
         created_at: row.participant_created_at,
         updated_at: row.participant_updated_at,
       },

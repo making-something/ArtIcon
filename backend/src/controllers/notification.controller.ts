@@ -230,7 +230,7 @@ export class NotificationController {
    */
   async sendPortfolioApprovalNotification(req: Request, res: Response): Promise<void> {
     try {
-      const { participant_ids, event_name, event_date } = req.body;
+      const { participant_ids, event_date } = req.body;
 
       if (!participant_ids || !Array.isArray(participant_ids) || participant_ids.length === 0) {
         res.status(400).json({
@@ -267,12 +267,10 @@ export class NotificationController {
             console.error(`Failed to send approval email to ${participant.email}:`, error);
           });
 
-        // Send WhatsApp (using hello_world template for now)
+        // Send WhatsApp approval message
         await whatsappService.sendApprovalMessage(
           participant.whatsapp_no,
-          participant.name,
-          event_name || 'Articon Hackathon',
-          eventDateObj
+          participant.name
         ).catch((error) => {
           console.error(`Failed to send approval WhatsApp to ${participant.whatsapp_no}:`, error);
         });

@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
+import { verifyToken } from '@/utils/jwt';
 
 interface JwtPayload {
   id: string;
@@ -28,29 +28,17 @@ export const authenticateToken = (req: Request, res: Response, next: NextFunctio
       return;
     }
 
-    const secret = process.env.JWT_SECRET;
-
-    if (!secret) {
-      console.error('JWT_SECRET is not configured');
-      res.status(500).json({
+    try {
+      const decoded = verifyToken(token);
+      req.user = decoded as JwtPayload;
+      next();
+    } catch (err) {
+      res.status(403).json({
         success: false,
-        message: 'Server configuration error',
+        message: 'Invalid or expired token',
       });
       return;
     }
-
-    jwt.verify(token, secret, (err, decoded) => {
-      if (err) {
-        res.status(403).json({
-          success: false,
-          message: 'Invalid or expired token',
-        });
-        return;
-      }
-
-      req.user = decoded as JwtPayload;
-      next();
-    });
   } catch (error) {
     console.error('Error in authenticateToken:', error);
     res.status(500).json({

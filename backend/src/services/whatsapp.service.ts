@@ -111,25 +111,7 @@ class WhatsAppService {
     });
   }
 
-  async sendApprovalMessage(
-    phoneNumber: string,
-    _participantName: string,
-    _eventName: string,
-    _eventDate: Date
-  ): Promise<WhatsAppResult> {
-    const formattedPhone = this.formatPhoneNumber(phoneNumber);
-
-    return await this.sendTemplate({
-      to: formattedPhone,
-      template: {
-        name: 'hello_world',
-        language: {
-          code: 'en_US',
-        },
-      },
-    });
-  }
-
+  
   async sendEventReminderMessage(
     phoneNumber: string,
     _participantName: string,
@@ -170,6 +152,76 @@ class WhatsAppService {
       provider: isWhatsAppConfigured ? 'WhatsApp Cloud API (Meta)' : 'Not Configured',
       timestamp: new Date().toISOString(),
     };
+  }
+
+  async sendApprovalMessage(
+    phoneNumber: string,
+    participantName: string
+  ): Promise<WhatsAppResult> {
+    // Format phone number
+    const formattedPhone = this.formatPhoneNumber(phoneNumber);
+
+    if (!isWhatsAppConfigured) {
+      console.log(`📱 [WHATSAPP LOG] To: ${formattedPhone}`);
+      console.log(`   Message: Portfolio Approved - Hi ${participantName}, your portfolio has been approved!`);
+      return { success: true, messageId: 'mock-approval-id' };
+    }
+
+    return await this.sendTemplate({
+      to: formattedPhone,
+      template: {
+        name: 'portfolio_approved',
+        language: {
+          code: 'en_US',
+        },
+        components: [
+          {
+            type: 'body',
+            parameters: [
+              {
+                type: 'text',
+                text: participantName,
+              },
+            ],
+          },
+        ],
+      },
+    });
+  }
+
+  async sendRejectionMessage(
+    phoneNumber: string,
+    participantName: string
+  ): Promise<WhatsAppResult> {
+    // Format phone number
+    const formattedPhone = this.formatPhoneNumber(phoneNumber);
+
+    if (!isWhatsAppConfigured) {
+      console.log(`📱 [WHATSAPP LOG] To: ${formattedPhone}`);
+      console.log(`   Message: Portfolio Update - Hi ${participantName}, we've reviewed your portfolio.`);
+      return { success: true, messageId: 'mock-rejection-id' };
+    }
+
+    return await this.sendTemplate({
+      to: formattedPhone,
+      template: {
+        name: 'portfolio_update',
+        language: {
+          code: 'en_US',
+        },
+        components: [
+          {
+            type: 'body',
+            parameters: [
+              {
+                type: 'text',
+                text: participantName,
+              },
+            ],
+          },
+        ],
+      },
+    });
   }
 
   async testWhatsApp(testPhoneNumber: string): Promise<WhatsAppResult> {

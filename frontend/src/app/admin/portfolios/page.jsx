@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { approveParticipant, rejectParticipant, exportParticipantsCSV } from "@/services/api";
 import "./portfolios.css";
 
 export default function AdminPortfolios() {
@@ -8,6 +9,7 @@ export default function AdminPortfolios() {
 	const [error, setError] = useState(null);
 	const [filters, setFilters] = useState({
 		category: "all",
+		approval_status: "all",
 		search: "",
 		page: 1,
 		limit: 20,
@@ -33,6 +35,7 @@ export default function AdminPortfolios() {
 
 			const queryParams = new URLSearchParams({
 				category: filters.category,
+				approval_status: filters.approval_status,
 				page: filters.page.toString(),
 				limit: filters.limit.toString(),
 				...(filters.search && { search: filters.search }),
@@ -75,6 +78,62 @@ export default function AdminPortfolios() {
 		setFilters({ ...filters, page: newPage });
 	};
 
+	const handleApprovalStatusChange = (approval_status) => {
+		setFilters({ ...filters, approval_status, page: 1 });
+	};
+
+	const handleApprove = async (participantId, adminNotes = '') => {
+		try {
+			setLoading(true);
+			const result = await approveParticipant(participantId, adminNotes);
+
+			if (result.success) {
+				// Refresh participants list
+				await fetchParticipants();
+				alert('Participant approved successfully!');
+			} else {
+				alert('Failed to approve participant');
+			}
+		} catch (error) {
+			console.error('Error approving participant:', error);
+			alert('Error approving participant');
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	const handleReject = async (participantId, adminNotes = '') => {
+		try {
+			const notes = adminNotes || prompt('Please enter rejection reason (optional):');
+			if (notes === null) return; // User cancelled
+
+			setLoading(true);
+			const result = await rejectParticipant(participantId, notes);
+
+			if (result.success) {
+				// Refresh participants list
+				await fetchParticipants();
+				alert('Participant rejected successfully!');
+			} else {
+				alert('Failed to reject participant');
+			}
+		} catch (error) {
+			console.error('Error rejecting participant:', error);
+			alert('Error rejecting participant');
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	const handleExportCSV = async () => {
+		try {
+			await exportParticipantsCSV(filters.category, filters.approval_status);
+		} catch (error) {
+			console.error('Error exporting CSV:', error);
+			alert('Error exporting CSV');
+		}
+	};
+
 	const getCategoryLabel = (category) => {
 		const labels = {
 			video: "Video Editing",
@@ -82,6 +141,24 @@ export default function AdminPortfolios() {
 			graphics: "Graphic Design",
 		};
 		return labels[category] || category;
+	};
+
+	const getApprovalStatusLabel = (status) => {
+		const labels = {
+			pending: "Pending",
+			approved: "Approved",
+			rejected: "Rejected",
+		};
+		return labels[status] || status;
+	};
+
+	const getApprovalStatusColor = (status) => {
+		const colors = {
+			pending: "#ffc107",
+			approved: "#28a745",
+			rejected: "#dc3545",
+		};
+		return colors[status] || "#6c757d";
 	};
 
 	const getPortfolioLink = (participant) => {
@@ -123,40 +200,75 @@ export default function AdminPortfolios() {
 			</div>
 
 			<div className="portfolios-controls">
-				<div className="category-filters">
-					<button
-						className={filters.category === "all" ? "active" : ""}
-						onClick={() => handleCategoryChange("all")}
-					>
-						All
-					</button>
-					<button
-						className={filters.category === "video" ? "active" : ""}
-						onClick={() => handleCategoryChange("video")}
-					>
-						Video Editing
-					</button>
-					<button
-						className={filters.category === "ui_ux" ? "active" : ""}
-						onClick={() => handleCategoryChange("ui_ux")}
-					>
-						UI/UX Design
-					</button>
-					<button
-						className={filters.category === "graphics" ? "active" : ""}
-						onClick={() => handleCategoryChange("graphics")}
-					>
-						Graphic Design
-					</button>
+				<div className="filters-row">
+					<div className="category-filters">
+						<button
+							className={filters.category === "all" ? "active" : ""}
+							onClick={() => handleCategoryChange("all")}
+						>
+							All
+						</button>
+						<button
+							className={filters.category === "video" ? "active" : ""}
+							onClick={() => handleCategoryChange("video")}
+						>
+							Video Editing
+						</button>
+						<button
+							className={filters.category === "ui_ux" ? "active" : ""}
+							onClick={() => handleCategoryChange("ui_ux")}
+						>
+							UI/UX Design
+						</button>
+						<button
+							className={filters.category === "graphics" ? "active" : ""}
+							onClick={() => handleCategoryChange("graphics")}
+						>
+							Graphic Design
+						</button>
+					</div>
+
+					<div className="approval-filters">
+						<button
+							className={filters.approval_status === "all" ? "active" : ""}
+							onClick={() => handleApprovalStatusChange("all")}
+						>
+							All Status
+						</button>
+						<button
+							className={filters.approval_status === "pending" ? "active" : ""}
+							onClick={() => handleApprovalStatusChange("pending")}
+						>
+							Pending
+						</button>
+						<button
+							className={filters.approval_status === "approved" ? "active" : ""}
+							onClick={() => handleApprovalStatusChange("approved")}
+						>
+							Approved
+						</button>
+						<button
+							className={filters.approval_status === "rejected" ? "active" : ""}
+							onClick={() => handleApprovalStatusChange("rejected")}
+						>
+							Rejected
+						</button>
+					</div>
 				</div>
 
-				<div className="search-box">
-					<input
-						type="text"
-						placeholder="Search by name, email, or city..."
-						value={filters.search}
-						onChange={handleSearchChange}
-					/>
+				<div className="controls-bottom">
+					<div className="search-box">
+						<input
+							type="text"
+							placeholder="Search by name, email, or city..."
+							value={filters.search}
+							onChange={handleSearchChange}
+						/>
+					</div>
+
+					<button className="export-csv-btn" onClick={handleExportCSV}>
+						📊 Export CSV
+					</button>
 				</div>
 			</div>
 
@@ -249,6 +361,51 @@ export default function AdminPortfolios() {
 									{new Date(participant.created_at).toLocaleDateString()}
 								</span>
 							</div>
+
+							<div className="info-row">
+								<span className="label">Approval:</span>
+								<span
+									className="approval-status-badge"
+									style={{
+										backgroundColor: getApprovalStatusColor(participant.approval_status),
+										color: 'white',
+										padding: '2px 8px',
+										borderRadius: '12px',
+										fontSize: '12px',
+										fontWeight: 'bold'
+									}}
+								>
+									{getApprovalStatusLabel(participant.approval_status)}
+								</span>
+							</div>
+
+							{participant.admin_notes && (
+								<div className="info-row">
+									<span className="label">Notes:</span>
+									<span className="value" style={{ fontStyle: 'italic', fontSize: '12px' }}>
+										{participant.admin_notes}
+									</span>
+								</div>
+							)}
+
+							{participant.approval_status === 'pending' && (
+								<div className="approval-actions">
+									<button
+										className="approve-btn"
+										onClick={() => handleApprove(participant.id)}
+										disabled={loading}
+									>
+										✅ Approve
+									</button>
+									<button
+										className="reject-btn"
+										onClick={() => handleReject(participant.id)}
+										disabled={loading}
+									>
+										❌ Reject
+									</button>
+								</div>
+							)}
 						</div>
 					</div>
 				))}

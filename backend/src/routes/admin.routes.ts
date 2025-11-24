@@ -140,4 +140,37 @@ router.get(
   adminController.getAllParticipantsWithPortfolios.bind(adminController),
 );
 
+/**
+ * @route   PUT /api/admin/participants/:id/approve
+ * @desc    Approve participant portfolio
+ * @access  Admin
+ */
+router.put(
+  "/participants/:id/approve",
+  authenticateAdmin,
+  adminController.approveParticipant.bind(adminController),
+);
+
+/**
+ * @route   PUT /api/admin/participants/:id/reject
+ * @desc    Reject participant portfolio
+ * @access  Admin
+ */
+router.put(
+  "/participants/:id/reject",
+  authenticateAdmin,
+  adminController.rejectParticipant.bind(adminController),
+);
+
+/**
+ * @route   GET /api/admin/participants/export/csv
+ * @desc    Export participants data as CSV
+ * @access  Admin
+ */
+router.get(
+  "/participants/export/csv",
+  authenticateAdmin,
+  adminController.exportParticipantsCSV.bind(adminController),
+);
+
 export default router;

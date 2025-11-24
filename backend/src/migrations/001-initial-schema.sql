@@ -23,6 +23,10 @@ CREATE TABLE IF NOT EXISTS participants (
   specialization TEXT,
   source TEXT,
   password_hash TEXT,
+  approval_status TEXT DEFAULT 'pending' CHECK (approval_status IN ('pending', 'approved', 'rejected')),
+  approved_at TEXT,
+  rejected_at TEXT,
+  admin_notes TEXT,
   created_at TEXT DEFAULT (datetime('now')),
   updated_at TEXT DEFAULT (datetime('now'))
 );
@@ -102,6 +106,7 @@ CREATE TABLE IF NOT EXISTS event_settings (
 CREATE INDEX IF NOT EXISTS idx_participants_email ON participants(email);
 CREATE INDEX IF NOT EXISTS idx_participants_category ON participants(category);
 CREATE INDEX IF NOT EXISTS idx_participants_is_present ON participants(is_present);
+CREATE INDEX IF NOT EXISTS idx_participants_approval_status ON participants(approval_status);
 CREATE INDEX IF NOT EXISTS idx_participants_created_at ON participants(created_at);
 
 CREATE INDEX IF NOT EXISTS idx_tasks_category ON tasks(category);

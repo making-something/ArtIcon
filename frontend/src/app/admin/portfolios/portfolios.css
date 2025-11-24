@@ -31,10 +31,23 @@
 	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
+.filters-row {
+	display: flex;
+	gap: 2rem;
+	margin-bottom: 1.5rem;
+	flex-wrap: wrap;
+	align-items: center;
+}
+
 .category-filters {
 	display: flex;
 	gap: 0.75rem;
-	margin-bottom: 1rem;
+	flex-wrap: wrap;
+}
+
+.approval-filters {
+	display: flex;
+	gap: 0.75rem;
 	flex-wrap: wrap;
 }
 
@@ -58,6 +71,59 @@
 	background: #667eea;
 	color: white;
 	border-color: #667eea;
+}
+
+.approval-filters button {
+	padding: 0.6rem 1.2rem;
+	border: 2px solid #e2e8f0;
+	background: white;
+	border-radius: 8px;
+	cursor: pointer;
+	font-weight: 500;
+	transition: all 0.3s ease;
+	color: #4a5568;
+}
+
+.approval-filters button:hover {
+	background: #f7fafc;
+	border-color: #667eea;
+}
+
+.approval-filters button.active {
+	background: #667eea;
+	color: white;
+	border-color: #667eea;
+}
+
+.controls-bottom {
+	display: flex;
+	gap: 1rem;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+}
+
+.search-box {
+	flex: 1;
+	min-width: 300px;
+}
+
+.export-csv-btn {
+	padding: 0.75rem 1.5rem;
+	background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+	color: white;
+	border: none;
+	border-radius: 8px;
+	cursor: pointer;
+	font-weight: 600;
+	transition: all 0.3s ease;
+	white-space: nowrap;
+}
+
+.export-csv-btn:hover {
+	background: linear-gradient(135deg, #218838 0%, #1ea085 100%);
+	transform: translateY(-1px);
+	box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
 }
 
 .search-box input {
@@ -294,6 +360,59 @@
 
 .error button:hover {
 	background: #5568d3;
+}
+
+/* Approval Action Buttons */
+.approval-actions {
+	display: flex;
+	gap: 0.75rem;
+	margin-top: 1rem;
+	padding-top: 1rem;
+	border-top: 1px solid #e2e8f0;
+}
+
+.approve-btn,
+.reject-btn {
+	padding: 0.5rem 1rem;
+	border: none;
+	border-radius: 6px;
+	cursor: pointer;
+	font-weight: 600;
+	font-size: 0.9rem;
+	transition: all 0.3s ease;
+	flex: 1;
+}
+
+.approve-btn {
+	background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+	color: white;
+}
+
+.approve-btn:hover:not(:disabled) {
+	background: linear-gradient(135deg, #218838 0%, #1ea085 100%);
+	transform: translateY(-1px);
+	box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+.approve-btn:disabled {
+	opacity: 0.6;
+	cursor: not-allowed;
+}
+
+.reject-btn {
+	background: linear-gradient(135deg, #dc3545 0%, #e74c3c 100%);
+	color: white;
+}
+
+.reject-btn:hover:not(:disabled) {
+	background: linear-gradient(135deg, #c82333 0%, #bd2e2e 100%);
+	transform: translateY(-1px);
+	box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+}
+
+.reject-btn:disabled {
+	opacity: 0.6;
+	cursor: not-allowed;
 }
 
 @media (max-width: 768px) {

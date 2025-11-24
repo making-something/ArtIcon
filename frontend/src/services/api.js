@@ -21,7 +21,15 @@ async function apiRequest(endpoint, options = {}) {
 
 	// Add auth token if available
 	if (typeof window !== 'undefined') {
-		const token = localStorage.getItem('authToken');
+		// Try admin token first for admin routes, then fall back to participant token
+		let token = null;
+		if (endpoint.startsWith('/api/admin')) {
+			token = localStorage.getItem('adminToken');
+		}
+		// Fall back to participant token if no admin token or for non-admin routes
+		if (!token) {
+			token = localStorage.getItem('authToken');
+		}
 		if (token) {
 			config.headers['Authorization'] = `Bearer ${token}`;
 		}
@@ -100,6 +108,15 @@ export async function registerParticipant(formData) {
 		}
 	}
 
+	// Map specialization to category for backend
+	const specializationToCategoryMap = {
+		"Video Editing": "video",
+		"UI/UX Design": "ui_ux",
+		"Graphic Design": "graphics",
+	};
+
+	const category = specializationToCategoryMap[formData.specialization] || "ui_ux";
+
 	const response = await apiRequest('/api/participants/register', {
 		method: 'POST',
 		body: JSON.stringify({
@@ -107,6 +124,7 @@ export async function registerParticipant(formData) {
 			email: formData.email,
 			phone: formData.phone,
 			city: formData.city,
+			category: category, // Send category instead of relying on specialization mapping
 			portfolio: formData.portfolio || null,
 			portfolioFile: portfolioFilePath,
 			role: formData.role,
@@ -248,6 +266,120 @@ export async function checkEventStatus() {
 	return apiRequest('/api/participants/event-status');
 }
 
+/**
+ * Get participant tasks
+ */
+export async function getParticipantTasks(participantId) {
+	return apiRequest(`/api/participants/${participantId}/tasks`);
+}
+
+/**
+ * Get all submissions (admin only)
+ */
+export async function getSubmissions() {
+	return apiRequest('/api/submissions');
+}
+
+/**
+ * Create submission
+ */
+export async function createSubmission(participantId, taskId, driveLink) {
+	return apiRequest('/api/submissions', {
+		method: 'POST',
+		body: JSON.stringify({
+			participant_id: participantId,
+			task_id: taskId,
+			drive_link: driveLink,
+		}),
+	});
+}
+
+/**
+ * Update submission score (admin only)
+ */
+export async function updateSubmissionScore(submissionId, score) {
+	return apiRequest(`/api/submissions/${submissionId}`, {
+		method: 'PUT',
+		body: JSON.stringify({ score }),
+	});
+}
+
+/**
+ * Get admin dashboard stats
+ */
+export async function getAdminDashboardStats() {
+	return apiRequest('/api/admin/dashboard/stats');
+}
+
+/**
+ * Get all participants (admin only)
+ */
+export async function getAllParticipants() {
+	return apiRequest('/api/participants');
+}
+
+/**
+ * Approve participant (admin only)
+ */
+export async function approveParticipant(participantId, adminNotes) {
+	return apiRequest(`/api/admin/participants/${participantId}/approve`, {
+		method: 'PUT',
+		body: JSON.stringify({ admin_notes: adminNotes }),
+	});
+}
+
+/**
+ * Reject participant (admin only)
+ */
+export async function rejectParticipant(participantId, adminNotes) {
+	return apiRequest(`/api/admin/participants/${participantId}/reject`, {
+		method: 'PUT',
+		body: JSON.stringify({ admin_notes: adminNotes }),
+	});
+}
+
+/**
+ * Export participants as CSV (admin only)
+ */
+export async function exportParticipantsCSV(category = 'all', approvalStatus = 'all') {
+	const params = new URLSearchParams();
+	if (category !== 'all') params.append('category', category);
+	if (approvalStatus !== 'all') params.append('approval_status', approvalStatus);
+
+	const token = typeof window !== 'undefined' ? localStorage.getItem('adminToken') : null;
+
+	try {
+		const response = await fetch(
+			`${API_BASE_URL}/api/admin/participants/export/csv?${params}`,
+			{
+				headers: {
+					Authorization: token ? `Bearer ${token}` : '',
+				},
+			}
+		);
+
+		if (!response.ok) {
+			throw new Error('Failed to export CSV');
+		}
+
+		// Create download link
+		const blob = await response.blob();
+		const url = window.URL.createObjectURL(blob);
+		const a = document.createElement('a');
+		a.href = url;
+		a.download = `participants-${new Date().toISOString().split('T')[0]}.csv`;
+		document.body.appendChild(a);
+		a.click();
+		window.URL.revokeObjectURL(url);
+		document.body.removeChild(a);
+
+		return { success: true };
+	} catch (error) {
+		console.error('CSV export error:', error);
+		throw error;
+	}
+}
+
 export default {
 	registerParticipant,
 	uploadPortfolioFile,
@@ -259,5 +391,14 @@ export default {
 	isAuthenticated,
 	getParticipantById,
 	checkEventStatus,
+	getParticipantTasks,
+	getSubmissions,
+	createSubmission,
+	updateSubmissionScore,
+	getAdminDashboardStats,
+	getAllParticipants,
+	approveParticipant,
+	rejectParticipant,
+	exportParticipantsCSV,
 };
 

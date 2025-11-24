@@ -105,6 +105,36 @@ export class EmailService {
   }
 
   /**
+   * Send portfolio approval email
+   */
+  async sendApprovalEmail(participant: Participant): Promise<EmailResult> {
+    const html = this.generateApprovalTemplate(participant);
+    const text = this.generateApprovalText(participant);
+
+    return await this.sendEmail({
+      to: participant.email,
+      subject: '🎉 Portfolio Approved - Articon Hackathon 2025',
+      html,
+      text,
+    });
+  }
+
+  /**
+   * Send portfolio rejection email (for admin review)
+   */
+  async sendRejectionEmail(participant: Participant): Promise<EmailResult> {
+    const html = this.generateRejectionTemplate(participant);
+    const text = this.generateRejectionText(participant);
+
+    return await this.sendEmail({
+      to: participant.email,
+      subject: 'Update on Your Portfolio - Articon Hackathon 2025',
+      html,
+      text,
+    });
+  }
+
+  /**
    * Send event reminder (1 day before)
    */
   async sendEventReminderEmail(participant: Participant, eventDate: Date): Promise<EmailResult> {
@@ -455,6 +485,164 @@ Preparation Checklist:
 Dashboard: https://articon.multiicon.in
 
 See you tomorrow! Best of luck! 🍀
+    `;
+  }
+
+  private generateApprovalTemplate(participant: Participant): string {
+    return `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white;">
+        <div style="padding: 40px 20px; text-align: center;">
+          <h1 style="margin: 0; font-size: 32px;">✅ Portfolio Approved!</h1>
+          <p style="margin: 10px 0 0 0; font-size: 18px; opacity: 0.9;">Your portfolio has been reviewed and approved</p>
+        </div>
+        <div style="background: white; color: #333; padding: 30px; border-radius: 8px 8px 0 0;">
+          <h2 style="color: #28a745; margin-top: 0;">Congratulations ${participant.name}! 🎉</h2>
+          <p style="font-size: 16px; line-height: 1.6;">Great news! Your portfolio has been reviewed by our team and has been <strong>approved</strong> for the Articon Hackathon 2025.</p>
+
+          <div style="background-color: #d4edda; border-left: 4px solid #28a745; padding: 20px; margin: 25px 0;">
+            <h4 style="margin-top: 0; color: #155724;">📋 What's Next:</h4>
+            <ul style="color: #155724; line-height: 1.8;">
+              <li>You're now officially confirmed for the event</li>
+              <li>Mark your calendar for November 30th, 2025</li>
+              <li>Prepare your creative tools and software</li>
+              <li>Get ready for an amazing creative challenge!</li>
+            </ul>
+          </div>
+
+          <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 25px 0;">
+            <h3 style="margin-top: 0; color: #495057;">Your Registration Details:</h3>
+            <ul style="color: #6c757d; line-height: 1.8;">
+              <li><strong>Name:</strong> ${participant.name}</li>
+              <li><strong>Email:</strong> ${participant.email}</li>
+              <li><strong>Category:</strong> ${this.formatCategory(participant.category)}</li>
+              <li><strong>City:</strong> ${participant.city}</li>
+            </ul>
+          </div>
+
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="https://articon.multiicon.in" style="display: inline-block; background: #28a745; color: white; padding: 15px 30px; text-decoration: none; border-radius: 50px; font-weight: bold;">
+              Visit Dashboard
+            </a>
+          </div>
+
+          <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
+          <p style="margin: 0; color: #888; font-size: 14px;">
+            We can't wait to see what you create! 🚀
+          </p>
+          <p style="margin: 10px 0 0 0; color: #888; font-size: 12px;">
+            Need help? Reply to this email or contact us at support@multiicon.in
+          </p>
+        </div>
+      </div>
+    `;
+  }
+
+  private generateApprovalText(participant: Participant): string {
+    return `
+✅ Portfolio Approved! - Articon Hackathon 2025
+
+Congratulations ${participant.name}!
+
+Great news! Your portfolio has been reviewed by our team and has been approved for the Articon Hackathon 2025.
+
+What's Next:
+- You're now officially confirmed for the event
+- Mark your calendar for November 30th, 2025
+- Prepare your creative tools and software
+- Get ready for an amazing creative challenge!
+
+Your Registration Details:
+- Name: ${participant.name}
+- Email: ${participant.email}
+- Category: ${this.formatCategory(participant.category)}
+- City: ${participant.city}
+
+Visit your dashboard: https://articon.multiicon.in
+
+We can't wait to see what you create! 🚀
+
+Need help? Reply to this email or contact us at support@multiicon.in
+    `;
+  }
+
+  private generateRejectionTemplate(participant: Participant): string {
+    return `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white;">
+        <div style="padding: 40px 20px; text-align: center;">
+          <h1 style="margin: 0; font-size: 32px;">📋 Update on Your Portfolio</h1>
+          <p style="margin: 10px 0 0 0; font-size: 18px; opacity: 0.9;">Review completed for your submission</p>
+        </div>
+        <div style="background: white; color: #333; padding: 30px; border-radius: 8px 8px 0 0;">
+          <h2 style="color: #6c757d; margin-top: 0;">Hi ${participant.name}! 👋</h2>
+          <p style="font-size: 16px; line-height: 1.6;">Thank you for submitting your portfolio for <strong>Articon Hackathon 2025</strong>. Our team has carefully reviewed your submission.</p>
+
+          <div style="background-color: #f8d7da; border-left: 4px solid #dc3545; padding: 20px; margin: 25px 0;">
+            <h4 style="margin-top: 0; color: #721c24;">Update on Your Application:</h4>
+            <p style="color: #721c24; line-height: 1.6;">
+              After careful consideration, we regret to inform you that your portfolio could not be approved at this time.
+              This decision doesn't reflect on your talent or potential - it's about finding the best fit for this specific event.
+            </p>
+          </div>
+
+          <div style="background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 20px; margin: 25px 0;">
+            <h4 style="margin-top: 0; color: #856404;">💡 Keep Creating:</h4>
+            <ul style="color: #856404; line-height: 1.8;">
+              <li>Continue building your portfolio</li>
+              <li>Look for other creative opportunities</li>
+              <li>Stay connected for future events</li>
+              <li>Keep honing your skills and creativity</li>
+            </ul>
+          </div>
+
+          <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 25px 0;">
+            <h3 style="margin-top: 0; color: #495057;">Your Submission Details:</h3>
+            <ul style="color: #6c757d; line-height: 1.8;">
+              <li><strong>Name:</strong> ${participant.name}</li>
+              <li><strong>Email:</strong> ${participant.email}</li>
+              <li><strong>Category:</strong> ${this.formatCategory(participant.category)}</li>
+              <li><strong>City:</strong> ${participant.city}</li>
+            </ul>
+          </div>
+
+          <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
+          <p style="margin: 0; color: #888; font-size: 14px;">
+            Thank you for your interest in Articon Hackathon 2025. Keep creating and stay inspired! ✨
+          </p>
+          <p style="margin: 10px 0 0 0; color: #888; font-size: 12px;">
+            Questions? Reply to this email or contact us at support@multiicon.in
+          </p>
+        </div>
+      </div>
+    `;
+  }
+
+  private generateRejectionText(participant: Participant): string {
+    return `
+📋 Update on Your Portfolio - Articon Hackathon 2025
+
+Hi ${participant.name}!
+
+Thank you for submitting your portfolio for Articon Hackathon 2025. Our team has carefully reviewed your submission.
+
+Update on Your Application:
+After careful consideration, we regret to inform you that your portfolio could not be approved at this time.
+This decision doesn't reflect on your talent or potential - it's about finding the best fit for this specific event.
+
+Keep Creating:
+- Continue building your portfolio
+- Look for other creative opportunities
+- Stay connected for future events
+- Keep honing your skills and creativity
+
+Your Submission Details:
+- Name: ${participant.name}
+- Email: ${participant.email}
+- Category: ${this.formatCategory(participant.category)}
+- City: ${participant.city}
+
+Thank you for your interest in Articon Hackathon 2025. Keep creating and stay inspired! ✨
+
+Questions? Reply to this email or contact us at support@multiicon.in
     `;
   }
 

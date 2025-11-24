@@ -496,7 +496,7 @@ export class AdminController {
    */
   async getAllParticipantsWithPortfolios(req: Request, res: Response): Promise<void> {
     try {
-      const { category, page = 1, limit = 50, search } = req.query;
+      const { category, page = 1, limit = 50, search, approval_status } = req.query;
 
       const filters: any = {};
       if (category && category !== 'all') {
@@ -504,6 +504,9 @@ export class AdminController {
       }
       if (search && typeof search === 'string') {
         filters.search = search;
+      }
+      if (approval_status && typeof approval_status === 'string') {
+        filters.approval_status = approval_status as any;
       }
       if (page && limit) {
         filters.page = parseInt(page as string);
@@ -527,6 +530,252 @@ export class AdminController {
       });
     } catch (error) {
       console.error('Error in getAllParticipantsWithPortfolios:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Internal server error',
+      });
+    }
+  }
+
+  /**
+   * Approve participant portfolio
+   */
+  async approveParticipant(req: Request, res: Response): Promise<void> {
+    try {
+      const { id } = req.params;
+      const { admin_notes } = req.body;
+
+      // Get participant
+      const participant = await databaseService.getParticipantById(id);
+
+      if (!participant) {
+        res.status(404).json({
+          success: false,
+          message: 'Participant not found',
+        });
+        return;
+      }
+
+      // Update participant approval status
+      const updateData = {
+        approval_status: 'approved' as const,
+        approved_at: new Date().toISOString(),
+        rejected_at: null,
+        admin_notes: admin_notes || null,
+      };
+
+      const updatedParticipant = await databaseService.updateParticipant(id, updateData);
+
+      if (!updatedParticipant) {
+        res.status(500).json({
+          success: false,
+          message: 'Failed to approve participant',
+        });
+        return;
+      }
+
+      // Send approval email and WhatsApp
+      const emailService = (await import('@/services/email.service')).default;
+      const { whatsappService } = await import('@/services/whatsapp.service');
+
+      // Send approval email asynchronously
+      console.log(`📧 Sending approval email to: ${updatedParticipant.email}`);
+      emailService.sendApprovalEmail(updatedParticipant)
+        .then((result) => {
+          if (result.success) {
+            console.log(`✅ Approval email sent successfully to ${updatedParticipant.email}`);
+          } else {
+            console.error(`❌ Failed to send approval email to ${updatedParticipant.email}: ${result.error}`);
+          }
+        })
+        .catch((error) => {
+          console.error("❌ Error sending approval email:", error);
+        });
+
+      // Send approval WhatsApp message asynchronously
+      console.log(`📱 Sending approval WhatsApp to: ${updatedParticipant.whatsapp_no}`);
+      whatsappService.sendApprovalMessage(updatedParticipant.whatsapp_no, updatedParticipant.name)
+        .then((result) => {
+          if (result.success) {
+            console.log(`✅ Approval WhatsApp sent successfully to ${updatedParticipant.whatsapp_no}`);
+          } else {
+            console.error(`❌ Failed to send approval WhatsApp to ${updatedParticipant.whatsapp_no}: ${result.error}`);
+          }
+        })
+        .catch((error) => {
+          console.error("❌ Error sending approval WhatsApp:", error);
+        });
+
+      res.status(200).json({
+        success: true,
+        message: 'Participant approved successfully',
+        data: updatedParticipant,
+      });
+    } catch (error) {
+      console.error('Error in approveParticipant:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Internal server error',
+      });
+    }
+  }
+
+  /**
+   * Reject participant portfolio
+   */
+  async rejectParticipant(req: Request, res: Response): Promise<void> {
+    try {
+      const { id } = req.params;
+      const { admin_notes } = req.body;
+
+      // Get participant
+      const participant = await databaseService.getParticipantById(id);
+
+      if (!participant) {
+        res.status(404).json({
+          success: false,
+          message: 'Participant not found',
+        });
+        return;
+      }
+
+      // Update participant approval status
+      const updateData = {
+        approval_status: 'rejected' as const,
+        rejected_at: new Date().toISOString(),
+        approved_at: null,
+        admin_notes: admin_notes || null,
+      };
+
+      const updatedParticipant = await databaseService.updateParticipant(id, updateData);
+
+      if (!updatedParticipant) {
+        res.status(500).json({
+          success: false,
+          message: 'Failed to reject participant',
+        });
+        return;
+      }
+
+      // Send rejection email and WhatsApp
+      const emailService = (await import('@/services/email.service')).default;
+      const { whatsappService } = await import('@/services/whatsapp.service');
+
+      // Send rejection email asynchronously
+      console.log(`📧 Sending rejection email to: ${updatedParticipant.email}`);
+      emailService.sendRejectionEmail(updatedParticipant)
+        .then((result) => {
+          if (result.success) {
+            console.log(`✅ Rejection email sent successfully to ${updatedParticipant.email}`);
+          } else {
+            console.error(`❌ Failed to send rejection email to ${updatedParticipant.email}: ${result.error}`);
+          }
+        })
+        .catch((error) => {
+          console.error("❌ Error sending rejection email:", error);
+        });
+
+      // Send rejection WhatsApp message asynchronously
+      console.log(`📱 Sending rejection WhatsApp to: ${updatedParticipant.whatsapp_no}`);
+      whatsappService.sendRejectionMessage(updatedParticipant.whatsapp_no, updatedParticipant.name)
+        .then((result) => {
+          if (result.success) {
+            console.log(`✅ Rejection WhatsApp sent successfully to ${updatedParticipant.whatsapp_no}`);
+          } else {
+            console.error(`❌ Failed to send rejection WhatsApp to ${updatedParticipant.whatsapp_no}: ${result.error}`);
+          }
+        })
+        .catch((error) => {
+          console.error("❌ Error sending rejection WhatsApp:", error);
+        });
+
+      res.status(200).json({
+        success: true,
+        message: 'Participant rejected successfully',
+        data: updatedParticipant,
+      });
+    } catch (error) {
+      console.error('Error in rejectParticipant:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Internal server error',
+      });
+    }
+  }
+
+  /**
+   * Export participants data as CSV
+   */
+  async exportParticipantsCSV(req: Request, res: Response): Promise<void> {
+    try {
+      const { category, approval_status } = req.query;
+
+      const filters: any = {};
+      if (category && category !== 'all') {
+        filters.category = category as any;
+      }
+      if (approval_status && typeof approval_status === 'string') {
+        filters.approval_status = approval_status as any;
+      }
+      // Get all participants without pagination for export
+      filters.page = 1;
+      filters.limit = 10000;
+
+      const { participants } = await databaseService.getParticipants(filters);
+
+      // Convert to CSV
+      const headers = [
+        'ID',
+        'Name',
+        'Email',
+        'WhatsApp',
+        'Category',
+        'City',
+        'Portfolio URL',
+        'Portfolio File',
+        'Role',
+        'Experience',
+        'Organization',
+        'Specialization',
+        'Source',
+        'Approval Status',
+        'Admin Notes',
+        'Present',
+        'Registered At'
+      ];
+
+      const csvRows = participants.map((p) => [
+        p.id,
+        p.name,
+        p.email,
+        p.whatsapp_no,
+        p.category,
+        p.city,
+        p.portfolio_url || '',
+        p.portfolio_file_path || '',
+        p.role || '',
+        p.experience || '',
+        p.organization || '',
+        p.specialization || '',
+        p.source || '',
+        p.approval_status,
+        p.admin_notes || '',
+        p.is_present ? 'Yes' : 'No',
+        new Date(p.created_at).toLocaleDateString()
+      ]);
+
+      const csvContent = [
+        headers.join(','),
+        ...csvRows.map(row => row.map(cell => `"${cell}"`).join(','))
+      ].join('\n');
+
+      // Set headers for CSV download
+      res.setHeader('Content-Type', 'text/csv');
+      res.setHeader('Content-Disposition', `attachment; filename="participants-${new Date().toISOString().split('T')[0]}.csv"`);
+
+      res.status(200).send(csvContent);
+    } catch (error) {
+      console.error('Error in exportParticipantsCSV:', error);
       res.status(500).json({
         success: false,
         message: 'Internal server error',

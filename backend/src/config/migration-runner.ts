@@ -3,7 +3,18 @@ import fs from 'fs';
 import path from 'path';
 
 class MigrationRunner {
-  private migrationsPath = path.join(__dirname, '../migrations');
+  // Prefer a runtime migrations folder (project root `migrations/`) or
+  // the path specified via `MIGRATIONS_PATH`. Fall back to the source
+  // `src/migrations` path which is used during development.
+  private migrationsPath: string = (() => {
+    const envPath = process.env.MIGRATIONS_PATH;
+    if (envPath) return path.resolve(envPath);
+
+    const cwdPath = path.join(process.cwd(), 'migrations');
+    if (fs.existsSync(cwdPath)) return cwdPath;
+
+    return path.join(__dirname, '../../src/migrations');
+  })();
 
   async runMigrations(): Promise<void> {
     console.log('🔄 Running database migrations...');

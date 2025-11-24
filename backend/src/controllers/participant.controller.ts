@@ -20,10 +20,12 @@ export class ParticipantController {
 				role,
 				experience,
 				organization,
-				specialization,
+				specialization: initialSpecialization,
 				source,
 				password,
 			} = req.body;
+
+			let specialization = initialSpecialization;
 
 			// Validate required fields - either portfolio URL or file must be provided
 			if (!fullName || !email || !phone || !city || !password) {
@@ -43,18 +45,34 @@ export class ParticipantController {
 				return;
 			}
 
-			// Map specialization to category
-			const specializationToCategoryMap: {
-				[key: string]: "video" | "ui_ux" | "graphics";
-			} = {
-				"Video Editing": "video",
-				"UI/UX Design": "ui_ux",
-				"Graphic Design": "graphics",
-			};
+			// Determine category from specialization or direct category input
+			let category: "video" | "ui_ux" | "graphics";
 
-			const category = specialization
-				? specializationToCategoryMap[specialization]
-				: "ui_ux";
+			if (specialization) {
+				// Map specialization to category
+				const specializationToCategoryMap: {
+					[key: string]: "video" | "ui_ux" | "graphics";
+				} = {
+					"Video Editing": "video",
+					"UI/UX Design": "ui_ux",
+					"Graphic Design": "graphics",
+				};
+				category = specializationToCategoryMap[specialization];
+			} else if (req.body.category) {
+				// Use category directly from frontend
+				category = req.body.category;
+				// Also create specialization for consistency
+				const categoryToSpecializationMap: {
+					[key: string]: string;
+				} = {
+					"video": "Video Editing",
+					"ui_ux": "UI/UX Design",
+					"graphics": "Graphic Design",
+				};
+				specialization = categoryToSpecializationMap[category] || category;
+			} else {
+				category = "ui_ux";
+			}
 
 			if (!category) {
 				res.status(400).json({

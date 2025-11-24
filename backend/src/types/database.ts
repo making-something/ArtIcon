@@ -12,6 +12,7 @@ export type Json =
 export type Category = "video" | "ui_ux" | "graphics";
 export type NotificationTarget = "all" | "winners" | "specific";
 export type NotificationStatus = "pending" | "sent" | "failed";
+export type ApprovalStatus = "pending" | "approved" | "rejected";
 
 // Participant types
 export interface Participant {
@@ -30,6 +31,10 @@ export interface Participant {
 	specialization: string | null;
 	source: string | null;
 	password_hash: string | null;
+	approval_status: ApprovalStatus;
+	approved_at: string | null;
+	rejected_at: string | null;
+	admin_notes: string | null;
 	created_at: string;
 	updated_at: string;
 }
@@ -50,6 +55,10 @@ export interface ParticipantInsert {
 	specialization?: string | null;
 	source?: string | null;
 	password_hash?: string | null;
+	approval_status?: ApprovalStatus;
+	approved_at?: string | null;
+	rejected_at?: string | null;
+	admin_notes?: string | null;
 	created_at?: string;
 	updated_at?: string;
 }
@@ -70,6 +79,10 @@ export interface ParticipantUpdate {
 	specialization?: string | null;
 	source?: string | null;
 	password_hash?: string | null;
+	approval_status?: ApprovalStatus;
+	approved_at?: string | null;
+	rejected_at?: string | null;
+	admin_notes?: string | null;
 	created_at?: string;
 	updated_at?: string;
 }
