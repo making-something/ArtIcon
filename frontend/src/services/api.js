@@ -3,11 +3,12 @@
  * Centralized API communication layer
  */
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+const API_BASE_URL =
+	process.env.NEXT_PUBLIC_API_URL || "https://api.articon.multiicon.in";
 
-if (!API_BASE_URL) {
-	console.error(
-		"Error: NEXT_PUBLIC_API_URL environment variable is not defined. API requests will fail."
+if (!process.env.NEXT_PUBLIC_API_URL) {
+	console.warn(
+		"Warning: NEXT_PUBLIC_API_URL environment variable is not defined. Using default: https://api.articon.multiicon.in"
 	);
 }
 

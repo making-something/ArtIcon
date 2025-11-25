@@ -25,7 +25,8 @@ export default function AdminPortfolios() {
 	});
 	const [pagination, setPagination] = useState(null);
 
-	const API_URL = process.env.NEXT_PUBLIC_API_URL;
+	const API_URL =
+		process.env.NEXT_PUBLIC_API_URL || "https://api.articon.multiicon.in";
 
 	useEffect(() => {
 		fetchParticipants();
