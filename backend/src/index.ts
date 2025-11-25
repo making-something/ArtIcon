@@ -44,11 +44,7 @@ const parseOrigins = (origins?: string) => {
 
 const managedOrigins = ["https://articon.multiicon.in"];
 
-const defaultOrigins = [
-	"http://localhost:3000",
-	"http://localhost:5500",
-	"http://127.0.0.1:5500",
-];
+const defaultOrigins = ["http://localhost:3000", "http://localhost:8182"];
 
 const envOrigins = parseOrigins(process.env.FRONTEND_URL);
 
