@@ -152,6 +152,8 @@ optional -> rejection date
 
 optional -> winner page
 
+admin notification for 
+
 
 UI changes:
 articon logo without tagline

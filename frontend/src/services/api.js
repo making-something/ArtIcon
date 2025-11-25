@@ -3,59 +3,69 @@
  * Centralized API communication layer
  */
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const API_BASE_URL =
+	process.env.NEXT_PUBLIC_API_URL || "https://api.articon.multiicon.in";
 
 /**
  * Generic API request handler
  */
 async function apiRequest(endpoint, options = {}) {
 	const url = `${API_BASE_URL}${endpoint}`;
-	
+
 	const config = {
 		headers: {
-			'Content-Type': 'application/json',
+			"Content-Type": "application/json",
 			...options.headers,
 		},
 		...options,
 	};
 
 	// Add auth token if available
-	if (typeof window !== 'undefined') {
+	if (typeof window !== "undefined") {
 		// Try admin token first for admin routes, then fall back to participant token
 		let token = null;
-		if (endpoint.startsWith('/api/admin')) {
-			token = localStorage.getItem('adminToken');
+		if (endpoint.startsWith("/api/admin")) {
+			token = localStorage.getItem("adminToken");
 		}
 		// Fall back to participant token if no admin token or for non-admin routes
 		if (!token) {
-			token = localStorage.getItem('authToken');
+			token = localStorage.getItem("authToken");
 		}
 		if (token) {
-			config.headers['Authorization'] = `Bearer ${token}`;
+			config.headers["Authorization"] = `Bearer ${token}`;
 		}
 	}
 
 	try {
 		const response = await fetch(url, config);
-		
+
 		// Check if response is JSON
-		const contentType = response.headers.get('content-type');
-		if (!contentType || !contentType.includes('application/json')) {
-			throw new Error('Server returned non-JSON response. Please check if the backend is running.');
+		const contentType = response.headers.get("content-type");
+		if (!contentType || !contentType.includes("application/json")) {
+			throw new Error(
+				"Server returned non-JSON response. Please check if the backend is running."
+			);
 		}
-		
+
 		const data = await response.json();
 
 		if (!response.ok) {
-			throw new Error(data.message || `API request failed with status ${response.status}`);
+			throw new Error(
+				data.message || `API request failed with status ${response.status}`
+			);
 		}
 
 		return data;
 	} catch (error) {
-		console.error('API Error:', error);
+		console.error("API Error:", error);
 		// Provide more helpful error messages
-		if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
-			throw new Error('Cannot connect to server. Please ensure the backend is running on http://localhost:8000');
+		if (
+			error.message.includes("Failed to fetch") ||
+			error.message.includes("NetworkError")
+		) {
+			throw new Error(
+				"Cannot connect to server. Please ensure the backend is running on http://localhost:8000"
+			);
 		}
 		throw error;
 	}
@@ -66,13 +76,13 @@ async function apiRequest(endpoint, options = {}) {
  */
 export async function uploadPortfolioFile(file) {
 	const formData = new FormData();
-	formData.append('portfolio', file);
+	formData.append("portfolio", file);
 
 	const url = `${API_BASE_URL}/api/portfolio/upload`;
-	
+
 	try {
 		const response = await fetch(url, {
-			method: 'POST',
+			method: "POST",
 			body: formData,
 			// Don't set Content-Type header - browser will set it with boundary for multipart
 		});
@@ -80,12 +90,12 @@ export async function uploadPortfolioFile(file) {
 		const data = await response.json();
 
 		if (!response.ok) {
-			throw new Error(data.message || 'File upload failed');
+			throw new Error(data.message || "File upload failed");
 		}
 
 		return data;
 	} catch (error) {
-		console.error('File upload error:', error);
+		console.error("File upload error:", error);
 		throw error;
 	}
 }
@@ -104,7 +114,7 @@ export async function registerParticipant(formData) {
 				portfolioFilePath = uploadResponse.data.filePath;
 			}
 		} catch (error) {
-			throw new Error('Failed to upload portfolio file: ' + error.message);
+			throw new Error("Failed to upload portfolio file: " + error.message);
 		}
 	}
 
@@ -115,10 +125,11 @@ export async function registerParticipant(formData) {
 		"Graphic Design": "graphics",
 	};
 
-	const category = specializationToCategoryMap[formData.specialization] || "ui_ux";
+	const category =
+		specializationToCategoryMap[formData.specialization] || "ui_ux";
 
-	const response = await apiRequest('/api/participants/register', {
-		method: 'POST',
+	const response = await apiRequest("/api/participants/register", {
+		method: "POST",
 		body: JSON.stringify({
 			fullName: formData.fullName,
 			email: formData.email,
@@ -138,11 +149,13 @@ export async function registerParticipant(formData) {
 
 	// Store token in localStorage and Cookie (Auto-login)
 	if (response.success && response.token) {
-		if (typeof window !== 'undefined') {
-			localStorage.setItem('authToken', response.token);
-			localStorage.setItem('participant', JSON.stringify(response.participant));
+		if (typeof window !== "undefined") {
+			localStorage.setItem("authToken", response.token);
+			localStorage.setItem("participant", JSON.stringify(response.participant));
 			// Set cookie for middleware access (expires in 7 days)
-			document.cookie = `authToken=${response.token}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`;
+			document.cookie = `authToken=${response.token}; path=/; max-age=${
+				60 * 60 * 24 * 7
+			}; SameSite=Lax`;
 		}
 	}
 
@@ -153,16 +166,16 @@ export async function registerParticipant(formData) {
  * Admin Login
  */
 export async function loginAdmin(email, password) {
-	const response = await apiRequest('/api/admin/login', {
-		method: 'POST',
+	const response = await apiRequest("/api/admin/login", {
+		method: "POST",
 		body: JSON.stringify({ email, password }),
 	});
 
 	// Store admin token
 	if (response.success && response.data.token) {
-		if (typeof window !== 'undefined') {
-			localStorage.setItem('adminToken', response.data.token);
-			localStorage.setItem('admin', JSON.stringify(response.data.admin));
+		if (typeof window !== "undefined") {
+			localStorage.setItem("adminToken", response.data.token);
+			localStorage.setItem("admin", JSON.stringify(response.data.admin));
 		}
 	}
 
@@ -173,18 +186,20 @@ export async function loginAdmin(email, password) {
  * Participant Login
  */
 export async function loginParticipant(email, password) {
-	const response = await apiRequest('/api/participants/login', {
-		method: 'POST',
+	const response = await apiRequest("/api/participants/login", {
+		method: "POST",
 		body: JSON.stringify({ email, password }),
 	});
 
 	// Store token in localStorage and Cookie
 	if (response.success && response.token) {
-		if (typeof window !== 'undefined') {
-			localStorage.setItem('authToken', response.token);
-			localStorage.setItem('participant', JSON.stringify(response.participant));
+		if (typeof window !== "undefined") {
+			localStorage.setItem("authToken", response.token);
+			localStorage.setItem("participant", JSON.stringify(response.participant));
 			// Set cookie for middleware access (expires in 7 days)
-			document.cookie = `authToken=${response.token}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`;
+			document.cookie = `authToken=${response.token}; path=/; max-age=${
+				60 * 60 * 24 * 7
+			}; SameSite=Lax`;
 		}
 	}
 
@@ -199,33 +214,37 @@ export async function login(email, password) {
 	try {
 		const adminResponse = await loginAdmin(email, password);
 		if (adminResponse.success) {
-			return { success: true, role: 'admin', data: adminResponse.data };
+			return { success: true, role: "admin", data: adminResponse.data };
 		}
 	} catch (adminError) {
 		// If admin login fails, try participant login
 		try {
 			const participantResponse = await loginParticipant(email, password);
 			if (participantResponse.success) {
-				return { success: true, role: 'participant', data: participantResponse };
+				return {
+					success: true,
+					role: "participant",
+					data: participantResponse,
+				};
 			}
 		} catch (participantError) {
 			// Both failed, throw the participant error (more common)
 			throw participantError;
 		}
 	}
-	
-	throw new Error('Login failed. Please check your credentials.');
+
+	throw new Error("Login failed. Please check your credentials.");
 }
 
 /**
  * Logout
  */
 export function logout() {
-	if (typeof window !== 'undefined') {
-		localStorage.removeItem('authToken');
-		localStorage.removeItem('participant');
-		localStorage.removeItem('adminToken');
-		localStorage.removeItem('admin');
+	if (typeof window !== "undefined") {
+		localStorage.removeItem("authToken");
+		localStorage.removeItem("participant");
+		localStorage.removeItem("adminToken");
+		localStorage.removeItem("admin");
 		// Remove cookie
 		document.cookie = "authToken=; path=/; max-age=0";
 	}
@@ -235,8 +254,8 @@ export function logout() {
  * Get current participant from localStorage
  */
 export function getCurrentParticipant() {
-	if (typeof window !== 'undefined') {
-		const participant = localStorage.getItem('participant');
+	if (typeof window !== "undefined") {
+		const participant = localStorage.getItem("participant");
 		return participant ? JSON.parse(participant) : null;
 	}
 	return null;
@@ -246,8 +265,8 @@ export function getCurrentParticipant() {
  * Check if user is authenticated
  */
 export function isAuthenticated() {
-	if (typeof window !== 'undefined') {
-		return !!localStorage.getItem('authToken');
+	if (typeof window !== "undefined") {
+		return !!localStorage.getItem("authToken");
 	}
 	return false;
 }
@@ -263,7 +282,7 @@ export async function getParticipantById(id) {
  * Check event status
  */
 export async function checkEventStatus() {
-	return apiRequest('/api/participants/event-status');
+	return apiRequest("/api/participants/event-status");
 }
 
 /**
@@ -277,15 +296,15 @@ export async function getParticipantTasks(participantId) {
  * Get all submissions (admin only)
  */
 export async function getSubmissions() {
-	return apiRequest('/api/submissions');
+	return apiRequest("/api/submissions");
 }
 
 /**
  * Create submission
  */
 export async function createSubmission(participantId, taskId, driveLink) {
-	return apiRequest('/api/submissions', {
-		method: 'POST',
+	return apiRequest("/api/submissions", {
+		method: "POST",
 		body: JSON.stringify({
 			participant_id: participantId,
 			task_id: taskId,
@@ -299,7 +318,7 @@ export async function createSubmission(participantId, taskId, driveLink) {
  */
 export async function updateSubmissionScore(submissionId, score) {
 	return apiRequest(`/api/submissions/${submissionId}`, {
-		method: 'PUT',
+		method: "PUT",
 		body: JSON.stringify({ score }),
 	});
 }
@@ -308,14 +327,14 @@ export async function updateSubmissionScore(submissionId, score) {
  * Get admin dashboard stats
  */
 export async function getAdminDashboardStats() {
-	return apiRequest('/api/admin/dashboard/stats');
+	return apiRequest("/api/admin/dashboard/stats");
 }
 
 /**
  * Get all participants (admin only)
  */
 export async function getAllParticipants() {
-	return apiRequest('/api/participants');
+	return apiRequest("/api/participants");
 }
 
 /**
@@ -323,7 +342,7 @@ export async function getAllParticipants() {
  */
 export async function approveParticipant(participantId, adminNotes) {
 	return apiRequest(`/api/admin/participants/${participantId}/approve`, {
-		method: 'PUT',
+		method: "PUT",
 		body: JSON.stringify({ admin_notes: adminNotes }),
 	});
 }
@@ -333,7 +352,7 @@ export async function approveParticipant(participantId, adminNotes) {
  */
 export async function rejectParticipant(participantId, adminNotes) {
 	return apiRequest(`/api/admin/participants/${participantId}/reject`, {
-		method: 'PUT',
+		method: "PUT",
 		body: JSON.stringify({ admin_notes: adminNotes }),
 	});
 }
@@ -341,33 +360,38 @@ export async function rejectParticipant(participantId, adminNotes) {
 /**
  * Export participants as CSV (admin only)
  */
-export async function exportParticipantsCSV(category = 'all', approvalStatus = 'all') {
+export async function exportParticipantsCSV(
+	category = "all",
+	approvalStatus = "all"
+) {
 	const params = new URLSearchParams();
-	if (category !== 'all') params.append('category', category);
-	if (approvalStatus !== 'all') params.append('approval_status', approvalStatus);
+	if (category !== "all") params.append("category", category);
+	if (approvalStatus !== "all")
+		params.append("approval_status", approvalStatus);
 
-	const token = typeof window !== 'undefined' ? localStorage.getItem('adminToken') : null;
+	const token =
+		typeof window !== "undefined" ? localStorage.getItem("adminToken") : null;
 
 	try {
 		const response = await fetch(
 			`${API_BASE_URL}/api/admin/participants/export/csv?${params}`,
 			{
 				headers: {
-					Authorization: token ? `Bearer ${token}` : '',
+					Authorization: token ? `Bearer ${token}` : "",
 				},
 			}
 		);
 
 		if (!response.ok) {
-			throw new Error('Failed to export CSV');
+			throw new Error("Failed to export CSV");
 		}
 
 		// Create download link
 		const blob = await response.blob();
 		const url = window.URL.createObjectURL(blob);
-		const a = document.createElement('a');
+		const a = document.createElement("a");
 		a.href = url;
-		a.download = `participants-${new Date().toISOString().split('T')[0]}.csv`;
+		a.download = `participants-${new Date().toISOString().split("T")[0]}.csv`;
 		document.body.appendChild(a);
 		a.click();
 		window.URL.revokeObjectURL(url);
@@ -375,7 +399,7 @@ export async function exportParticipantsCSV(category = 'all', approvalStatus = '
 
 		return { success: true };
 	} catch (error) {
-		console.error('CSV export error:', error);
+		console.error("CSV export error:", error);
 		throw error;
 	}
 }
@@ -401,4 +425,3 @@ export default {
 	rejectParticipant,
 	exportParticipantsCSV,
 };
-
