@@ -1,7 +1,7 @@
 .otis-footer {
 	position: relative;
 	width: 100vw;
-	height: 85svh;
+	height: auto;
 	padding: 2em;
 	background-color: var(--bg);
 	color: var(--fg);
@@ -53,7 +53,8 @@
 .otis-footer .footer-row {
 	display: flex;
 	gap: 2em;
-	margin-bottom: 6em;
+	margin-top: 4em;
+	margin-bottom: 2em;
 	justify-content: center;
 	align-items: center;
 }
@@ -134,14 +135,6 @@
 	align-items: center;
 }
 
-.otis-footer .footer-social-item {
-	display: flex;
-	gap: 0.5em;
-	align-items: center;
-	justify-content: center;
-	opacity: 1;
-}
-
 .otis-footer .footer-social-tag {
 	font-family: "supply-mono", "Geist Mono", monospace;
 	font-size: 0.75rem;
@@ -152,6 +145,21 @@
 
 .otis-footer .footer-social-link {
 	font-weight: 700;
+	display: flex;
+	align-items: center;
+	gap: 0.5em;
+}
+
+.otis-footer .footer-social-link svg {
+	width: 1.5rem;
+	height: 1.5rem;
+}
+
+.otis-footer .footer-social-links {
+	display: flex;
+	gap: 1em;
+	justify-content: center;
+	align-items: center;
 }
 
 .otis-footer a {
@@ -193,7 +201,7 @@
 	bottom: 0;
 	left: 0;
 	width: 100%;
-	height: 200%;
+	height: 110%;
 	pointer-events: none;
 	overflow: hidden;
 }
@@ -222,17 +230,13 @@
 
 	.otis-footer .footer-row {
 		flex-direction: column;
-		margin-bottom: 2em;
+		margin-top: 1.5em;
 		gap: 3em;
 	}
 
 	.otis-footer .footer-col {
 		align-items: center;
 		text-align: center;
-	}
-
-	.otis-footer .footer-col .footer-social-item {
-		justify-content: center;
 	}
 
 	.otis-footer .footer-contact-card {

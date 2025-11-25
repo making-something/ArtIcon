@@ -75,7 +75,7 @@ const Register = () => {
 			id: 3,
 			field: "specialization",
 			type: "select",
-			options: ["UI/UX Design", "Video Editing", "Graphic Design"],
+			options: ["UI/UX Design", "Video Editing", "Graphic Design", "All"],
 			pre: " and specialize in and want to participate in ",
 			post: " .",
 			placeholder: "CHOOSE FIELD",
@@ -577,7 +577,7 @@ const Register = () => {
 					</div>
 					<div className="top-nav-buttons">
 						<button className="back-nav-btn" onClick={() => router.push("/")}>
-							<ArrowLeftIcon className="hidden-in-mobile" />
+							{/* <ArrowLeftIcon className="hidden-in-mobile" /> */}
 							Back
 						</button>
 						{phase !== "login" && (

@@ -7,7 +7,7 @@ const CTACard = () => {
 	return (
 		<section className="cta">
 			<div className="container">
-				<div className="cta-copy" style={{ backgroundColor: "gray" }}>
+				<div className="cta-copy" style={{ backgroundColor: "#e0dede", borderRadius: "15px", padding: "2em" }}>
 					<Copy animateOnScroll={true}>
 						<p className="lg">
 							Every Great Creation Starts With Understanding The Guidelines!
@@ -27,11 +27,8 @@ const CTACard = () => {
 
 				<div className="contact-pill-btn">
 					<a href="/register"></a>
-					<div className="contact-text-small">
-						<p>Collabs, or cosmic brainstorms welcome</p>
-					</div>
 					<div className="contact-text-large">
-						<h1>Hit Me Up</h1>
+						<h1>Register Now</h1>
 					</div>
 				</div>
 			</div>

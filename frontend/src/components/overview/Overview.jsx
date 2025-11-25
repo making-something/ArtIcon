@@ -261,9 +261,8 @@ const Overview = () => {
 				{/* Header Section */}
 				<div className="stats-header">
 					<h1>
-						Rewards &<br />
+						Rewards &
 						Recognition
-						<br />
 						Await You
 					</h1>
 					<p>Win big prizes and recognition for your creativity</p>
@@ -312,13 +311,14 @@ const Overview = () => {
 
 						{/* E-Certificate & Goodies */}
 						<div className="stats-col stats-item-3">
-							<h1>E-Certificate &amp; Goodies</h1>
-							<p className="category-text">For All Participants</p>
+							<h1>For All Participants</h1>
+							<p className="category-text">
+								Because every effort matters!
+							</p>
 							<div className="desc">
-								<p>Digital Certificate</p>
-								<p>Exclusive Badge</p>
-								<p>Sticker Pack &amp; Phone Stand</p>
-								<p>ArtIcon Branded Bag</p>
+								<p>E-Certificate</p>
+								<p>Goodies</p>
+								<p>Social Media Recognition Post</p>
 							</div>
 						</div>
 					</div>

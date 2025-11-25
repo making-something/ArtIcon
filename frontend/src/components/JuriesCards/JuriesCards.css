@@ -23,14 +23,14 @@
 
 .juries-hero h1 {
 	color: var(--accent-orange);
-	font-size: clamp(2.5rem, 10vw, 10rem);
+	font-size: clamp(2rem, 8vw, 8rem);
 	margin: 0;
 	text-align: center;
 }
 
 .juries-hero p {
 	font-family: "Big Shoulders Display", sans-serif;
-	font-size: clamp(2rem, 4vw, 4.5rem);
+	font-size: clamp(1.5rem, 3vw, 3.5rem);
 	font-weight: 700;
 	text-transform: uppercase;
 	color: var(--base-400);

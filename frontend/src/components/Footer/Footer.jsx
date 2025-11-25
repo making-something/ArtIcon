@@ -1,6 +1,7 @@
 "use client";
 import "./Footer.css";
 import { useEffect, useRef } from "react";
+import { FaFacebookF, FaInstagram, FaLinkedinIn } from 'react-icons/fa';
 
 const imageParticleCount = 10;
 const imagePaths = Array.from(
@@ -16,16 +17,19 @@ const socialLinks = [
 		label: "FB",
 		name: "Facebook",
 		href: "https://www.facebook.com/multiiconofficial/",
+		icon: FaFacebookF,
 	},
 	{
 		label: "IN",
 		name: "Instagram",
 		href: "https://www.instagram.com/account",
+		icon: FaInstagram,
 	},
 	{
 		label: "LI",
 		name: "LinkedIn",
 		href: "https://www.linkedin.com/company/mulitiicon/",
+		icon: FaLinkedinIn,
 	},
 ];
 
@@ -216,19 +220,21 @@ const Footer = () => {
 					</div>
 					<div className="footer-col footer-col-social">
 						<p>Social Pulse</p>
-						{socialLinks.map((link) => (
-							<p className="footer-social-item" key={link.href}>
-								<span className="footer-social-tag">{link.label}</span>
+						<div className="footer-social-links">
+							{socialLinks.map((link) => (
 								<a
+									key={link.href}
 									href={link.href}
 									target="_blank"
 									rel="noreferrer noopener"
 									className="footer-social-link"
+									title={link.name}
+									aria-label={link.name}
 								>
-									{link.name}
+									<link.icon />
 								</a>
-							</p>
-						))}
+							))}
+						</div>
 					</div>
 				</div>
 				<div className="copyright-info">

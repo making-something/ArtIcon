@@ -184,8 +184,8 @@ export default function JuriesCards() {
 				<div className="juries-hero-content">
 					<h1>Meet Our Expert Jury Panel</h1>
 					<p>
-						Four industry experts who will evaluate your creativity,
-						consistency, storytelling, and time mastery
+						Three industry experts who will evaluate your creativity,
+						consistency, storytelling, and time mastery.
 					</p>
 				</div>
 			</section>
@@ -200,7 +200,7 @@ export default function JuriesCards() {
 							<img src="/juries/JURY 1-01.avif" alt="Ronak Raiyani" />
 						</div>
 						<div className="jury-member-info">
-							<p>President of RITA Groups</p>
+							<p>President of RAJKOT IT ASSOCIATION</p>
 						</div>
 					</div>
 				</div>

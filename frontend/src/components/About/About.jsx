@@ -182,9 +182,6 @@ const About = () => {
 	);
 	return (
 		<section className="about-section-wrapper" ref={containerRef}>
-			{/* HERO */}
-
-			{/* STORY */}
 			<div className="about-copy">
 				<h2 className="about-copy-title">Who will be the ArtIcon Champion?</h2>
 				<div className="about-copy-sticky-wrapper">
@@ -202,7 +199,9 @@ const About = () => {
 							Only the most versatile, innovative, and consistent creator will
 							take home the <span>ArtIcon Champion Title</span>
 						</p>
+					</div>
 
+					<div className="about-copy-content about-copy-content-second" style={{backgroundColor:"#b1c1ef"}}>
 						<p className="about-callout">
 							So creators…
 							<br />

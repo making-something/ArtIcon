@@ -125,7 +125,7 @@
 	text-transform: uppercase;
 	color: var(--text-main);
 	text-align: center;
-	margin: 0 0 4em 0;
+	margin: 0 0 2em 0;
 	z-index: 2;
 	line-height: 1;
 }
@@ -133,12 +133,15 @@
 .about-copy-sticky-wrapper {
 	position: relative;
 	width: 100vw;
-	height: 100vh;
+	height: auto;
+	min-height: 120vh; /* Increased height for two content boxes */
 	display: flex;
+	flex-direction: column;
 	justify-content: center;
 	align-items: center;
 	background-color: var(--bg-main);
 	overflow: hidden;
+	gap: 4em; /* Space between the two content boxes */
 }
 
 .about-copy-content {

@@ -15,7 +15,7 @@ const FAQ = () => {
 		{
 			question: "Is this an online or offline event?",
 			answer:
-				"Offline! Pure vibes, live energy, and actual face-to-face creative chaos at Golden Acre.",
+				"Offline! Pure vibes, live energy, and actual face-to-face creative chaos at Multiicon.",
 		},
 		{
 			question: "Can I participate in more than one category?",
