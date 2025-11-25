@@ -44,23 +44,19 @@
 
 .timeline-work .timeline-titles {
 	position: relative;
-	width: 500vw;
+	width: 400vw; /* 4 steps × 100vw each */
 	height: 100vh;
 	display: flex;
 	will-change: transform;
 }
 
 .timeline-work .timeline-title-wrapper {
-	flex: 1;
+	width: 100vw; /* Each wrapper takes full viewport width */
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-}
-
-/* First step text should be centered on screen initially */
-.timeline-work .timeline-title-wrapper:first-child {
-	margin-left: calc(50vw - 62.5vw);
+	flex-shrink: 0;
 }
 
 .timeline-title-img {
@@ -82,26 +78,14 @@
 
 .timeline-work .timeline-title-wrapper h1 {
 	text-align: center;
-	transform: translateY(-0.5em);
+	transform: translateY(0);
 	font-size: 5rem;
 	line-height: 0.95;
 	text-transform: uppercase;
 	font-family: "rader", sans-serif;
 	font-style: italic;
 	font-weight: 400;
-	margin-bottom: 0.5rem;
-}
-
-.timeline-step-description {
-	font-family: "PP Neue Montreal", sans-serif;
-	font-size: clamp(1rem, 1.5vw, 1.3rem);
-	font-weight: 500;
-	color: var(--base-400);
-	text-align: center;
 	margin: 0;
-	line-height: 1.4;
-	max-width: 500px;
-	padding: 0 2rem;
 }
 
 .timeline-work .timeline-images {
@@ -259,12 +243,6 @@
 
 	.timeline-title-img {
 		display: block;
-	}
-
-	.timeline-step-description {
-		font-size: clamp(0.9rem, 3vw, 1.1rem);
-		padding: 0 1rem;
-		max-width: 100%;
 	}
 
 	.timeline-work .timeline-titles {

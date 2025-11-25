@@ -2,7 +2,7 @@
 .event-overview-anime-text-container {
 	position: relative;
 	width: 100vw;
-	height: 100vh;
+	min-height: 150vh;
 	overflow: hidden;
 	background-color: var(--base-100);
 }
@@ -25,16 +25,105 @@
 }
 
 .event-overview-anime-text-container .event-overview-anime-text {
-	width: 60%;
+	width: 70%;
+}
+
+/* Title Styling */
+.event-overview-anime-text-container
+	.event-overview-anime-text
+	.event-overview-title {
+	color: var(--base-300);
+	text-align: center;
+	margin-bottom: 2rem;
+	font-size: 2.5rem;
+	font-weight: 900;
+	line-height: 1.2;
+	font-family: "Big Shoulders Display", sans-serif;
+	text-transform: uppercase;
+	letter-spacing: -0.02em;
 }
 
 .event-overview-anime-text-container .event-overview-anime-text p {
 	color: var(--base-300);
 	text-align: center;
-	margin-bottom: 2rem;
+	margin-bottom: 1.5rem;
+	font-size: 1.6rem;
+	font-weight: 900;
+	line-height: 1.4;
+}
+
+/* Categories List */
+.event-overview-anime-text-container
+	.event-overview-anime-text
+	.event-overview-categories {
+	list-style: none;
+	padding: 0;
+	margin: 1.5rem 0;
+	text-align: center;
+	display: inline-block;
+}
+
+.event-overview-anime-text-container
+	.event-overview-anime-text
+	.event-overview-categories
+	li {
+	color: var(--base-300);
+	font-size: 1.6rem;
+	font-weight: 900;
+	line-height: 1.8;
+	position: relative;
+	padding-left: 2.5rem;
+	margin-bottom: 0.3rem;
+	text-align: left;
+}
+
+.event-overview-anime-text-container
+	.event-overview-anime-text
+	.event-overview-categories
+	li::before {
+	content: "◆";
+	position: absolute;
+	left: 0;
+	color: var(--accent-2);
+	font-size: 1.2rem;
+	line-height: 1.8;
+	animation: pulse-bullet 2s ease-in-out infinite;
+}
+
+@keyframes pulse-bullet {
+	0%,
+	100% {
+		opacity: 1;
+		transform: scale(1);
+	}
+	50% {
+		opacity: 0.7;
+		transform: scale(1.1);
+	}
+}
+
+/* Divider Text */
+.event-overview-anime-text-container
+	.event-overview-anime-text
+	.event-overview-divider {
+	margin-top: 2rem;
+	margin-bottom: 1.5rem;
+	font-size: 2rem;
+	font-style: italic;
+	color: var(--base-300);
+	opacity: 0.9;
+}
+
+/* Highlight Text */
+.event-overview-anime-text-container
+	.event-overview-anime-text
+	.event-overview-highlight {
+	margin-top: 2rem;
 	font-size: 2rem;
 	font-weight: 900;
-	line-height: 1;
+	color: var(--base-300);
+	text-transform: uppercase;
+	letter-spacing: 0.02em;
 }
 
 .event-overview-anime-text-container
@@ -95,7 +184,7 @@
 .event-overview-anime-text-container
 	.event-overview-anime-text
 	.event-overview-word
-	span.event-overview-keyword.hackathon::before,
+	span.event-overview-keyword.champion::before,
 .event-overview-anime-text-container
 	.event-overview-anime-text
 	.event-overview-word
@@ -103,7 +192,15 @@
 .event-overview-anime-text-container
 	.event-overview-anime-text
 	.event-overview-word
-	span.event-overview-keyword.fusion::before {
+	span.event-overview-keyword.editing::before,
+.event-overview-anime-text-container
+	.event-overview-anime-text
+	.event-overview-word
+	span.event-overview-keyword.competition::before,
+.event-overview-anime-text-container
+	.event-overview-anime-text
+	.event-overview-word
+	span.event-overview-keyword.explosion::before {
 	background-color: var(--accent-1);
 }
 
@@ -118,11 +215,23 @@
 .event-overview-anime-text-container
 	.event-overview-anime-text
 	.event-overview-word
+	span.event-overview-keyword.graphic::before,
+.event-overview-anime-text-container
+	.event-overview-anime-text
+	.event-overview-word
 	span.event-overview-keyword.design::before,
 .event-overview-anime-text-container
 	.event-overview-anime-text
 	.event-overview-word
-	span.event-overview-keyword.ideas::before {
+	span.event-overview-keyword.designer::before,
+.event-overview-anime-text-container
+	.event-overview-anime-text
+	.event-overview-word
+	span.event-overview-keyword.ideas::before,
+.event-overview-anime-text-container
+	.event-overview-anime-text
+	.event-overview-word
+	span.event-overview-keyword.alive::before {
 	background-color: var(--accent-2);
 }
 
@@ -133,7 +242,23 @@
 .event-overview-anime-text-container
 	.event-overview-anime-text
 	.event-overview-word
+	span.event-overview-keyword.ai-powered::before,
+.event-overview-anime-text-container
+	.event-overview-anime-text
+	.event-overview-word
 	span.event-overview-keyword.tools::before,
+.event-overview-anime-text-container
+	.event-overview-anime-text
+	.event-overview-word
+	span.event-overview-keyword.devices::before,
+.event-overview-anime-text-container
+	.event-overview-anime-text
+	.event-overview-word
+	span.event-overview-keyword.imagination::before,
+.event-overview-anime-text-container
+	.event-overview-anime-text
+	.event-overview-word
+	span.event-overview-keyword.creativity::before,
 .event-overview-anime-text-container
 	.event-overview-anime-text
 	.event-overview-word
@@ -141,7 +266,39 @@
 .event-overview-anime-text-container
 	.event-overview-anime-text
 	.event-overview-word
-	span.event-overview-keyword.festival::before {
+	span.event-overview-keyword.future::before,
+.event-overview-anime-text-container
+	.event-overview-anime-text
+	.event-overview-word
+	span.event-overview-keyword.versatile::before,
+.event-overview-anime-text-container
+	.event-overview-anime-text
+	.event-overview-word
+	span.event-overview-keyword.innovative::before,
+.event-overview-anime-text-container
+	.event-overview-anime-text
+	.event-overview-word
+	span.event-overview-keyword.consistent::before,
+.event-overview-anime-text-container
+	.event-overview-anime-text
+	.event-overview-word
+	span.event-overview-keyword.creator::before,
+.event-overview-anime-text-container
+	.event-overview-anime-text
+	.event-overview-word
+	span.event-overview-keyword.thinker::before,
+.event-overview-anime-text-container
+	.event-overview-anime-text
+	.event-overview-word
+	span.event-overview-keyword.wizard::before,
+.event-overview-anime-text-container
+	.event-overview-anime-text
+	.event-overview-word
+	span.event-overview-keyword.gujarat\'s::before,
+.event-overview-anime-text-container
+	.event-overview-anime-text
+	.event-overview-word
+	span.event-overview-keyword.first::before {
 	background-color: var(--accent-3);
 }
 
@@ -161,8 +318,54 @@
 		width: 100%;
 	}
 
+	.event-overview-anime-text-container
+		.event-overview-anime-text
+		.event-overview-title {
+		font-size: 1.8rem;
+		margin-bottom: 1.2rem;
+	}
+
 	.event-overview-anime-text-container .event-overview-anime-text p {
-		font-size: 1.3rem;
+		font-size: 1.1rem;
+		margin-bottom: 1rem;
+	}
+
+	.event-overview-anime-text-container
+		.event-overview-anime-text
+		.event-overview-categories {
+		margin: 1rem 0;
+	}
+
+	.event-overview-anime-text-container
+		.event-overview-anime-text
+		.event-overview-categories
+		li {
+		font-size: 1.1rem;
+		padding-left: 2rem;
+		line-height: 1.6;
+	}
+
+	.event-overview-anime-text-container
+		.event-overview-anime-text
+		.event-overview-categories
+		li::before {
+		font-size: 1rem;
+		line-height: 1.6;
+	}
+
+	.event-overview-anime-text-container
+		.event-overview-anime-text
+		.event-overview-divider {
+		font-size: 1.4rem;
+		margin-top: 1.5rem;
+		margin-bottom: 1rem;
+	}
+
+	.event-overview-anime-text-container
+		.event-overview-anime-text
+		.event-overview-highlight {
+		font-size: 1.4rem;
+		margin-top: 1.5rem;
 	}
 
 	.event-overview-anime-text-container

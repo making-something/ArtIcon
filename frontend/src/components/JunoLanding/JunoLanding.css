@@ -465,6 +465,40 @@
 	letter-spacing: 0.02em;
 }
 
+/* Card Points Styling */
+.home-services .card-copy .card-points {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center; /* Center horizontally */
+	gap: 0.75rem; /* Increased gap between lines */
+}
+
+.home-services .card-copy .card-points li {
+	font-family: "DM Mono", monospace;
+	font-size: 0.85rem;
+	font-weight: 500;
+	text-transform: uppercase;
+	color: var(--base-300);
+	padding-left: 1.5rem;
+	position: relative;
+	line-height: 1.8; /* Increased line height for more space */
+	text-align: left;
+	width: auto; /* Allow items to be their natural width */
+}
+
+.home-services .card-copy .card-points li::before {
+	content: "•";
+	position: absolute;
+	left: 0;
+	color: var(--base-300);
+	font-size: 1.2rem;
+	font-weight: bold;
+}
+
 .home-services .cards #card-1 {
 	transform: translateX(100%) translateY(-100%) rotate(-5deg) scale(0.25);
 	z-index: 2;
@@ -578,6 +612,15 @@ p.mono span {
 		padding: 1.75rem 1.75rem 0 1.75rem;
 	}
 
+	.home-services .card-copy .card-points {
+		gap: 0.7rem;
+	}
+
+	.home-services .card-copy .card-points li {
+		font-size: 0.9rem;
+		line-height: 1.8;
+	}
+
 	.home-services .flip-card-back {
 		gap: 2rem;
 	}
@@ -601,6 +644,15 @@ p.mono span {
 		font-size: 0.85rem;
 		line-height: 2.8;
 		padding: 1.5rem 1.5rem 0 1.5rem;
+	}
+
+	.home-services .card-copy .card-points {
+		gap: 0.65rem;
+	}
+
+	.home-services .card-copy .card-points li {
+		font-size: 0.8rem;
+		line-height: 1.7;
 	}
 
 	.home-services .flip-card-back {
@@ -712,6 +764,20 @@ p.mono span {
 		height: auto;
 	}
 
+	.home-services .card-copy .card-points {
+		gap: 0.6rem;
+	}
+
+	.home-services .card-copy .card-points li {
+		font-size: 0.7rem;
+		padding-left: 1.2rem;
+		line-height: 1.6;
+	}
+
+	.home-services .card-copy .card-points li::before {
+		font-size: 1rem;
+	}
+
 	.home-services .flip-card-back .card-back-icon {
 		width: 60px;
 		height: 60px;
@@ -750,6 +816,16 @@ p.mono span {
 		padding: 0.75rem 0.75rem 0 0.75rem;
 	}
 
+	.home-services .card-copy .card-points {
+		gap: 0.55rem;
+	}
+
+	.home-services .card-copy .card-points li {
+		font-size: 0.65rem;
+		padding-left: 1rem;
+		line-height: 1.6;
+	}
+
 	.home-services .cards-container {
 		margin-top: 7rem;
 	}
@@ -774,6 +850,20 @@ p.mono span {
 		font-size: 0.65rem;
 		line-height: 2;
 		padding: 0.5rem 0.5rem 0 0.5rem;
+	}
+
+	.home-services .card-copy .card-points {
+		gap: 0.5rem;
+	}
+
+	.home-services .card-copy .card-points li {
+		font-size: 0.6rem;
+		padding-left: 0.9rem;
+		line-height: 1.5;
+	}
+
+	.home-services .card-copy .card-points li::before {
+		font-size: 0.9rem;
 	}
 
 	.home-services .flip-card-back {

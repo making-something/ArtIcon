@@ -460,7 +460,7 @@ const JunoLanding = () => {
 		ScrollTrigger.create({
 			trigger: ".outro",
 			start: "top top",
-			end: `+=${window.innerHeight * 3}px`,
+			end: `+=${window.innerHeight * 2}px`, // Reduced from 3 to 2
 			pin: true,
 			pinSpacing: true,
 			invalidateOnRefresh: true,
@@ -492,7 +492,7 @@ const JunoLanding = () => {
 		ScrollTrigger.create({
 			trigger: ".outro",
 			start: "top bottom",
-			end: `+=${window.innerHeight * 6}px`,
+			end: `+=${window.innerHeight * 4}px`, // Reduced from 6 to 4
 			scrub: 1,
 			onUpdate: (self) => {
 				const progress = self.progress;
@@ -668,7 +668,7 @@ const JunoLanding = () => {
 									data-animate-delay="0.2"
 									data-animate-on-scroll="true"
 								>
-									[ Category 01 ]
+									[ Main Rule ]
 								</p>
 								<h4
 									data-animate-type="line-reveal"
@@ -676,7 +676,7 @@ const JunoLanding = () => {
 									data-animate-on-scroll="true"
 									style={{ transform: "translateY(-40px)" }}
 								>
-									Graphic Design
+									Articon Champion
 								</h4>
 							</div>
 							<div className="home-about-card">
@@ -694,7 +694,7 @@ const JunoLanding = () => {
 									data-animate-on-scroll="true"
 									style={{ transform: "translateY(-40px)" }}
 								>
-									UI/UX Design
+									Graphic Designing
 								</h4>
 							</div>
 						</div>
@@ -714,7 +714,7 @@ const JunoLanding = () => {
 									data-animate-on-scroll="true"
 									style={{ transform: "translateY(-40px)" }}
 								>
-									Video Editing
+									UI/UX
 								</h4>
 							</div>
 							<div className="home-about-card">
@@ -724,7 +724,7 @@ const JunoLanding = () => {
 									data-animate-delay="0.35"
 									data-animate-on-scroll="true"
 								>
-									[ Main Rule ]
+									[ Category 04 ]
 								</p>
 								<h4
 									data-animate-type="line-reveal"
@@ -732,7 +732,7 @@ const JunoLanding = () => {
 									data-animate-on-scroll="true"
 									style={{ transform: "translateY(-40px)" }}
 								>
-									One Icon to Rule Them All
+									Video Editor
 								</h4>
 							</div>
 						</div>
@@ -742,7 +742,7 @@ const JunoLanding = () => {
 			<section className="home-services">
 				<div className="container">
 					<div className="home-services-header">
-						<p className="md">Event Details & Registration</p>
+						<p className="md">What we expect from you</p>
 					</div>
 				</div>
 				<div className="home-services-top-bar">
@@ -808,11 +808,14 @@ const JunoLanding = () => {
 											<p className="mono">01</p>
 										</div>
 										<div className="card-copy">
-											<p>
-												Design pixel-perfect interfaces that users love. From
-												wireframes to prototypes, create experiences that blend
-												beauty with functionality and accessibility.
-											</p>
+											<ul className="card-points">
+												<li>User-Focused</li>
+												<li>Wireframe Pro</li>
+												<li>Clean Layout Mindset</li>
+												<li>Strong UX Logic</li>
+												<li>Interactive Thinking</li>
+												<li>Data-Driven Decisions</li>
+											</ul>
 										</div>
 										<div className="card-title">
 											<p className="mono">01</p>
@@ -863,11 +866,14 @@ const JunoLanding = () => {
 											<p className="mono">02</p>
 										</div>
 										<div className="card-copy">
-											<p>
-												Craft stunning visual identities that tell powerful
-												stories. From bold color palettes to complete brand
-												systems, bring creative visions to life.
-											</p>
+											<ul className="card-points">
+												<li>Creative</li>
+												<li>Detail-oriented</li>
+												<li>Brand-focused</li>
+												<li>Skilled in design tools</li>
+												<li>Visual communicator</li>
+												<li>Deadline-driven</li>
+											</ul>
 										</div>
 										<div className="card-title">
 											<p className="mono">02</p>
@@ -918,11 +924,14 @@ const JunoLanding = () => {
 											<p className="mono">03</p>
 										</div>
 										<div className="card-copy">
-											<p>
-												Transform raw footage into captivating stories. Edit,
-												color grade, and produce professional videos that engage
-												audiences and leave lasting impressions.
-											</p>
+											<ul className="card-points">
+												<li>Sharp Timing</li>
+												<li>Prompt Expert</li>
+												<li>Smooth Flow</li>
+												<li>Story Driven</li>
+												<li>AI-Savvy</li>
+												<li>Fast & Efficient</li>
+											</ul>
 										</div>
 										<div className="card-title">
 											<p className="mono">03</p>

@@ -54,7 +54,7 @@ export default function Timeline() {
 					// Clear and rebuild indicators
 					indicatorContainer.innerHTML = "";
 
-					for (let section = 1; section <= 5; section++) {
+					for (let section = 1; section <= 4; section++) {
 						const sectionNumber = document.createElement("p");
 						sectionNumber.className = "mn";
 						sectionNumber.textContent = `0${section}`;
@@ -101,12 +101,10 @@ export default function Timeline() {
 
 					const timelineTitles = container.querySelector(".timeline-titles");
 					// Calculate distance so last item stops at center
-					// First item has margin-left: -12.5vw to center it
-					// Total width = 500vw, 4 items, each = 125vw
-					// Item 1 center at: -12.5vw + 62.5vw = 50vw (centered)
-					// Item 4 starts at: -12.5vw + 375vw = 362.5vw, center at 425vw
-					// To center item 4: 425vw - 50vw = 375vw = 3.75 screens
-					const moveDistance = window.innerWidth * 3.75;
+					// Total width = 400vw (4 items), each = 100vw
+					// First item centered with margin-left offset
+					// Last item (4th) should end centered: move 3 full screens
+					const moveDistance = window.innerWidth * 3;
 
 					const imagesContainer = container.querySelector(".timeline-images");
 
@@ -115,40 +113,46 @@ export default function Timeline() {
 					// Clear and rebuild image cards
 					imagesContainer.innerHTML = "";
 
-					let cardIndex = 0;
-					for (let i = 0; i < timelineWorkItems.length; i++) {
-						const item = timelineWorkItems[i];
-						// Create even number of images for all steps
-						// Step 1: 2 images, Steps 2-3: 4 images each, Step 4: 2 images
-						const isMiddleStep = i === 1 || i === 2;
-						const numImages = isMiddleStep ? 4 : 2;
+					// Use local timeline images
+					const timelineImages = [
+						"/timeline/img1.jpg",
+						"/timeline/img2.jpg",
+						"/timeline/img3.jpg",
+						"/timeline/img4.jpg",
+						"/timeline/img5.jpg",
+						"/timeline/img6.jpg",
+						"/timeline/img7.jpg",
+						"/timeline/img8.jpg",
+						"/timeline/img9.jpg",
+						"/timeline/img10.jpg",
+					];
 
-						for (let j = 0; j < numImages; j++) {
-							const timelineImgCard = document.createElement("div");
-							timelineImgCard.className = `timeline-img-card timeline-img-card-${
-								i + 1
-							}`;
-							timelineImgCard.setAttribute("data-step-index", i);
+					// Create 8 image cards with better distribution (reduced from 10)
+					for (let i = 0; i < timelineImages.length; i++) {
+						const timelineImgCard = document.createElement("div");
+						timelineImgCard.className = `timeline-img-card timeline-img-card-${
+							(i % 4) + 1
+						}`;
+						timelineImgCard.setAttribute("data-step-index", i % 4);
 
-							const img = document.createElement("img");
-							img.src = item.image;
-							img.alt = item.alt;
-							timelineImgCard.appendChild(img);
+						const img = document.createElement("img");
+						img.src = timelineImages[i];
+						img.alt = `Timeline image ${i + 1}`;
+						img.loading = "lazy"; // Add lazy loading for external images
+						timelineImgCard.appendChild(img);
 
-							const position =
-								featuredCardPos[cardIndex % featuredCardPos.length];
+						const position = featuredCardPos[i % featuredCardPos.length];
 
-							gsap.set(timelineImgCard, {
-								x: position.x,
-								y: position.y,
-								z: -1500,
-								scale: 0,
-								force3D: true,
-							});
+						gsap.set(timelineImgCard, {
+							x: position.x,
+							y: position.y,
+							z: -2000,
+							scale: 0,
+							rotation: Math.random() * 20 - 10, // Random rotation between -10 and 10 degrees
+							force3D: true,
+						});
 
-							imagesContainer.appendChild(timelineImgCard);
-							cardIndex++;
-						}
+						imagesContainer.appendChild(timelineImgCard);
 					}
 
 					const timelineImgCards =
@@ -158,35 +162,52 @@ export default function Timeline() {
 					scrollTriggerInstance = ScrollTrigger.create({
 						trigger: container,
 						start: "top top",
-						end: `+=${window.innerHeight * 5}px`,
+						end: `+=${window.innerHeight * 6}px`, // Increased for slower scroll
 						pin: true,
 						pinSpacing: true,
 						invalidateOnRefresh: true,
 						fastScrollEnd: true,
 						anticipatePin: 1,
-						scrub: 1,
+						scrub: true, // Set to true for smooth scroll in both directions
 						id: "timeline-main",
 						onUpdate: (self) => {
-							const xPosition = -moveDistance * self.progress;
+							const progress = self.progress;
+
+							const xPosition = -moveDistance * progress;
 							gsap.set(timelineTitles, {
 								x: xPosition,
 							});
 
 							timelineImgCards.forEach((timelineImgCard, index) => {
-								const staggerOffset = index * 0.075;
-								const scaledProgress = (self.progress - staggerOffset) * 2;
+								const staggerOffset = index * 0.08; // Adjusted stagger for 8 images
+								const scaledProgress = (progress - staggerOffset) * 1.5;
 								const individualProgress = Math.max(
 									0,
 									Math.min(1, scaledProgress)
 								);
 
-								const newZ = -1500 + 3000 * individualProgress;
-								const scaleProgress = Math.min(1, individualProgress * 10);
-								const scale = Math.max(0, Math.min(1, scaleProgress));
+								// Enhanced Z-axis movement for better depth
+								const newZ = -2000 + 3500 * individualProgress;
+								const scaleProgress = Math.min(1, individualProgress * 8);
+								const scale = Math.max(0, Math.min(1.1, scaleProgress)); // Slightly larger max scale
+
+								// Add rotation animation for more dynamic effect
+								const rotationProgress = individualProgress * 360;
+								const rotation = rotationProgress % 360;
+
+								// Add opacity fade in/out
+								let opacity = 1;
+								if (individualProgress < 0.1) {
+									opacity = individualProgress * 10;
+								} else if (individualProgress > 0.9) {
+									opacity = (1 - individualProgress) * 10;
+								}
 
 								gsap.set(timelineImgCard, {
 									z: newZ,
 									scale: scale,
+									rotationZ: rotation * 0.1, // Subtle rotation
+									opacity: opacity,
 									force3D: true,
 								});
 							});
@@ -197,8 +218,7 @@ export default function Timeline() {
 
 							indicators.forEach((indicator, index) => {
 								const indicatorStart = index * progressPerIndicator;
-								const indicatorOpacity =
-									self.progress > indicatorStart ? 1 : 0.2;
+								const indicatorOpacity = progress > indicatorStart ? 1 : 0.2;
 
 								gsap.to(indicator, {
 									opacity: indicatorOpacity,
@@ -247,14 +267,13 @@ export default function Timeline() {
 								</div>
 							)}
 							<h1 className="timeline-title">{item.title}</h1>
-							<p className="timeline-step-description">{item.description}</p>
 						</div>
 					))}
 				</div>
 				<div className="timeline-work-indicator"></div>
 				<div className="timeline-work-footer">
-					<p className="mn">Articon 2025 [ {timelineWorkItems.length} ]</p>
-					<p className="mn">///////////////////</p>
+					<p className="mn">Articon 2025</p>
+					<p className="mn">||||||||||||||</p>
 				</div>
 			</section>
 		</>

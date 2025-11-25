@@ -1,0 +1,164 @@
+/* ADD THESE STYLES TO CTACard.css AFTER LINE 53 (before the old register button styles) */
+
+/* --- CONTACT PILL BUTTON STYLES --- */
+.about-contact {
+	position: relative;
+	width: 100%;
+	min-height: 50vh;
+	padding: 2em;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-color: transparent;
+}
+
+.contact-pill-btn {
+	position: relative;
+	width: 70%;
+	height: 250px;
+	border: 0.75em solid var(--base-100);
+	border-radius: 20em;
+	background: linear-gradient(
+		45deg,
+		var(--accent-orange),
+		var(--accent-yellow),
+		var(--accent-teal),
+		var(--accent-orange)
+	);
+	background-size: 400% 400%;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	gap: 8px;
+	box-shadow: 10px 10px 0px 5px var(--base-100);
+	overflow: hidden;
+	cursor: pointer;
+	animation: gradientMove 10s ease-in-out infinite;
+	transition: transform 0.2s ease;
+}
+
+.contact-pill-btn:active {
+	transform: translate(5px, 5px);
+	box-shadow: 5px 5px 0px 2px var(--base-100);
+}
+
+.contact-pill-btn a {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+	z-index: 5;
+}
+
+/* Stripes Overlay */
+.contact-pill-btn::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 200%;
+	height: 100%;
+	background: repeating-linear-gradient(
+		45deg,
+		rgba(0, 0, 0, 0.125) 0px,
+		rgba(0, 0, 0, 0.125) 15px,
+		transparent 15px,
+		transparent 30px
+	);
+	animation: stripeMove 30s linear infinite;
+	z-index: 1;
+}
+
+.contact-text-large h1 {
+	font-size: 5rem;
+	margin: 0;
+	color: var(--base-100);
+	z-index: 2;
+	position: relative;
+}
+
+.contact-text-small p {
+	font-family: "DM Mono", monospace;
+	color: var(--base-100);
+	z-index: 2;
+	position: relative;
+	font-size: 1rem;
+}
+
+/* --- END CONTACT PILL BUTTON STYLES --- */
+
+
+/* UPDATE RESPONSIVE STYLES */
+
+/* Tablet Responsive (768px - 1000px) */
+@media (max-width: 1000px) and (min-width: 769px) {
+	.contact-pill-btn {
+		width: 85%;
+		height: 220px;
+	}
+
+	.contact-text-large h1 {
+		font-size: 4rem;
+	}
+
+	.contact-text-small p {
+		font-size: 0.9rem;
+	}
+}
+
+/* Mobile Responsive (max-width: 768px) */
+@media (max-width: 768px) {
+	.about-contact {
+		min-height: 40vh;
+		padding: 1.5rem;
+	}
+
+	.contact-pill-btn {
+		width: 100%;
+		height: 180px;
+		border-radius: 2em;
+		border-width: 0.5em;
+		box-shadow: 6px 6px 0px 3px var(--base-100);
+	}
+
+	.contact-pill-btn:active {
+		box-shadow: 3px 3px 0px 1px var(--base-100);
+	}
+
+	.contact-text-large h1 {
+		font-size: 3rem;
+	}
+
+	.contact-text-small p {
+		font-size: 0.8rem;
+	}
+}
+
+/* Small Mobile Responsive (max-width: 480px) */
+@media (max-width: 480px) {
+	.about-contact {
+		min-height: 35vh;
+		padding: 1rem;
+	}
+
+	.contact-pill-btn {
+		height: 150px;
+		border-width: 0.4em;
+		box-shadow: 4px 4px 0px 2px var(--base-100);
+	}
+
+	.contact-pill-btn:active {
+		box-shadow: 2px 2px 0px 1px var(--base-100);
+	}
+
+	.contact-text-large h1 {
+		font-size: 2.5rem;
+	}
+
+	.contact-text-small p {
+		font-size: 0.7rem;
+	}
+}
+

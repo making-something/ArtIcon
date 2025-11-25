@@ -138,3 +138,31 @@ Free Goodies for All Participants (if they post & tag Multiicon)
 - Custom Art Icon Badge / Sticker Pack 
 - Multiicon phone stand 
 - Bag
+
+
+either one or all catagories
+notification in whatsapp and mail for registration  , approval , and reject , on 5th dec , on 6th dec , on 7th dec 7am [done] (content will be provided by maam)
+unique mail and whatsapp register
+timer should shows after we approve the application
+forgot password
+
+
+filter participants by approval , date register , by present or absent
+optional -> rejection date  
+
+optional -> winner page
+
+
+UI changes:
+articon logo without tagline
+herosection about page content
+cards-flip paragraph style change or if doesn't works back to points
+no mention the numbers of participants
+timeline section - no sebtittles
+about component - first pargraph changes
+winner catagories 4 cards section
+rules card chnage
+show all the tasks to all catgory participant
+footer changes - social media icon , fonts , ADDRESS : Floor 3, Rumi Plaza, Airport Main Rd, near Race Course Road, Maruti Nagar, Rajkot, Gujarat 360001
+
+

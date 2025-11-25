@@ -43,11 +43,14 @@ const Menu = () => {
 		<nav>
 			<div className={`nav-logo ${hiddenClass}`}>
 				<a href="/">
-					<img src="/logo.avif" alt="ArtIcon Logo" />
+					<img src="/LOGO PNG-04.png" alt="ArtIcon Logo" />
 				</a>
 			</div>
 
-			<div className={`nav-cta-wrapper ${hiddenClass}`} onClick={handleRegisterClick}>
+			<div
+				className={`nav-cta-wrapper ${hiddenClass}`}
+				onClick={handleRegisterClick}
+			>
 				<p className="cta-label">REGISTER NOW</p>
 			</div>
 		</nav>

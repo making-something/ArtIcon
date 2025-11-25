@@ -18,21 +18,34 @@ const EventOverview = () => {
 			gsap.delayedCall(0.1, () => {
 				const wordHighlightBgColor = "191, 188, 180";
 				const keywords = [
+					"articon",
+					"champion",
+					"graphic",
+					"design",
 					"ui/ux",
 					"video",
-					"graphics",
-					"design",
-					"articon",
-					"hackathon",
-					"creativity",
-					"theme",
+					"editing",
+					"versatile",
+					"innovative",
+					"consistent",
+					"creator",
 					"ai",
 					"tools",
-					"compete",
-					"champion",
-					"versatility",
-					"storytelling",
-					"innovation",
+					"devices",
+					"imagination",
+					"competition",
+					"creativity",
+					"explosion",
+					"art",
+					"future",
+					"thinker",
+					"designer",
+					"wizard",
+					"ideas",
+					"alive",
+					"gujarat's",
+					"first",
+					"ai-powered",
 				];
 
 				// Process text and create word elements
@@ -77,7 +90,7 @@ const EventOverview = () => {
 				const scrollTrigger = ScrollTrigger.create({
 					trigger: animeTextContainer,
 					start: "top top",
-					end: `+=${window.innerHeight * 2}`,
+					end: `+=${window.innerHeight * 3}`,
 					pin: animeTextContainer,
 					pinSpacing: true,
 					scrub: 1,
@@ -153,22 +166,34 @@ const EventOverview = () => {
 			<div className="event-overview-container">
 				<div className="event-overview-copy-container">
 					<div className="event-overview-anime-text">
+						<h2 className="event-overview-title">
+							Who will be the ArtIcon Champion?
+						</h2>
 						<p>
-							What if you could design a UI/UX masterpiece, edit a stunning
-							video, and craft breathtaking graphics — all in one day, under one
-							theme?
+							The one who performs in all 3 categories and delivers the best
+							creative results across:
+						</p>
+						<ul className="event-overview-categories">
+							<li>Graphic Design</li>
+							<li>UI/UX</li>
+							<li>Video Editing</li>
+						</ul>
+						<p>
+							Only the most versatile, innovative, and consistent creator will
+							take home the ArtIcon Champion Title!
+						</p>
+						<p className="event-overview-divider">So creators…</p>
+						<p>Bring your AI tools, devices & imagination!</p>
+						<p>
+							This isn't just a competition — it's a creativity explosion where
+							art, design & AI shape the future!
 						</p>
 						<p>
-							Welcome to ArtIcon 2025, Gujarat's premier creativity hackathon
-							where 100 talented creators compete in a fusion of design, art,
-							and AI tools. This isn't just another competition — it's a
-							full-day creative marathon that tests your versatility,
-							storytelling, and innovation.
+							Whether you're a UI/UX thinker, Graphic designer, or Video editor
+							wizard — your ideas come alive here!
 						</p>
-						<p>
-							Three categories. One unified theme. 10.5 hours of pure
-							creativity. Are you ready to prove you're the ultimate creative
-							champion?
+						<p className="event-overview-highlight">
+							ArtIcon 2025 — Gujarat's FIRST AI-powered creativity competition!
 						</p>
 					</div>
 				</div>

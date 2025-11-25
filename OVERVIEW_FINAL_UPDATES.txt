@@ -1,0 +1,64 @@
+OVERVIEW COMPONENT - FINAL UPDATES
+===================================
+
+FILE: frontend/src/components/Overview/overview.css
+
+CHANGES NEEDED:
+
+1. MAKE CARDS BIGGER - Lines 413-416
+   REPLACE:
+   .stats-row-1 .stats-item-1 {
+       width: 70%;
+       max-width: 600px;
+   }
+   
+   WITH:
+   .stats-row-1 .stats-item-1 {
+       width: 85%;
+       max-width: 800px;
+   }
+
+2. WHITE TEXT FOR 3RD CARD (GOODIES) - After line 437
+   REPLACE:
+   .stats-item-3 {
+       flex: 1;
+       background-color: var(--text-main);
+       color: var(--bg-main);
+   }
+   
+   WITH:
+   .stats-item-3 {
+       flex: 1;
+       background-color: var(--text-main);
+   }
+   
+   /* White text for 3rd card (Goodies card) */
+   .stats-item-3 h1,
+   .stats-item-3 .category-text,
+   .stats-item-3 .desc p {
+       color: #fff !important;
+   }
+   
+   .stats-item-3 .desc p::before {
+       color: #fff !important;
+   }
+
+===================================
+
+ABOUT THE POPUP ANIMATION:
+The popup animation IS already working in the code!
+Location: frontend/src/components/Overview/Overview.jsx (lines 17-47)
+
+The animation:
+- Starts with cards at scale: 0.8, opacity: 0
+- Animates to scale: 1, opacity: 1
+- Duration: 1 second
+- Stagger: 0.15 seconds between cards
+- Easing: back.out(1.2) (bounce effect)
+- Triggers when stats section reaches 70% of viewport
+
+If you don't see the animation, try:
+1. Refresh the page
+2. Scroll down to the stats section
+3. Make sure you have the updated HTML with class names: stats-item-1, stats-item-2, stats-item-3
+

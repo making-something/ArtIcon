@@ -1,78 +1,385 @@
 .cta {
-  background-color: var(--base-100);
+	background-color: var(--base-100);
 }
 
 .cta .container {
-  display: flex;
-  flex-direction: column;
-  gap: 6rem;
-  padding-bottom: 10rem;
+	display: flex;
+	flex-direction: column;
+	gap: 6rem;
+	padding-bottom: 10rem;
 }
 
 .cta .cta-copy {
-  width: 70%;
-  margin: 0 auto;
-  display: flex;
-  gap: 2rem;
-  padding: 4rem 0;
-}
-
-.cta .cta-copy .cta-col {
-  flex: 1;
-}
-
-.cta .cta-copy .cta-col:nth-child(2) {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
+	width: 70%;
+	margin: 0 auto;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
+	gap: 2rem;
+	padding: 4rem 0;
 }
 
 .cta .cta-card {
-  margin: 0 auto;
-  width: 70%;
-  background-color: var(--base-400);
-  color: var(--base-100);
-  padding: 2rem;
-  border-radius: 1rem;
+	margin: 0 auto;
+	width: 70%;
+	background-color: var(--base-400);
+	color: var(--base-100);
+	padding: 2rem;
+	border-radius: 1rem;
 }
 
 .cta .cta-card .cta-card-copy {
-  display: flex;
-  gap: 2rem;
+	display: flex;
+	gap: 2rem;
 }
 
 .cta .cta-card .cta-card-copy .cta-card-col {
-  flex: 1;
+	flex: 1;
 }
 
 .cta .cta-card .cta-card-copy .cta-card-col:nth-child(2) {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
+	display: flex;
+	flex-direction: column;
+	gap: 2rem;
 }
 
 .cta .cta-card .cta-card-copy .cta-card-col:nth-child(2) p {
-  margin-bottom: 2rem;
+	margin-bottom: 2rem;
 }
 .cta .cta-card .cta-card-copy .cta-card-col:nth-child(2) p:nth-child(2) {
-  margin-bottom: 4rem;
+	margin-bottom: 4rem;
 }
 
-@media (max-width: 1000px) {
-  .cta .cta-copy {
-    width: 100%;
-    flex-direction: column;
-  }
+/* Contact Pill Button Container */
+.cta .contact-pill-btn {
+	position: relative;
+	width: 70%;
+	max-width: 800px;
+	height: 250px;
+	margin: 0 auto;
+	border: 0.75em solid #000;
+	border-radius: 20em;
+	background: linear-gradient(
+		45deg,
+		var(--accent-orange),
+		var(--accent-yellow),
+		var(--accent-teal),
+		var(--accent-orange)
+	);
+	background-size: 400% 400%;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	gap: 8px;
+	box-shadow: 10px 10px 0px 5px #000000;
+	overflow: hidden;
+	cursor: pointer;
+	animation: gradientMove 10s ease-in-out infinite;
+	transition: transform 0.2s ease;
+}
 
-  .cta .cta-card {
-    width: 100%;
-  }
+.cta .contact-pill-btn:active {
+	transform: translate(5px, 5px);
+	box-shadow: 5px 5px 0px 2px #000000;
+}
 
-  .cta .cta-card .cta-card-copy {
-    flex-direction: column;
-  }
+.cta .contact-pill-btn a {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+	z-index: 5;
+}
 
-  .cta .container {
-    gap: 2rem;
-  }
+/* Stripes Overlay */
+.cta .contact-pill-btn::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 200%;
+	height: 100%;
+	background: repeating-linear-gradient(
+		45deg,
+		rgba(0, 0, 0, 0.125) 0px,
+		rgba(0, 0, 0, 0.125) 15px,
+		transparent 15px,
+		transparent 30px
+	);
+	animation: stripeMove 30s linear infinite;
+	z-index: 1;
+}
+
+.cta .contact-text-large h1 {
+	font-size: 5rem;
+	margin: 0;
+	color: var(--text-main);
+	z-index: 2;
+	position: relative;
+}
+
+.cta .contact-text-small p {
+	font-family: "DM Mono", monospace;
+	color: var(--text-main);
+	z-index: 2;
+	position: relative;
+	font-size: 1rem;
+}
+
+/* Register Button Styling */
+.cta-register-btn {
+	position: relative;
+	width: 100%;
+	height: 200px;
+	border: 0.75em solid var(--base-100);
+	border-radius: 20em;
+	background: linear-gradient(
+		45deg,
+		var(--accent-orange),
+		var(--accent-yellow),
+		var(--accent-teal),
+		var(--accent-orange)
+	);
+	background-size: 400% 400%;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	gap: 8px;
+	box-shadow: 10px 10px 0px 5px var(--base-100);
+	overflow: hidden;
+	cursor: pointer;
+	animation: gradientMove 10s ease-in-out infinite;
+	transition: transform 0.2s ease;
+}
+
+.cta-register-btn:active {
+	transform: translate(5px, 5px);
+	box-shadow: 5px 5px 0px 2px var(--base-100);
+}
+
+.cta-register-btn a {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+	z-index: 5;
+}
+
+/* Stripes Overlay */
+.cta-register-btn::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 200%;
+	height: 100%;
+	background: repeating-linear-gradient(
+		45deg,
+		rgba(0, 0, 0, 0.125) 0px,
+		rgba(0, 0, 0, 0.125) 15px,
+		transparent 15px,
+		transparent 30px
+	);
+	animation: stripeMove 30s linear infinite;
+	z-index: 1;
+}
+
+.register-text-large h1 {
+	font-size: 4rem;
+	margin: 0;
+	color: var(--base-100);
+	z-index: 2;
+	position: relative;
+}
+
+.register-text-small p {
+	font-family: "DM Mono", monospace;
+	color: var(--base-100);
+	z-index: 2;
+	position: relative;
+	font-size: 0.9rem;
+}
+
+/* Animations */
+@keyframes gradientMove {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}
+
+@keyframes stripeMove {
+	0% {
+		transform: translateX(-50%);
+	}
+	100% {
+		transform: translateX(0%);
+	}
+}
+
+/* Tablet Responsive (768px - 1000px) */
+@media (max-width: 1000px) and (min-width: 769px) {
+	.cta .cta-copy {
+		width: 85%;
+	}
+
+	.cta .cta-card {
+		width: 85%;
+	}
+
+	.cta .container {
+		gap: 4rem;
+	}
+
+	.cta .contact-pill-btn {
+		width: 80%;
+		height: 220px;
+	}
+
+	.cta .contact-text-large h1 {
+		font-size: 4rem;
+	}
+
+	.cta .contact-text-small p {
+		font-size: 0.9rem;
+	}
+
+	.cta-register-btn {
+		height: 180px;
+	}
+
+	.register-text-large h1 {
+		font-size: 3.5rem;
+	}
+
+	.register-text-small p {
+		font-size: 0.85rem;
+	}
+}
+
+/* Mobile Responsive (max-width: 768px) */
+@media (max-width: 768px) {
+	.cta .cta-copy {
+		width: 100%;
+		padding: 2rem 0;
+		gap: 1.5rem;
+	}
+
+	.cta .cta-card {
+		width: 100%;
+		padding: 1.5rem;
+	}
+
+	.cta .cta-card .cta-card-copy {
+		flex-direction: column;
+		gap: 1.5rem;
+	}
+
+	.cta .container {
+		gap: 2rem;
+		padding-bottom: 6rem;
+	}
+
+	.cta .contact-pill-btn {
+		width: 100%;
+		height: 180px;
+		border-radius: 2em;
+		border-width: 0.5em;
+		box-shadow: 6px 6px 0px 3px #000000;
+	}
+
+	.cta .contact-pill-btn:active {
+		box-shadow: 3px 3px 0px 1px #000000;
+	}
+
+	.cta .contact-text-large h1 {
+		font-size: 3rem;
+	}
+
+	.cta .contact-text-small p {
+		font-size: 0.8rem;
+	}
+
+	.cta-register-btn {
+		height: 150px;
+		border-radius: 2em;
+		border-width: 0.5em;
+		box-shadow: 6px 6px 0px 3px var(--base-100);
+	}
+
+	.cta-register-btn:active {
+		box-shadow: 3px 3px 0px 1px var(--base-100);
+	}
+
+	.register-text-large h1 {
+		font-size: 2.5rem;
+	}
+
+	.register-text-small p {
+		font-size: 0.75rem;
+	}
+}
+
+/* Small Mobile Responsive (max-width: 480px) */
+@media (max-width: 480px) {
+	.cta .cta-copy {
+		padding: 1.5rem 0;
+		gap: 1rem;
+	}
+
+	.cta .cta-card {
+		padding: 1rem;
+	}
+
+	.cta .container {
+		gap: 1.5rem;
+		padding-bottom: 4rem;
+	}
+
+	.cta .contact-pill-btn {
+		width: 100%;
+		height: 150px;
+		border-width: 0.4em;
+		box-shadow: 4px 4px 0px 2px #000000;
+	}
+
+	.cta .contact-pill-btn:active {
+		box-shadow: 2px 2px 0px 1px #000000;
+	}
+
+	.cta .contact-text-large h1 {
+		font-size: 2.5rem;
+	}
+
+	.cta .contact-text-small p {
+		font-size: 0.7rem;
+	}
+
+	.cta-register-btn {
+		height: 120px;
+		border-width: 0.4em;
+		box-shadow: 4px 4px 0px 2px var(--base-100);
+	}
+
+	.cta-register-btn:active {
+		box-shadow: 2px 2px 0px 1px var(--base-100);
+	}
+
+	.register-text-large h1 {
+		font-size: 2rem;
+	}
+
+	.register-text-small p {
+		font-size: 0.65rem;
+	}
 }

@@ -1,0 +1,162 @@
+/* JUNOLANDING COMPONENT - RESPONSIVE FIXES */
+/* Add these breakpoints to frontend/src/components/JunoLanding/JunoLanding.css */
+/* Insert BEFORE the existing @media (max-width: 1400px) and (min-width: 1001px) breakpoint */
+
+/* === FIX 1: Three Cards Section Overlap === */
+
+/* New Breakpoint: 1300-1400px - Prevent card overlap */
+@media (max-width: 1400px) and (min-width: 1301px) {
+	/* Three Cards Section */
+	.home-services .cards-container {
+		width: 80%; /* Increase from 75% to give more space */
+		gap: 3rem; /* Reduce from 4rem */
+	}
+	
+	.home-services .card {
+		max-width: 280px; /* Prevent cards from getting too wide */
+	}
+	
+	.home-services .flip-card-back .card-copy p {
+		font-size: 0.72rem;
+		line-height: 2.1;
+		padding: 0.7rem 0.7rem 0 0.7rem;
+	}
+	
+	.home-services .card-copy .card-points {
+		gap: 0.58rem;
+	}
+	
+	.home-services .card-copy .card-points li {
+		font-size: 0.68rem;
+		line-height: 1.65;
+		padding-left: 1.1rem;
+	}
+	
+	.home-services .card-copy .card-points li::before {
+		font-size: 0.5rem;
+		left: 0.3rem;
+	}
+}
+
+/* Adjust Existing Breakpoint: 1200-1300px */
+@media (max-width: 1300px) and (min-width: 1201px) {
+	/* Three Cards Section */
+	.home-services .cards-container {
+		width: 85%; /* Further increase */
+		gap: 2.5rem;
+	}
+	
+	.home-services .card {
+		max-width: 250px;
+	}
+	
+	.home-services .flip-card-back .card-copy p {
+		font-size: 0.68rem;
+		line-height: 2;
+		padding: 0.6rem 0.6rem 0 0.6rem;
+	}
+	
+	.home-services .card-copy .card-points {
+		gap: 0.52rem;
+	}
+	
+	.home-services .card-copy .card-points li {
+		font-size: 0.63rem;
+		line-height: 1.6;
+		padding-left: 1rem;
+	}
+	
+	.home-services .card-copy .card-points li::before {
+		font-size: 0.48rem;
+		left: 0.28rem;
+	}
+}
+
+/* === FIX 2: Hero Footer Elements Overlap === */
+
+/* New Breakpoint: 1100-1200px - Fix footer overlap */
+@media (max-width: 1200px) and (min-width: 1101px) {
+	.hero .hero-content .hero-footer-copy {
+		width: 40%; /* Increase from 35% */
+	}
+	
+	.hero .hero-content .hero-footer-copy p {
+		font-size: 1.3rem; /* Reduce from 1.4rem */
+	}
+	
+	.hero-footer-copy .fancy-word {
+		font-size: 1.3rem;
+	}
+	
+	.hero .hero-content .hero-footer-tags {
+		gap: 1rem; /* Reduce from 1.25rem */
+	}
+	
+	.hero .hero-content .hero-footer-tags p {
+		font-size: 0.75rem;
+		padding: 0.4em 0.7em;
+	}
+}
+
+/* === FIX 3: Hero Marquee Wrapper Overlap === */
+
+/* Enhance Existing Breakpoint: 1000-1200px */
+@media (max-width: 1200px) and (min-width: 1001px) {
+	.hero-marquee-wrapper {
+		bottom: 4% !important; /* Reduce from 6% to prevent overlap */
+		width: 82% !important; /* Reduce from 85% */
+		gap: 2.5rem !important; /* Reduce from 3rem */
+	}
+	
+	.hero-tagline-container p.md {
+		font-size: 1.3rem !important; /* Reduce from 1.4rem */
+	}
+	
+	.hero-tagline-container .fancy-word {
+		font-size: 1.4rem !important;
+	}
+}
+
+/* === FIX 4: Hero Header Adjustments === */
+
+/* New Breakpoint: 1300-1400px */
+@media (max-width: 1400px) and (min-width: 1301px) {
+	.hero .hero-content .hero-header h1 {
+		font-size: 13.5vw; /* Slightly reduce from 14vw */
+	}
+	
+	.hero .hero-cards {
+		width: 42%; /* Slightly increase from 40% */
+	}
+}
+
+/* New Breakpoint: 1200-1300px */
+@media (max-width: 1300px) and (min-width: 1201px) {
+	.hero .hero-content .hero-header h1 {
+		font-size: 13vw;
+	}
+	
+	.hero .hero-cards {
+		width: 44%;
+	}
+	
+	.hero .hero-cards .card p {
+		font-size: 0.72rem;
+	}
+}
+
+/* New Breakpoint: 1100-1200px */
+@media (max-width: 1200px) and (min-width: 1101px) {
+	.hero .hero-content .hero-header h1 {
+		font-size: 12.5vw;
+	}
+	
+	.hero .hero-cards {
+		width: 46%;
+	}
+	
+	.hero .hero-cards .card p {
+		font-size: 0.7rem;
+	}
+}
+

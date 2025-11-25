@@ -156,6 +156,21 @@ const About = () => {
 						},
 					});
 				}
+
+				// 4. STICKY EFFECT - Pin the entire sticky wrapper (full screen)
+				const stickyWrapper = containerRef.current?.querySelector(
+					".about-copy-sticky-wrapper"
+				);
+				if (stickyWrapper) {
+					ScrollTrigger.create({
+						trigger: stickyWrapper,
+						start: "top top",
+						end: "+=200vh",
+						pin: true,
+						pinSpacing: true,
+						markers: false,
+					});
+				}
 			}
 
 			// Refresh ScrollTrigger after setup
@@ -171,67 +186,93 @@ const About = () => {
 
 			{/* STORY */}
 			<div className="about-copy">
-				<div className="about-copy-content">
-					<h3>
-						Here's the challenge: On <span>November 30th, 2025</span>, you'll
-						receive one creative <span>THEME</span> at <span>9:00 AM</span>.
-					</h3>
-					<h3>
-						You have until <span>7:30 PM</span> to create three complete
-						projects — a <span>UI/UX DESIGN</span>, a{" "}
-						<span>GRAPHIC DESIGN</span>, and a <span>VIDEO EDIT</span> — all
-						telling the same story through different mediums. Use{" "}
-						<span>AI TOOLS</span> to amplify your creativity and compete for the{" "}
-						<span>MAIN ARTICON TROPHY</span>!
-					</h3>
-				</div>
+				<h2 className="about-copy-title">Who will be the ArtIcon Champion?</h2>
+				<div className="about-copy-sticky-wrapper">
+					<div className="about-copy-content">
+						<p className="about-intro">
+							The one who performs in all 3 categories and delivers the best
+							creative results across:
+						</p>
+						<ul className="about-categories">
+							<li>Graphic Design</li>
+							<li>UI/UX</li>
+							<li>Video Editing</li>
+						</ul>
+						<p className="about-champion">
+							Only the most versatile, innovative, and consistent creator will
+							take home the <span>ArtIcon Champion Title</span>
+						</p>
 
-				{/* Parallax Tags */}
-				<div className="about-tag" id="tag-1">
-					<p>AI-Powered</p>
-				</div>
-				<div className="about-tag" id="tag-2">
-					<p>Solo Challenge</p>
-				</div>
-				<div className="about-tag" id="tag-3">
-					<p>One Theme</p>
-				</div>
-				<div className="about-tag" id="tag-4">
-					<p>Three Tasks</p>
-				</div>
-				<div className="about-tag" id="tag-5">
-					<p>Full Day</p>
+						<p className="about-callout">
+							So creators…
+							<br />
+							Bring your AI tools, devices & imagination!
+						</p>
+
+						<p className="about-description">
+							This isn't just a competition
+							<br />
+							it's a creativity explosion where art, design & AI shape the
+							future!
+						</p>
+
+						<p className="about-description">
+							Whether you're a UI/UX thinker, Graphic designer, or Video editor
+							wizard
+							<br />
+							your ideas come alive here!
+						</p>
+
+						<p className="about-footer">
+							<span>ArtIcon 2025</span> — Gujarat's FIRST AI-powered creativity
+							competition
+						</p>
+					</div>
+
+					{/* Parallax Tags */}
+					<div className="about-tag" id="tag-1">
+						<p>AI-Powered</p>
+					</div>
+					<div className="about-tag" id="tag-2">
+						<p>Solo Challenge</p>
+					</div>
+					<div className="about-tag" id="tag-3">
+						<p>One Theme</p>
+					</div>
+					<div className="about-tag" id="tag-4">
+						<p>Three Tasks</p>
+					</div>
+					<div className="about-tag" id="tag-5">
+						<p>Full Day</p>
+					</div>
 				</div>
 			</div>
 
 			{/* SKILLS */}
-			<div className="about-skills">
+			{/* <div className="about-skills">
 				<div className="skills-copy">
 					<p>
-						This is a solo challenge held at Multiicon's 4th Floor, where you'll
-						work independently to showcase your versatility across all three
-						creative disciplines. Think of it as a creative triathlon — you're
-						not just a specialist, you're proving you're a complete creative
-						powerhouse.
+						ArtIcon 2025 is a creativity hackathon where up to 100 participants
+						compete across three categories: UI/UX Design, Video Editing, and
+						Graphic Design. The main challenge? Complete all three tasks under
+						one unified theme in just 10.5 hours.
 					</p>
 					<p>
-						Three expert jury members will evaluate your submissions based on
-						creativity, consistency across all three tasks, and how well you
-						tell a cohesive story through different mediums. The key to winning?
-						It's not just about individual excellence — it's about creating a
-						unified creative vision that shines through UI/UX, graphics, and
-						video.
+						Participants work solo from 9:00 AM to 7:30 PM on November 30th,
+						2025 at Multiicon's 4th Floor. AI tools are encouraged to enhance
+						your creativity, and three expert jury members will evaluate your
+						work based on creativity, consistency, and storytelling.
 					</p>
 					<p>
 						Whether you're a designer, video editor, or creative enthusiast,
-						this is your chance to push your boundaries, learn new skills, and
-						prove you can master multiple creative domains in a single day!
+						this is your chance to showcase your skills, win amazing prizes, and
+						get recognized in the creative community!
 					</p>
 				</div>
-			</div>
+			</div> */}
 
 			{/* STATS */}
-			<div className="about-stats">
+			{/* <div className="about-stats">
 				<div className="stats-row">
 					<div className="stats-col stats-header">
 						<h1>
@@ -267,7 +308,7 @@ const About = () => {
 						</p>
 					</div>
 				</div>
-			</div>
+			</div> */}
 
 			{/* CTA */}
 			{/* <div className="about-contact">

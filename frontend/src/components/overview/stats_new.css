@@ -1,0 +1,137 @@
+/* --- 4. STATS (Two Row Layout with Floating Icons) --- */
+.about-stats {
+	position: relative;
+	padding: 8em 2em 4em 2em;
+	display: flex;
+	flex-direction: column;
+	gap: 2em;
+	background-color: var(--bg-main);
+	overflow: hidden;
+}
+
+/* Floating $ Icons */
+.stats-icon {
+	position: absolute;
+	font-family: "Barlow Condensed", sans-serif;
+	font-size: 8rem;
+	font-weight: 800;
+	font-style: italic;
+	color: var(--text-main);
+	opacity: 0.08;
+	z-index: 1;
+	pointer-events: none;
+}
+
+.stats-icon-1 {
+	top: 10%;
+	left: 5%;
+	transform: rotate(-15deg);
+}
+
+.stats-icon-2 {
+	top: 15%;
+	right: 8%;
+	transform: rotate(20deg);
+}
+
+.stats-icon-3 {
+	bottom: 20%;
+	left: 12%;
+	transform: rotate(25deg);
+}
+
+.stats-icon-4 {
+	bottom: 15%;
+	right: 10%;
+	transform: rotate(-20deg);
+}
+
+.stats-row {
+	display: flex;
+	gap: 2em;
+	width: 100%;
+	z-index: 2;
+	position: relative;
+}
+
+/* First Row - Single Centered Card */
+.stats-row-1 {
+	justify-content: center;
+}
+
+.stats-row-1 .stats-item-1 {
+	width: 60%;
+	max-width: 800px;
+}
+
+/* Second Row - Two Cards */
+.stats-row-2 {
+	justify-content: center;
+}
+
+/* Card Styles */
+.stats-item-1 {
+	background-color: var(--accent-orange);
+}
+
+.stats-item-2 {
+	flex: 1;
+	background-color: var(--accent-teal);
+}
+
+.stats-item-3 {
+	flex: 1;
+	background-color: var(--text-main);
+	color: var(--bg-main);
+}
+
+.stats-item-1,
+.stats-item-2,
+.stats-item-3 {
+	aspect-ratio: 16/7;
+	padding: 2em;
+	border-radius: 1em;
+}
+
+/* Text alignment in grid */
+.stats-col {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+/* Numbers */
+.stats-col h1 {
+	font-size: 5rem;
+	font-weight: 400;
+	font-style: italic;
+	line-height: 0.95;
+	text-transform: uppercase;
+}
+
+.stats-col p {
+	font-family: "Barlow Condensed", sans-serif;
+	font-size: 1.25rem;
+	font-weight: 600;
+	line-height: 1.125;
+}
+
+/* Responsive */
+@media (max-width: 1000px) {
+	.stats-icon {
+		font-size: 5rem;
+	}
+	
+	.stats-row-1 .stats-item-1 {
+		width: 100%;
+	}
+	
+	.stats-row-2 {
+		flex-direction: column;
+	}
+	
+	.stats-col h1 {
+		font-size: 3rem;
+	}
+}
+

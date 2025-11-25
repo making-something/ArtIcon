@@ -1053,3 +1053,15 @@
 	color: var(--accent-1) !important;
 	font-style: italic;
 }
+
+.hidden-in-mobile {
+	display: inline-block;
+	width: 2rem;
+	height: 2rem;
+}
+
+@media (max-width: 768px) {
+	.hidden-in-mobile {
+		display: none;
+	}
+}

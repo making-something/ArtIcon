@@ -154,14 +154,14 @@ export default function JuriesCards() {
 							if (progress >= cardScaleStart && progress <= cardScaleEnd) {
 								const scaleProgress =
 									(progress - cardScaleStart) / (cardScaleEnd - cardScaleStart);
-								const scaleValue = 0.75 + scaleProgress * 0.25;
+								const scaleValue = 0.75 + scaleProgress * 0.15; // Changed from 0.25 to 0.15
 
 								gsap.set(card, {
 									scale: scaleValue,
 								});
 							} else if (progress > cardScaleEnd) {
 								gsap.set(card, {
-									scale: 1,
+									scale: 0.9, // Changed from 1 to 0.9 for final scale
 								});
 							}
 						});
@@ -184,7 +184,7 @@ export default function JuriesCards() {
 				<div className="juries-hero-content">
 					<h1>Meet Our Expert Jury Panel</h1>
 					<p>
-						Three industry experts who will evaluate your creativity,
+						Four industry experts who will evaluate your creativity,
 						consistency, storytelling, and time mastery
 					</p>
 				</div>

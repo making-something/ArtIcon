@@ -1,4 +1,5 @@
 "use client";
+import { ArrowLeftIcon } from "lucide-react";
 import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import gsap from "gsap";
@@ -576,7 +577,8 @@ const Register = () => {
 					</div>
 					<div className="top-nav-buttons">
 						<button className="back-nav-btn" onClick={() => router.push("/")}>
-							← Back
+							<ArrowLeftIcon className="hidden-in-mobile" />
+							Back
 						</button>
 						{phase !== "login" && (
 							<button
