@@ -45,6 +45,7 @@ const parseOrigins = (origins?: string) => {
 const envOrigins = parseOrigins(process.env.FRONTEND_URL);
 
 const allowedOrigins = Array.from(new Set(envOrigins));
+allowedOrigins.push("https://articon.multiicon.in"); // Temporary addition for testing
 
 if (process.env.NODE_ENV !== "test") {
 	if (envOrigins.length === 0) {
