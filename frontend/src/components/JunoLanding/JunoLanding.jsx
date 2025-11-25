@@ -646,9 +646,10 @@ const JunoLanding = () => {
 								data-animate-on-scroll="true"
 								style={{ marginBottom: "100px", fontSize: "80px" }}
 							>
-								Three Categories. One Theme. One Trophy to Win Them All!
+								4 categories. One integrated vision. That blends creativity,
+								motion, and experience into mastery.
 							</h2>
-							<p
+							{/* <p
 								className="mono"
 								data-animate-type="scramble"
 								data-animate-delay="0.2"
@@ -656,7 +657,7 @@ const JunoLanding = () => {
 								style={{ fontSize: "20px" }}
 							>
 								<span>&#9654;</span> Complete All Three Tasks Under One Theme
-							</p>
+							</p> */}
 						</div>
 					</div>
 					<div className="home-about-col">
@@ -667,9 +668,7 @@ const JunoLanding = () => {
 									data-animate-type="scramble"
 									data-animate-delay="0.2"
 									data-animate-on-scroll="true"
-								>
-									[ Main Rule ]
-								</p>
+								></p>
 								<h4
 									data-animate-type="line-reveal"
 									data-animate-delay="0.2"
@@ -685,9 +684,7 @@ const JunoLanding = () => {
 									data-animate-type="scramble"
 									data-animate-delay="0.25"
 									data-animate-on-scroll="true"
-								>
-									[ Category 02 ]
-								</p>
+								></p>
 								<h4
 									data-animate-type="line-reveal"
 									data-animate-delay="0.25"
@@ -705,9 +702,7 @@ const JunoLanding = () => {
 									data-animate-type="scramble"
 									data-animate-delay="0.3"
 									data-animate-on-scroll="true"
-								>
-									[ Category 03 ]
-								</p>
+								></p>
 								<h4
 									data-animate-type="line-reveal"
 									data-animate-delay="0.3"
@@ -723,9 +718,7 @@ const JunoLanding = () => {
 									data-animate-type="scramble"
 									data-animate-delay="0.35"
 									data-animate-on-scroll="true"
-								>
-									[ Category 04 ]
-								</p>
+								></p>
 								<h4
 									data-animate-type="line-reveal"
 									data-animate-delay="0.35"

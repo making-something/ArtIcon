@@ -7,7 +7,7 @@ const CTACard = () => {
 	return (
 		<section className="cta">
 			<div className="container">
-				<div className="cta-copy">
+				<div className="cta-copy" style={{ backgroundColor: "gray" }}>
 					<Copy animateOnScroll={true}>
 						<p className="lg">
 							Every Great Creation Starts With Understanding The Guidelines!
