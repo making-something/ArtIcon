@@ -42,20 +42,14 @@ const parseOrigins = (origins?: string) => {
 };
 //hellu
 
-const managedOrigins = ["https://articon.multiicon.in"];
-
-const defaultOrigins = ["http://localhost:3000", "http://localhost:8182"];
-
 const envOrigins = parseOrigins(process.env.FRONTEND_URL);
 
-const allowedOrigins = Array.from(
-	new Set([...envOrigins, ...managedOrigins, ...defaultOrigins])
-);
+const allowedOrigins = Array.from(new Set(envOrigins));
 
 if (process.env.NODE_ENV !== "test") {
 	if (envOrigins.length === 0) {
 		console.warn(
-			"No FRONTEND_URL configured; only localhost origins will be allowed."
+			"No FRONTEND_URL configured; CORS will block all requests."
 		);
 	} else {
 		console.log(

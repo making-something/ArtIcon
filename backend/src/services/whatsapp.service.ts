@@ -30,7 +30,7 @@ interface WhatsAppResult {
   success: boolean;
   messageId?: string;
   error?: string;
-  details?: any;
+  details?: unknown;
 }
 
 class WhatsAppService {
@@ -95,7 +95,7 @@ class WhatsAppService {
 
   async sendRegistrationMessage(
     phoneNumber: string,
-    _participantName: string
+    participantName: string
   ): Promise<WhatsAppResult> {
     // Format phone number (remove spaces, dashes, and add country code if not present)
     const formattedPhone = this.formatPhoneNumber(phoneNumber);
@@ -103,10 +103,21 @@ class WhatsAppService {
     return await this.sendTemplate({
       to: formattedPhone,
       template: {
-        name: 'hello_world',
+        name: 'application_received',
         language: {
           code: 'en_US',
         },
+        components: [
+          {
+            type: 'body',
+            parameters: [
+              {
+                type: 'text',
+                text: participantName,
+              },
+            ],
+          },
+        ],
       },
     });
   }
@@ -145,7 +156,7 @@ class WhatsAppService {
     return cleaned;
   }
 
-  async getServiceStatus(): Promise<any> {
+  async getServiceStatus(): Promise<unknown> {
     return {
       configured: isWhatsAppConfigured,
       phoneNumberId,
@@ -170,7 +181,7 @@ class WhatsAppService {
     return await this.sendTemplate({
       to: formattedPhone,
       template: {
-        name: 'portfolio_approved',
+        name: 'icon_selected',
         language: {
           code: 'en_US',
         },
@@ -205,7 +216,7 @@ class WhatsAppService {
     return await this.sendTemplate({
       to: formattedPhone,
       template: {
-        name: 'portfolio_update',
+        name: 'icon_not_selected',
         language: {
           code: 'en_US',
         },

@@ -1,14 +1,23 @@
 "use client";
 import { useState, useEffect } from "react";
-import { approveParticipant, rejectParticipant, exportParticipantsCSV } from "@/services/api";
+import { useRouter } from "next/navigation";
+import {
+	approveParticipant,
+	rejectParticipant,
+	exportParticipantsCSV,
+	logout,
+	getAdminDashboardStats,
+} from "@/services/api";
 import "./portfolios.css";
 
 export default function AdminPortfolios() {
+	const router = useRouter();
 	const [participants, setParticipants] = useState([]);
+	const [stats, setStats] = useState(null);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 	const [filters, setFilters] = useState({
-		category: "all",
+		category: "",
 		approval_status: "all",
 		search: "",
 		page: 1,
@@ -16,11 +25,23 @@ export default function AdminPortfolios() {
 	});
 	const [pagination, setPagination] = useState(null);
 
-	const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+	const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 	useEffect(() => {
 		fetchParticipants();
+		fetchStats();
 	}, [filters]);
+
+	const fetchStats = async () => {
+		try {
+			const response = await getAdminDashboardStats();
+			if (response.success) {
+				setStats(response.data);
+			}
+		} catch (error) {
+			console.error("Failed to fetch stats", error);
+		}
+	};
 
 	const fetchParticipants = async () => {
 		try {
@@ -28,8 +49,7 @@ export default function AdminPortfolios() {
 			const token = localStorage.getItem("adminToken");
 
 			if (!token) {
-				setError("Not authenticated. Please login.");
-				setLoading(false);
+				router.push("/registration"); // Redirect to unified login
 				return;
 			}
 
@@ -49,6 +69,12 @@ export default function AdminPortfolios() {
 					},
 				}
 			);
+
+			if (response.status === 401 || response.status === 403) {
+				logout();
+				router.push("/registration");
+				return;
+			}
 
 			if (!response.ok) {
 				throw new Error("Failed to fetch participants");
@@ -82,44 +108,44 @@ export default function AdminPortfolios() {
 		setFilters({ ...filters, approval_status, page: 1 });
 	};
 
-	const handleApprove = async (participantId, adminNotes = '') => {
+	const handleApprove = async (participantId, adminNotes = "") => {
+		if (!confirm("Are you sure you want to approve this participant?")) return;
 		try {
 			setLoading(true);
 			const result = await approveParticipant(participantId, adminNotes);
 
 			if (result.success) {
-				// Refresh participants list
 				await fetchParticipants();
-				alert('Participant approved successfully!');
+				fetchStats(); // Refresh stats
 			} else {
-				alert('Failed to approve participant');
+				alert("Failed to approve participant");
 			}
 		} catch (error) {
-			console.error('Error approving participant:', error);
-			alert('Error approving participant');
+			console.error("Error approving participant:", error);
+			alert("Error approving participant");
 		} finally {
 			setLoading(false);
 		}
 	};
 
-	const handleReject = async (participantId, adminNotes = '') => {
-		try {
-			const notes = adminNotes || prompt('Please enter rejection reason (optional):');
-			if (notes === null) return; // User cancelled
+	const handleReject = async (participantId, adminNotes = "") => {
+		const notes =
+			adminNotes || prompt("Please enter rejection reason (optional):");
+		if (notes === null) return;
 
+		try {
 			setLoading(true);
 			const result = await rejectParticipant(participantId, notes);
 
 			if (result.success) {
-				// Refresh participants list
 				await fetchParticipants();
-				alert('Participant rejected successfully!');
+				fetchStats(); // Refresh stats
 			} else {
-				alert('Failed to reject participant');
+				alert("Failed to reject participant");
 			}
 		} catch (error) {
-			console.error('Error rejecting participant:', error);
-			alert('Error rejecting participant');
+			console.error("Error rejecting participant:", error);
+			alert("Error rejecting participant");
 		} finally {
 			setLoading(false);
 		}
@@ -129,9 +155,14 @@ export default function AdminPortfolios() {
 		try {
 			await exportParticipantsCSV(filters.category, filters.approval_status);
 		} catch (error) {
-			console.error('Error exporting CSV:', error);
-			alert('Error exporting CSV');
+			console.error("Error exporting CSV:", error);
+			alert("Error exporting CSV");
 		}
+	};
+
+	const handleLogout = () => {
+		logout();
+		router.push("/registration");
 	};
 
 	const getCategoryLabel = (category) => {
@@ -139,26 +170,9 @@ export default function AdminPortfolios() {
 			video: "Video Editing",
 			ui_ux: "UI/UX Design",
 			graphics: "Graphic Design",
+			all: "All",
 		};
 		return labels[category] || category;
-	};
-
-	const getApprovalStatusLabel = (status) => {
-		const labels = {
-			pending: "Pending",
-			approved: "Approved",
-			rejected: "Rejected",
-		};
-		return labels[status] || status;
-	};
-
-	const getApprovalStatusColor = (status) => {
-		const colors = {
-			pending: "#ffc107",
-			approved: "#28a745",
-			rejected: "#dc3545",
-		};
-		return colors[status] || "#6c757d";
 	};
 
 	const getPortfolioLink = (participant) => {
@@ -168,87 +182,115 @@ export default function AdminPortfolios() {
 		return participant.portfolio_url;
 	};
 
-	const isFilePortfolio = (participant) => {
-		return !!participant.portfolio_file_path;
-	};
-
-	if (loading && participants.length === 0) {
-		return (
-			<div className="portfolios-container">
-				<div className="loading">Loading participants...</div>
-			</div>
-		);
-	}
-
-	if (error) {
-		return (
-			<div className="portfolios-container">
-				<div className="error">
-					<h2>Error</h2>
-					<p>{error}</p>
-					<button onClick={fetchParticipants}>Retry</button>
-				</div>
-			</div>
-		);
-	}
-
 	return (
-		<div className="portfolios-container">
-			<div className="portfolios-header">
-				<h1>Participant Portfolios</h1>
-				<p>View and manage participant portfolios</p>
-			</div>
+		<div className="admin-page">
+			<header className="admin-header">
+				<div className="page-title">
+					Admin <span className="cursive-accent">Dashboard</span>
+				</div>
+				<div className="header-actions">
+					<button
+						className="scanner-btn"
+						onClick={() => router.push("/admin/scanner")}
+					>
+						QR Scanner
+					</button>
+					<button className="logout-btn" onClick={handleLogout}>
+						Logout
+					</button>
+				</div>
+			</header>
 
-			<div className="portfolios-controls">
+			{/* Stats Section */}
+			{stats && (
+				<div className="stats-dashboard">
+					<div className="stat-card">
+						<h3>Total</h3>
+						<div className="value">{stats.totalParticipants}</div>
+					</div>
+					<div className="stat-card">
+						<h3>Present</h3>
+						<div className="value">{stats.presentParticipants}</div>
+					</div>
+					<div className="stat-card">
+						<h3>Submitted</h3>
+						<div className="value">{stats.totalSubmissions}</div>
+					</div>
+				</div>
+			)}
+
+			<div className="admin-controls">
 				<div className="filters-row">
-					<div className="category-filters">
+					<div className="filter-group">
 						<button
-							className={filters.category === "all" ? "active" : ""}
-							onClick={() => handleCategoryChange("all")}
+							className={`filter-btn ${filters.category === "" ? "active" : ""}`}
+							onClick={() => handleCategoryChange("")}
 						>
-							All
+							View All
 						</button>
 						<button
-							className={filters.category === "video" ? "active" : ""}
+							className={`filter-btn ${
+								filters.category === "video" ? "active" : ""
+							}`}
 							onClick={() => handleCategoryChange("video")}
 						>
-							Video Editing
+							Video
 						</button>
 						<button
-							className={filters.category === "ui_ux" ? "active" : ""}
+							className={`filter-btn ${
+								filters.category === "ui_ux" ? "active" : ""
+							}`}
 							onClick={() => handleCategoryChange("ui_ux")}
 						>
-							UI/UX Design
+							UI/UX
 						</button>
 						<button
-							className={filters.category === "graphics" ? "active" : ""}
+							className={`filter-btn ${
+								filters.category === "graphics" ? "active" : ""
+							}`}
 							onClick={() => handleCategoryChange("graphics")}
 						>
-							Graphic Design
+							Graphics
+						</button>
+						<button
+							className={`filter-btn ${
+								filters.category === "all" ? "active" : ""
+							}`}
+							onClick={() => handleCategoryChange("all")}
+						>
+							All Cat
 						</button>
 					</div>
 
-					<div className="approval-filters">
+					<div className="filter-group">
 						<button
-							className={filters.approval_status === "all" ? "active" : ""}
+							className={`filter-btn ${
+								filters.approval_status === "all" ? "active" : ""
+							}`}
 							onClick={() => handleApprovalStatusChange("all")}
 						>
-							All Status
+							Any Status
 						</button>
 						<button
-							className={filters.approval_status === "pending" ? "active" : ""}
+							className={`filter-btn ${
+								filters.approval_status === "pending" ? "active" : ""
+							}`}
 							onClick={() => handleApprovalStatusChange("pending")}
 						>
 							Pending
 						</button>
 						<button
-							className={filters.approval_status === "approved" ? "active" : ""}
+							className={`filter-btn ${
+								filters.approval_status === "approved" ? "active" : ""
+							}`}
 							onClick={() => handleApprovalStatusChange("approved")}
 						>
 							Approved
 						</button>
 						<button
-							className={filters.approval_status === "rejected" ? "active" : ""}
+							className={`filter-btn ${
+								filters.approval_status === "rejected" ? "active" : ""
+							}`}
 							onClick={() => handleApprovalStatusChange("rejected")}
 						>
 							Rejected
@@ -256,175 +298,127 @@ export default function AdminPortfolios() {
 					</div>
 				</div>
 
-				<div className="controls-bottom">
+				<div className="action-bar">
 					<div className="search-box">
 						<input
 							type="text"
-							placeholder="Search by name, email, or city..."
+							placeholder="SEARCH PARTICIPANTS..."
 							value={filters.search}
 							onChange={handleSearchChange}
 						/>
 					</div>
-
-					<button className="export-csv-btn" onClick={handleExportCSV}>
-						📊 Export CSV
+					<button className="export-btn" onClick={handleExportCSV}>
+						Export CSV
 					</button>
 				</div>
+				{pagination && (
+					<div className="results-count">
+						Showing {participants.length} of {pagination.total}
+					</div>
+				)}
 			</div>
 
-			{pagination && (
-				<div className="results-info">
-					Showing {participants.length} of {pagination.total} participants
-				</div>
-			)}
-
-			<div className="portfolios-grid">
-				{participants.map((participant) => (
-					<div key={participant.id} className="portfolio-card">
-						<div className="portfolio-card-header">
-							<h3>{participant.name}</h3>
-							<span className={`category-badge ${participant.category}`}>
-								{getCategoryLabel(participant.category)}
-							</span>
-						</div>
-
-						<div className="portfolio-card-body">
-							<div className="info-row">
-								<span className="label">Email:</span>
-								<span className="value">{participant.email}</span>
-							</div>
-
-							<div className="info-row">
-								<span className="label">Phone:</span>
-								<span className="value">{participant.whatsapp_no}</span>
-							</div>
-
-							<div className="info-row">
-								<span className="label">City:</span>
-								<span className="value">{participant.city}</span>
-							</div>
-
-							{participant.role && (
-								<div className="info-row">
-									<span className="label">Role:</span>
-									<span className="value">{participant.role}</span>
-								</div>
-							)}
-
-							{participant.experience !== null && (
-								<div className="info-row">
-									<span className="label">Experience:</span>
-									<span className="value">{participant.experience} years</span>
-								</div>
-							)}
-
-							{participant.organization && (
-								<div className="info-row">
-									<span className="label">Organization:</span>
-									<span className="value">{participant.organization}</span>
-								</div>
-							)}
-
-							<div className="portfolio-link">
-								<span className="label">Portfolio:</span>
-								{isFilePortfolio(participant) ? (
-									<a
-										href={getPortfolioLink(participant)}
-										target="_blank"
-										rel="noopener noreferrer"
-										className="portfolio-button file"
-									>
-										📄 View File
-									</a>
-								) : (
-									<a
-										href={getPortfolioLink(participant)}
-										target="_blank"
-										rel="noopener noreferrer"
-										className="portfolio-button link"
-									>
-										🔗 View Link
-									</a>
-								)}
-							</div>
-
-							<div className="info-row">
-								<span className="label">Present:</span>
-								<span className={`status ${participant.is_present ? "present" : "absent"}`}>
-									{participant.is_present ? "✓ Yes" : "✗ No"}
-								</span>
-							</div>
-
-							<div className="info-row">
-								<span className="label">Registered:</span>
-								<span className="value">
-									{new Date(participant.created_at).toLocaleDateString()}
-								</span>
-							</div>
-
-							<div className="info-row">
-								<span className="label">Approval:</span>
-								<span
-									className="approval-status-badge"
-									style={{
-										backgroundColor: getApprovalStatusColor(participant.approval_status),
-										color: 'white',
-										padding: '2px 8px',
-										borderRadius: '12px',
-										fontSize: '12px',
-										fontWeight: 'bold'
-									}}
-								>
-									{getApprovalStatusLabel(participant.approval_status)}
-								</span>
-							</div>
-
-							{participant.admin_notes && (
-								<div className="info-row">
-									<span className="label">Notes:</span>
-									<span className="value" style={{ fontStyle: 'italic', fontSize: '12px' }}>
-										{participant.admin_notes}
-									</span>
-								</div>
-							)}
-
-							{participant.approval_status === 'pending' && (
-								<div className="approval-actions">
-									<button
-										className="approve-btn"
-										onClick={() => handleApprove(participant.id)}
-										disabled={loading}
-									>
-										✅ Approve
-									</button>
-									<button
-										className="reject-btn"
-										onClick={() => handleReject(participant.id)}
-										disabled={loading}
-									>
-										❌ Reject
-									</button>
-								</div>
-							)}
-						</div>
-					</div>
-				))}
+			<div className="table-container">
+				{loading && participants.length === 0 ? (
+					<div className="loading-state">Loading Data...</div>
+				) : error ? (
+					<div className="empty-state">Error: {error}</div>
+				) : participants.length === 0 ? (
+					<div className="empty-state">No participants found.</div>
+				) : (
+					<table className="admin-table">
+						<thead>
+							<tr>
+								<th>Name</th>
+								<th>Category</th>
+								<th>City</th>
+								<th>Status</th>
+								<th>Portfolio</th>
+								<th>Actions</th>
+							</tr>
+						</thead>
+						<tbody>
+							{participants.map((participant) => (
+								<tr key={participant.id}>
+									<td>
+										<div style={{ fontWeight: "bold" }}>{participant.name}</div>
+										<div
+											style={{
+												fontSize: "0.85rem",
+												color: "var(--base-300)",
+											}}
+										>
+											{participant.email}
+										</div>
+									</td>
+									<td>{getCategoryLabel(participant.category)}</td>
+									<td>{participant.city}</td>
+									<td>
+										<span
+											className={`badge ${participant.approval_status}`}
+										>
+											{participant.approval_status}
+										</span>
+									</td>
+									<td>
+										<a
+											href={getPortfolioLink(participant)}
+											target="_blank"
+											rel="noopener noreferrer"
+											className="btn-view action-btn"
+										>
+											View
+										</a>
+									</td>
+									<td>
+										{participant.approval_status === "pending" && (
+											<>
+												<button
+													className="action-btn btn-approve"
+													onClick={() => handleApprove(participant.id)}
+												>
+													✓
+												</button>
+												<button
+													className="action-btn btn-reject"
+													onClick={() => handleReject(participant.id)}
+												>
+													✗
+												</button>
+											</>
+										)}
+										{participant.approval_status !== "pending" && (
+											<span
+												style={{
+													color: "var(--base-300)",
+													fontSize: "0.9rem",
+												}}
+											>
+												—
+											</span>
+										)}
+									</td>
+								</tr>
+							))}
+						</tbody>
+					</table>
+				)}
 			</div>
 
 			{pagination && pagination.totalPages > 1 && (
 				<div className="pagination">
 					<button
+						className="page-btn"
 						disabled={filters.page === 1}
 						onClick={() => handlePageChange(filters.page - 1)}
 					>
-						Previous
+						Prev
 					</button>
-
 					<span className="page-info">
-						Page {pagination.page} of {pagination.totalPages}
+						Page {pagination.page} / {pagination.totalPages}
 					</span>
-
 					<button
+						className="page-btn"
 						disabled={filters.page >= pagination.totalPages}
 						onClick={() => handlePageChange(filters.page + 1)}
 					>

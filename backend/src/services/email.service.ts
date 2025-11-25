@@ -1,12 +1,13 @@
 import { Participant } from '@/types/database';
 import { transporter, fromEmail, isAwsConfigured } from './email-transport';
+import QRCode from 'qrcode';
 
 interface EmailOptions {
   to: string | string[];
   subject: string;
   html: string;
   text?: string;
-  attachments?: any[];
+  attachments?: { filename: string; content: Buffer | string; cid?: string }[];
   replyTo?: string;
 }
 
@@ -47,14 +48,15 @@ export class EmailService {
       console.log(`   Message ID: ${result.messageId}`);
 
       return { success: true, messageId: result.messageId };
-    } catch (error: any) {
-      console.error('❌ Error sending email:', error.message);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      console.error('❌ Error sending email:', errorMessage);
       console.error('   To:', options.to);
       console.error('   Subject:', options.subject);
 
       return {
         success: false,
-        error: error.message || 'Unknown error occurred'
+        error: errorMessage
       };
     }
   }
@@ -68,7 +70,7 @@ export class EmailService {
 
     return await this.sendEmail({
       to: participant.email,
-      subject: '🎉 Registration Confirmed - Articon Hackathon 2025',
+      subject: 'Registration Received — Portfolio Under Review',
       html,
       text,
     });
@@ -83,7 +85,7 @@ export class EmailService {
 
     return await this.sendEmail({
       to: participant.email,
-      subject: '🎉 Portfolio Selected - Articon Hackathon 2025',
+      subject: 'Congratulations You’re Selected for ArtIcon 2025!',
       html,
       text,
     });
@@ -98,7 +100,7 @@ export class EmailService {
 
     return await this.sendEmail({
       to: participant.email,
-      subject: 'Articon Hackathon 2025 - Portfolio Update',
+      subject: 'ArtIcon 2025 — Application Update',
       html,
       text,
     });
@@ -141,9 +143,124 @@ export class EmailService {
     const html = this.generateEventReminderTemplate(participant, eventDate);
     const text = this.generateEventReminderText(participant, eventDate);
 
+    // Generate QR Code
+    const qrBuffer = await QRCode.toBuffer(participant.id, {
+      errorCorrectionLevel: 'H',
+      margin: 1,
+      width: 300,
+      color: {
+        dark: '#000000',
+        light: '#ffffff',
+      },
+    });
+
     return await this.sendEmail({
       to: participant.email,
       subject: '⏰ Reminder: Articon Hackathon Tomorrow!',
+      html,
+      text,
+      attachments: [
+        {
+          filename: 'qrcode.png',
+          content: qrBuffer,
+          cid: 'participant-qrcode', // Referenced in the template
+        },
+      ],
+    });
+  }
+
+  /**
+   * Send event reminder (2 days before)
+   */
+  async sendReminder2DaysEmail(participant: Participant): Promise<EmailResult> {
+    const subject = 'Just a reminder — ArtIcon is in 2 days!';
+    const html = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; border: 1px solid #eee;">
+        <h2 style="color: #333;">Just a reminder — ArtIcon is in 2 days!</h2>
+        <p style="font-size: 16px; color: #555;">Get your creativity ready 🎨🤖</p>
+        <p style="font-size: 16px; color: #555;">See you soon!</p>
+      </div>
+    `;
+    const text = `Just a reminder — ArtIcon is in 2 days! Get your creativity ready 🎨🤖\nSee you soon!`;
+
+    return await this.sendEmail({
+      to: participant.email,
+      subject,
+      html,
+      text,
+    });
+  }
+
+  /**
+   * Send event reminder (1 day before)
+   */
+  async sendReminder1DayEmail(participant: Participant): Promise<EmailResult> {
+    const subject = 'Tomorrow is the big day! 🌟';
+    const html = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; border: 1px solid #eee;">
+        <h2 style="color: #333;">Tomorrow is the big day! 🌟</h2>
+        <p style="font-size: 16px; color: #555;">ArtIcon starts at 9:00 AM.</p>
+      </div>
+    `;
+    const text = `Tomorrow is the big day! 🌟\nArtIcon starts at 9:00 AM.`;
+
+    return await this.sendEmail({
+      to: participant.email,
+      subject,
+      html,
+      text,
+    });
+  }
+
+  /**
+   * Send event reminder (Same Morning)
+   */
+  async sendReminderMorningEmail(participant: Participant): Promise<EmailResult> {
+    const subject = 'Good Morning! ☀️ Today is ArtIcon Day!';
+    const html = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; border: 1px solid #eee;">
+        <h2 style="color: #333;">Good Morning! ☀️</h2>
+        <p style="font-size: 18px; font-weight: bold; color: #222;">Today is ArtIcon Day!</p>
+        <p style="font-size: 16px; color: #555;">See you at 9:00 AM don’t forget your tools & energy ⚡</p>
+      </div>
+    `;
+    const text = `Good Morning! ☀️\nToday is ArtIcon Day!\nSee you at 9:00 AM don’t forget your tools & energy ⚡`;
+
+    return await this.sendEmail({
+      to: participant.email,
+      subject,
+      html,
+      text,
+    });
+  }
+
+  /**
+   * Send password reset email with new password
+   */
+  async sendPasswordResetEmail(participant: Participant, newPassword: string): Promise<EmailResult> {
+    const subject = 'Your New Password for ArtIcon 2025';
+    const html = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; border: 1px solid #eee;">
+        <h2 style="color: #333;">Password Reset Request</h2>
+        <p style="font-size: 16px; color: #555;">Hello ${participant.name},</p>
+        <p style="font-size: 16px; color: #555;">We received a request to reset your password. Here is your new temporary password:</p>
+        
+        <div style="background-color: #f8f9fa; padding: 15px; border-radius: 6px; text-align: center; margin: 20px 0;">
+          <span style="font-family: monospace; font-size: 24px; font-weight: bold; color: #333; letter-spacing: 2px;">${newPassword}</span>
+        </div>
+
+        <p style="font-size: 14px; color: #666;">Please login using this password. You cannot change it currently, so please keep it safe.</p>
+        
+        <div style="margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px;">
+          <p style="font-size: 12px; color: #999;">If you did not request this change, please contact support immediately.</p>
+        </div>
+      </div>
+    `;
+    const text = `Hello ${participant.name},\n\nYour new password is: ${newPassword}\n\nPlease login using this password.`;
+
+    return await this.sendEmail({
+      to: participant.email,
+      subject,
       html,
       text,
     });
@@ -187,216 +304,115 @@ export class EmailService {
   }
 
   // Template generators
-  private generateRegistrationTemplate(participant: Participant): string {
+  private generateRegistrationTemplate(_participant: Participant): string {
     return `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
         <div style="padding: 40px 20px; text-align: center;">
-          <h1 style="margin: 0; font-size: 32px;">🎉 Welcome to Articon 2025!</h1>
-          <p style="margin: 10px 0 0 0; font-size: 18px; opacity: 0.9;">Your registration is confirmed</p>
+          <h1 style="margin: 0; font-size: 32px;">Registration Received</h1>
+          <p style="margin: 10px 0 0 0; font-size: 18px; opacity: 0.9;">Portfolio Under Review</p>
         </div>
         <div style="background: white; color: #333; padding: 30px; border-radius: 8px 8px 0 0;">
-          <h2 style="color: #667eea; margin-top: 0;">Hello ${participant.name}! 👋</h2>
-          <p style="font-size: 16px; line-height: 1.6;">Thank you for registering for the <strong>Articon Hackathon 2025</strong>. We're excited to have you join us!</p>
-
+          <h2 style="color: #667eea; margin-top: 0;">Hello,</h2>
+          <p style="font-size: 16px; line-height: 1.6;">Your registration for ArtIcon 2025 is successfully completed. 🎉</p>
+          <p style="font-size: 16px; line-height: 1.6;">Our team will now review your portfolio and we’ll notify you of the status soon.</p>
+          
           <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 25px 0;">
-            <h3 style="margin-top: 0; color: #495057;">Your Registration Details:</h3>
-            <ul style="color: #6c757d; line-height: 1.8;">
-              <li><strong>Category:</strong> ${this.formatCategory(participant.category)}</li>
-              <li><strong>City:</strong> ${participant.city}</li>
-              <li><strong>Email:</strong> ${participant.email}</li>
-            </ul>
+             <p style="margin: 0; color: #495057; font-weight: bold;">Thank you for your interest & participation!</p>
           </div>
 
-          <div style="background-color: #e7f3ff; border-left: 4px solid #007bff; padding: 20px; margin: 25px 0;">
-            <h4 style="margin-top: 0; color: #0056b3;">📅 Event Information:</h4>
-            <p style="margin-bottom: 0;">
-              <strong>Date:</strong> November 15, 2025<br>
-              <strong>Time:</strong> 9:00 AM onwards<br>
-              <strong>Platform:</strong> Online Dashboard
-            </p>
-          </div>
-
-          <div style="text-align: center; margin: 30px 0;">
-            <a href="https://articon.multiicon.in" style="background-color: #667eea; color: white; padding: 12px 30px; text-decoration: none; border-radius: 25px; font-weight: bold; display: inline-block;">
-              Access Dashboard
-            </a>
-          </div>
-
-          <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
-
-          <p style="color: #6c757d; font-size: 14px; text-align: center;">
-            Stay tuned for updates! We'll notify you when the event starts.<br>
-            Good luck with the competition! 🏆
-          </p>
+          <p style="margin-top: 30px; font-weight: bold;">— Team ArtIcon</p>
         </div>
       </div>
     `;
   }
 
-  private generateRegistrationText(participant: Participant): string {
+  private generateRegistrationText(_participant: Participant): string {
     return `
-Welcome to Articon Hackathon 2025!
+Registration Received — Portfolio Under Review
 
-Hello ${participant.name},
-
-Thank you for registering for the Articon Hackathon 2025. Your registration is confirmed!
-
-Registration Details:
-- Category: ${this.formatCategory(participant.category)}
-- City: ${participant.city}
-- Email: ${participant.email}
-
-Event Information:
-- Date: November 15, 2025
-- Time: 9:00 AM onwards
-- Platform: Online Dashboard
-
-Access your dashboard at: https://articon.multiicon.in
-
-Stay tuned for updates! We'll notify you when the event starts.
-
-Good luck! 🏆
+Hello,
+Your registration for ArtIcon 2025 is successfully completed. 🎉
+Our team will now review your portfolio and we’ll notify you of the status soon.
+Thank you for your interest & participation!
+— Team ArtIcon
     `;
   }
 
-  private generatePortfolioSelectedTemplate(participant: Participant, eventDate: Date): string {
-    const eventDateStr = eventDate.toLocaleDateString('en-US', { 
-      weekday: 'long', 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric' 
-    });
-    const eventTimeStr = eventDate.toLocaleTimeString('en-US', { 
-      hour: '2-digit', 
-      minute: '2-digit' 
-    });
-
-    return `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
-        <div style="padding: 40px 20px; text-align: center;">
-          <h1 style="margin: 0; font-size: 32px;">🎉 You're Selected!</h1>
-          <p style="margin: 10px 0 0 0; font-size: 18px; opacity: 0.9;">Your portfolio has been approved</p>
+    private generatePortfolioSelectedTemplate(_participant: Participant, _eventDate: Date): string {
+      return `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+          <div style="padding: 40px 20px; text-align: center;">
+            <h1 style="margin: 0; font-size: 32px;">Congratulations!</h1>
+            <p style="margin: 10px 0 0 0; font-size: 18px; opacity: 0.9;">You’re Selected for ArtIcon 2025!</p>
+          </div>
+          <div style="background: white; color: #333; padding: 30px; border-radius: 8px 8px 0 0;">
+            <h2 style="color: #667eea; margin-top: 0;">Great news! 🎉</h2>
+            <p style="font-size: 16px; line-height: 1.6;">Your portfolio has been reviewed and you have been APPROVED to participate in ArtIcon 2025.</p>
+  
+            <div style="background-color: #e7f3ff; border-left: 4px solid #007bff; padding: 20px; margin: 25px 0;">
+              <p style="margin-bottom: 10px;"><strong>📅 Date:</strong> Sunday, 7th December 2025</p>
+              <p style="margin-bottom: 10px;"><strong>⏰ Time:</strong> 9:00 AM</p>
+              <p style="margin-bottom: 0;"><strong>📍 Location:</strong> Floor 3, Rumi Plaza, Airport Main Rd, near Race Course Road, Maruti Nagar, Rajkot, Gujarat 360001</p>
+            </div>
+  
+            <p style="font-size: 16px; line-height: 1.6;">We’re excited to see your creativity in action!</p>
+            <p style="margin-top: 30px; font-weight: bold;">— Team ArtIcon</p>
+          </div>
         </div>
-        <div style="background: white; color: #333; padding: 30px; border-radius: 8px 8px 0 0;">
-          <h2 style="color: #667eea; margin-top: 0;">Congratulations ${participant.name}! 🎊</h2>
-          <p style="font-size: 16px; line-height: 1.6;">Your portfolio impressed us! You're officially selected for <strong>Articon Hackathon 2025</strong>.</p>
+      `;
+    }
+    private generatePortfolioSelectedText(_participant: Participant, _eventDate: Date): string {
+      return `
+Congratulations You’re Selected for ArtIcon 2025!
 
-          <div style="background-color: #e7f3ff; border-left: 4px solid #007bff; padding: 20px; margin: 25px 0;">
-            <h4 style="margin-top: 0; color: #0056b3;">📅 Event Details:</h4>
-            <p style="margin-bottom: 0;">
-              <strong>Date:</strong> ${eventDateStr}<br>
-              <strong>Time:</strong> ${eventTimeStr}<br>
-              <strong>Category:</strong> ${this.formatCategory(participant.category)}
-            </p>
-          </div>
+Great news! 🎉
+Your portfolio has been reviewed and you have been APPROVED to participate in ArtIcon 2025.
 
-          <div style="background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 20px; margin: 25px 0;">
-            <h4 style="margin-top: 0; color: #856404;">⏳ Please Wait:</h4>
-            <p style="margin-bottom: 0; color: #856404;">
-              The event will start at the scheduled time. Please check your email for a QR code that you'll need to scan at the event for attendance.
-            </p>
-          </div>
+📅 Date: Sunday, 7th December 2025
+⏰ Time: 9:00 AM
+📍 Floor 3, Rumi Plaza, Airport Main Rd, near Race Course Road, Maruti Nagar, Rajkot, Gujarat 360001
 
-          <div style="text-align: center; margin: 30px 0;">
-            <a href="https://articon.multiicon.in" style="background-color: #667eea; color: white; padding: 12px 30px; text-decoration: none; border-radius: 25px; font-weight: bold; display: inline-block;">
-              Access Dashboard
-            </a>
-          </div>
-
-          <p style="color: #6c757d; font-size: 14px; text-align: center;">
-            We can't wait to see what you create! 🚀
-          </p>
-        </div>
-      </div>
-    `;
-  }
-
-  private generatePortfolioSelectedText(participant: Participant, eventDate: Date): string {
-    const eventDateStr = eventDate.toLocaleDateString('en-US', { 
-      weekday: 'long', 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric' 
-    });
-    const eventTimeStr = eventDate.toLocaleTimeString('en-US', { 
-      hour: '2-digit', 
-      minute: '2-digit' 
-    });
-
-    return `
-🎉 You're Selected! - Articon Hackathon 2025
-
-Congratulations ${participant.name}!
-
-Your portfolio impressed us! You're officially selected for Articon Hackathon 2025.
-
-Event Details:
-- Date: ${eventDateStr}
-- Time: ${eventTimeStr}
-- Category: ${this.formatCategory(participant.category)}
-
-Please Wait:
-The event will start at the scheduled time. Please check your email for a QR code that you'll need to scan at the event for attendance.
-
-Access your dashboard: https://articon.multiicon.in
-
-We can't wait to see what you create! 🚀
-    `;
-  }
-
-  private generatePortfolioRejectedTemplate(participant: Participant): string {
+We’re excited to see your creativity in action!
+—Team ArtIcon
+      `;
+    }
+  private generatePortfolioRejectedTemplate(_participant: Participant): string {
     return `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 20px; text-align: center; color: white;">
-          <h1 style="margin: 0; font-size: 28px;">Articon Hackathon 2025</h1>
-          <p style="margin: 10px 0 0 0; font-size: 16px; opacity: 0.9;">Portfolio Review Update</p>
+        <div style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); padding: 40px 20px; text-align: center; color: white;">
+          <h1 style="margin: 0; font-size: 28px;">ArtIcon 2025</h1>
+          <p style="margin: 10px 0 0 0; font-size: 16px; opacity: 0.9;">Application Update</p>
         </div>
         <div style="background: white; padding: 30px; border-radius: 0 0 8px 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-          <h2 style="color: #495057; margin-top: 0;">Hello ${participant.name},</h2>
-          <p style="font-size: 16px; line-height: 1.6;">Thank you for your interest in <strong>Articon Hackathon 2025</strong>.</p>
+          <h2 style="color: #495057; margin-top: 0;">Hello,</h2>
+          <p style="font-size: 16px; line-height: 1.6;">Thank you for your interest in ArtIcon 2025. After reviewing your portfolio, we regret to inform you that you were not selected this time.</p>
 
           <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 25px 0;">
             <p style="margin: 0; color: #495057; line-height: 1.8;">
-              After careful review of all portfolios, we regret to inform you that your portfolio is currently under review. Please allow 2-3 business days for a final decision. We received an overwhelming number of applications and the selection process is highly competitive.
+              We truly appreciate your effort and encourage you to participate in future events — your creativity matters!
             </p>
           </div>
 
-          <div style="background-color: #e7f3ff; border-left: 4px solid #007bff; padding: 20px; margin: 25px 0;">
-            <h4 style="margin-top: 0; color: #0056b3;">💡 We Encourage You:</h4>
-            <ul style="margin-bottom: 0; color: #495057; line-height: 1.8;">
-              <li>Keep building your portfolio</li>
-              <li>Participate in future events</li>
-              <li>Stay connected with our community</li>
-            </ul>
-          </div>
-
-          <p style="color: #6c757d; font-size: 14px; text-align: center;">
-            Thank you for your understanding. We wish you all the best in your creative journey! ✨
+          <p style="color: #6c757d; font-size: 14px;">
+            Thank you for understanding.
           </p>
+          <p style="margin-top: 30px; font-weight: bold; color: #6c757d;">— Team ArtIcon</p>
         </div>
       </div>
     `;
   }
 
-  private generatePortfolioRejectedText(participant: Participant): string {
+  private generatePortfolioRejectedText(_participant: Participant): string {
     return `
-Articon Hackathon 2025 - Portfolio Review Update
+ArtIcon 2025 — Application Update
 
-Hello ${participant.name},
-
-Thank you for your interest in Articon Hackathon 2025.
-
-After careful review of all portfolios, we regret to inform you that your portfolio is currently under review. Please allow 2-3 business days for a final decision. We received an overwhelming number of applications and the selection process is highly competitive.
-
-We Encourage You:
-- Keep building your portfolio
-- Participate in future events
-- Stay connected with our community
-
-Thank you for your understanding. We wish you all the best in your creative journey! ✨
+Hello,
+Thank you for your interest in ArtIcon 2025. After reviewing your portfolio, we regret to inform you that you were not selected this time.
+We truly appreciate your effort and encourage you to participate in future events — your creativity matters!
+Thank you for understanding.
+— Team ArtIcon
     `;
   }
-
   private generateEventReminderTemplate(participant: Participant, eventDate: Date): string {
     const eventDateStr = eventDate.toLocaleDateString('en-US', { 
       weekday: 'long', 
@@ -436,6 +452,11 @@ Thank you for your understanding. We wish you all the best in your creative jour
               <li>Have your login credentials handy</li>
               <li>Get a good night's rest!</li>
             </ul>
+            <div style="text-align: center; margin-top: 20px; padding-top: 20px; border-top: 1px dashed #ddd;">
+                <p style="margin-bottom: 10px; font-weight: bold; color: #333;">Your Attendance QR Code:</p>
+                <img src="cid:participant-qrcode" alt="Attendance QR Code" style="width: 200px; height: 200px; border: 4px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-radius: 8px;" />
+                <p style="font-size: 12px; color: #999; margin-top: 5px;">Show this at the registration desk</p>
+            </div>
           </div>
 
           <div style="text-align: center; margin: 30px 0;">
@@ -651,6 +672,7 @@ Questions? Reply to this email or contact us at support@multiicon.in
       video: 'Video Editing',
       ui_ux: 'UI/UX Design',
       graphics: 'Graphic Design',
+      all: 'All Categories',
     };
     return categoryMap[category] || category;
   }

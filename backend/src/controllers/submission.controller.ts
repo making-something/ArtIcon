@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { databaseService } from '@/services/database.service';
-import { SubmissionInsert } from '@/types/database';
+import { SubmissionInsert, SubmissionUpdate, Submission } from '@/types/database';
 import db from '@/config/database';
 
 export class SubmissionController {
@@ -106,7 +106,7 @@ export class SubmissionController {
         return;
       }
 
-      const updateData: any = {
+      const updateData: SubmissionUpdate = {
         drive_link,
         submitted_at: new Date().toISOString(),
       };
@@ -197,22 +197,46 @@ export class SubmissionController {
         LEFT JOIN tasks t ON s.task_id = t.id
         WHERE 1=1
       `;
-      const params: any[] = [];
+      const params: (string | number)[] = [];
 
       if (participant_id) {
         query += ' AND s.participant_id = ?';
-        params.push(participant_id);
+        params.push(participant_id as string);
       }
 
       if (task_id) {
         query += ' AND s.task_id = ?';
-        params.push(task_id);
+        params.push(task_id as string);
       }
 
       query += ' ORDER BY s.submitted_at DESC';
 
       const stmt = db.prepare(query);
-      const rows = stmt.all(...params) as any[];
+      const rows = stmt.all(...params) as (Submission & {
+        participant_id: string;
+        participant_name: string;
+        participant_email: string;
+        participant_whatsapp_no: string;
+        participant_category: string;
+        participant_city: string;
+        participant_portfolio_url: string;
+        participant_portfolio_file_path: string;
+        participant_is_present: number;
+        participant_role: string;
+        participant_experience: number;
+        participant_organization: string;
+        participant_specialization: string;
+        participant_source: string;
+        participant_password_hash: string;
+        participant_created_at: string;
+        participant_updated_at: string;
+        task_id: string;
+        task_category: string;
+        task_title: string;
+        task_description: string;
+        task_created_at: string;
+        task_updated_at: string;
+      })[];
 
       const submissions = rows.map(row => ({
         id: row.id,
@@ -257,7 +281,7 @@ export class SubmissionController {
       let filteredSubmissions = submissions;
       if (category) {
         filteredSubmissions = submissions.filter(
-          (sub: any) => sub.participant?.category === category
+          (sub) => sub.participant?.category === category
         );
       }
 
@@ -292,7 +316,14 @@ export class SubmissionController {
         ORDER BY s.submitted_at DESC
       `);
 
-      const rows = stmt.all(participant_id) as any[];
+      const rows = stmt.all(participant_id) as (Submission & {
+        task_id: string;
+        category: string;
+        title: string;
+        description: string;
+        created_at: string;
+        updated_at: string;
+      })[];
 
       const submissions = rows.map(row => ({
         id: row.id,

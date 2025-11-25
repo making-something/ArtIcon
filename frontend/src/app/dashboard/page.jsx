@@ -18,6 +18,16 @@ const Dashboard = () => {
 	// Target date: November 30, 2025, 9:00 AM
 	const targetDate = new Date("2025-11-30T09:00:00").getTime();
 
+	const getCategoryLabel = (cat) => {
+		const map = {
+			video: "Video Editing",
+			ui_ux: "UI/UX Design",
+			graphics: "Graphic Design",
+			all: "All",
+		};
+		return map[cat] || cat;
+	};
+
 	useEffect(() => {
 		// Check authentication
 		if (!isAuthenticated()) {
@@ -90,7 +100,7 @@ const Dashboard = () => {
 					<div className="header-right">
 						<div className="user-info">
 							<span className="user-name">{participant.name}</span>
-							<span className="user-category">{participant.category}</span>
+							<span className="user-category">{getCategoryLabel(participant.category)}</span>
 						</div>
 						<button className="logout-btn" onClick={handleLogout}>
 							Logout
@@ -148,7 +158,7 @@ const Dashboard = () => {
 						</div>
 						<div className="detail-item">
 							<span className="detail-label">Category:</span>
-							<span className="detail-value">{participant.category}</span>
+							<span className="detail-value">{getCategoryLabel(participant.category)}</span>
 						</div>
 						<div className="detail-item">
 							<span className="detail-label">City:</span>

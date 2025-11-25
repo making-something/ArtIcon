@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import emailService from "@/services/email.service";
 import { whatsappService } from "@/services/whatsapp.service";
 import { databaseService } from "@/services/database.service";
-import { ParticipantInsert } from "@/types/database";
+import { ParticipantInsert, Category } from "@/types/database";
 
 export class ParticipantController {
 	/**
@@ -46,16 +46,17 @@ export class ParticipantController {
 			}
 
 			// Determine category from specialization or direct category input
-			let category: "video" | "ui_ux" | "graphics";
+			let category: "video" | "ui_ux" | "graphics" | "all";
 
 			if (specialization) {
 				// Map specialization to category
 				const specializationToCategoryMap: {
-					[key: string]: "video" | "ui_ux" | "graphics";
+					[key: string]: "video" | "ui_ux" | "graphics" | "all";
 				} = {
 					"Video Editing": "video",
 					"UI/UX Design": "ui_ux",
 					"Graphic Design": "graphics",
+					"All": "all",
 				};
 				category = specializationToCategoryMap[specialization];
 			} else if (req.body.category) {
@@ -68,6 +69,7 @@ export class ParticipantController {
 					"video": "Video Editing",
 					"ui_ux": "UI/UX Design",
 					"graphics": "Graphic Design",
+					"all": "All",
 				};
 				specialization = categoryToSpecializationMap[category] || category;
 			} else {
@@ -252,9 +254,9 @@ export class ParticipantController {
 		try {
 			const { category, is_present } = req.query;
 
-			const filters: any = {};
+			const filters: { category?: Category; is_present?: boolean } = {};
 			if (category) {
-				filters.category = category as any;
+				filters.category = category as Category;
 			}
 			if (is_present !== undefined) {
 				filters.is_present = is_present === "true";
@@ -512,6 +514,60 @@ export class ParticipantController {
 			});
 		} catch (error) {
 			console.error("Error in checkEventStatus:", error);
+			res.status(500).json({
+				success: false,
+				message: "Internal server error",
+			});
+		}
+	}
+
+	/**
+	 * Forgot Password - Generate new password and email it
+	 */
+	async forgotPassword(req: Request, res: Response): Promise<void> {
+		try {
+			const { email } = req.body;
+
+			if (!email) {
+				res.status(400).json({
+					success: false,
+					message: "Email is required",
+				});
+				return;
+			}
+
+			// Find participant by email
+			const participant = await databaseService.getParticipantByEmail(email);
+
+			if (!participant) {
+				// Return success even if email doesn't exist to prevent enumeration
+				// But for this specific event context, giving feedback is probably more helpful
+				res.status(404).json({
+					success: false,
+					message: "Email not registered",
+				});
+				return;
+			}
+
+			// Generate new random password (8 characters)
+			const newPassword = Math.random().toString(36).slice(-8);
+
+			// Hash new password
+			const bcrypt = await import("bcryptjs");
+			const password_hash = await bcrypt.hash(newPassword, 10);
+
+			// Update database
+			await databaseService.updateParticipant(participant.id, { password_hash });
+
+			// Send email
+			await emailService.sendPasswordResetEmail(participant, newPassword);
+
+			res.status(200).json({
+				success: true,
+				message: "New password sent to your email",
+			});
+		} catch (error) {
+			console.error("Error in forgotPassword:", error);
 			res.status(500).json({
 				success: false,
 				message: "Internal server error",

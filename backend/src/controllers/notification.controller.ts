@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { databaseService } from '@/services/database.service';
 import emailService from '@/services/email.service';
 import { whatsappService } from '@/services/whatsapp.service';
-import { NotificationInsert } from '@/types/database';
+import { NotificationInsert, Participant, NotificationStatus, NotificationUpdate } from '@/types/database';
 
 export class NotificationController {
   /**
@@ -21,7 +21,7 @@ export class NotificationController {
       }
 
       // Get recipients based on target_audience
-      let participants: any[] = [];
+      let participants: Participant[] = [];
 
       if (target_audience === 'all') {
         const { participants: allParticipants } = await databaseService.getParticipants();
@@ -118,7 +118,7 @@ export class NotificationController {
     try {
       const { status } = req.query;
 
-      const notifications = await databaseService.getAllNotifications(status as any);
+      const notifications = await databaseService.getAllNotifications(status as NotificationStatus);
 
       res.status(200).json({
         success: true,
@@ -172,7 +172,7 @@ export class NotificationController {
       const { id } = req.params;
       const { message, scheduled_time, status } = req.body;
 
-      const updateData: any = {};
+      const updateData: NotificationUpdate = {};
       if (message) updateData.message = message;
       if (scheduled_time) updateData.scheduled_time = scheduled_time;
       if (status) updateData.status = status;
@@ -323,11 +323,29 @@ export class NotificationController {
 
       // Send reminder notifications
       for (const participant of participants) {
-        // Send email
-        await emailService.sendEventReminderEmail(participant, eventDateObj)
-          .catch((error) => {
-            console.error(`Failed to send reminder email to ${participant.email}:`, error);
-          });
+        // Send email based on days until event
+        if (daysUntil === 2) {
+          await emailService.sendReminder2DaysEmail(participant)
+            .catch((error) => {
+              console.error(`Failed to send 2-day reminder email to ${participant.email}:`, error);
+            });
+        } else if (daysUntil === 1) {
+          await emailService.sendReminder1DayEmail(participant)
+            .catch((error) => {
+              console.error(`Failed to send 1-day reminder email to ${participant.email}:`, error);
+            });
+        } else if (daysUntil === 0) {
+          await emailService.sendReminderMorningEmail(participant)
+            .catch((error) => {
+              console.error(`Failed to send morning reminder email to ${participant.email}:`, error);
+            });
+        } else {
+          // Fallback to generic reminder
+          await emailService.sendEventReminderEmail(participant, eventDateObj)
+            .catch((error) => {
+              console.error(`Failed to send generic reminder email to ${participant.email}:`, error);
+            });
+        }
 
         // Send WhatsApp (using hello_world template for now)
         await whatsappService.sendEventReminderMessage(

@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import { signToken } from '@/utils/jwt';
 import { databaseService } from '@/services/database.service';
-import { AdminInsert, TaskInsert } from '@/types/database';
+import { AdminInsert, TaskInsert, TaskUpdate, ApprovalStatus, Category } from '@/types/database';
 
 export class AdminController {
   /**
@@ -205,7 +205,7 @@ export class AdminController {
         return;
       }
 
-      const updateData: any = {};
+      const updateData: TaskUpdate = {};
       if (title) updateData.title = title;
       if (description) updateData.description = description;
 
@@ -270,7 +270,7 @@ export class AdminController {
     try {
       const { category } = req.query;
 
-      const tasks = await databaseService.getAllTasks(category as any);
+      const tasks = await databaseService.getAllTasks(category as Category);
 
       res.status(200).json({
         success: true,
@@ -365,7 +365,7 @@ export class AdminController {
     try {
       const { category } = req.query;
 
-      const winners = await databaseService.getAllWinners(category as any);
+      const winners = await databaseService.getAllWinners(category as Category);
 
       res.status(200).json({
         success: true,
@@ -498,15 +498,15 @@ export class AdminController {
     try {
       const { category, page = 1, limit = 50, search, approval_status } = req.query;
 
-      const filters: any = {};
+      const filters: { category?: Category; search?: string; approval_status?: ApprovalStatus; page?: number; limit?: number } = {};
       if (category && category !== 'all') {
-        filters.category = category as any;
+        filters.category = category as Category;
       }
       if (search && typeof search === 'string') {
         filters.search = search;
       }
       if (approval_status && typeof approval_status === 'string') {
-        filters.approval_status = approval_status as any;
+        filters.approval_status = approval_status as ApprovalStatus;
       }
       if (page && limit) {
         filters.page = parseInt(page as string);
@@ -710,12 +710,12 @@ export class AdminController {
     try {
       const { category, approval_status } = req.query;
 
-      const filters: any = {};
+      const filters: { category?: Category; approval_status?: ApprovalStatus; page?: number; limit?: number } = {};
       if (category && category !== 'all') {
-        filters.category = category as any;
+        filters.category = category as Category;
       }
       if (approval_status && typeof approval_status === 'string') {
-        filters.approval_status = approval_status as any;
+        filters.approval_status = approval_status as ApprovalStatus;
       }
       // Get all participants without pagination for export
       filters.page = 1;

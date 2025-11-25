@@ -19,6 +19,13 @@ router.post('/register', participantController.register.bind(participantControll
 router.post('/login', participantController.login.bind(participantController));
 
 /**
+ * @route   POST /api/participants/forgot-password
+ * @desc    Reset password and send to email
+ * @access  Public
+ */
+router.post('/forgot-password', participantController.forgotPassword.bind(participantController));
+
+/**
  * @route   GET /api/participants/event-status
  * @desc    Check if event has started
  * @access  Public

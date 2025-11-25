@@ -42,7 +42,7 @@ class DatabaseService {
     limit?: number;
   } = {}): Promise<{ participants: Participant[]; total: number }> {
     let query = 'SELECT * FROM participants WHERE 1=1';
-    const params: any[] = [];
+    const params: (string | number | boolean | null)[] = [];
 
     if (filters.category) {
       query += ' AND category = ?';
@@ -116,7 +116,7 @@ class DatabaseService {
     if (fields.length === 0) return await this.getParticipantById(id);
 
     const setClause = fields.map(field => `${field} = ?`).join(', ');
-    const values = fields.map(field => (data as any)[field]);
+    const values = fields.map(field => (data as Record<string, unknown>)[field]);
     values.push(id); // For WHERE clause
 
     const stmt = db.prepare(`
@@ -133,7 +133,7 @@ class DatabaseService {
 
   async getAllTasks(category?: Category): Promise<Task[]> {
     let query = 'SELECT * FROM tasks';
-    const params: any[] = [];
+    const params: (string | null)[] = [];
 
     if (category) {
       query += ' WHERE category = ?';
@@ -170,7 +170,7 @@ class DatabaseService {
     if (fields.length === 0) return await this.getTaskById(id);
 
     const setClause = fields.map(field => `${field} = ?`).join(', ');
-    const values = fields.map(field => (data as any)[field]);
+    const values = fields.map(field => (data as Record<string, unknown>)[field]);
     values.push(id);
 
     const stmt = db.prepare(`
@@ -240,6 +240,7 @@ class DatabaseService {
       WHERE s.id = ?
     `);
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const row = stmt.get(id) as any;
     if (!row) return null;
 
@@ -314,7 +315,7 @@ class DatabaseService {
     if (fields.length === 0) return await this.getSubmissionById(id);
 
     const setClause = fields.map(field => `${field} = ?`).join(', ');
-    const values = fields.map(field => (data as any)[field]);
+    const values = fields.map(field => (data as Record<string, unknown>)[field]);
     values.push(id);
 
     const stmt = db.prepare(`
@@ -393,6 +394,7 @@ class DatabaseService {
 
   async getNotificationById(id: string): Promise<Notification | null> {
     const stmt = db.prepare('SELECT * FROM notifications WHERE id = ?');
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const row = stmt.get(id) as any;
 
     if (!row) return null;
@@ -405,7 +407,7 @@ class DatabaseService {
 
   async getAllNotifications(status?: NotificationStatus): Promise<Notification[]> {
     let query = 'SELECT * FROM notifications';
-    const params: any[] = [];
+    const params: (string | null)[] = [];
 
     if (status) {
       query += ' WHERE status = ?';
@@ -414,6 +416,7 @@ class DatabaseService {
 
     query += ' ORDER BY scheduled_time DESC';
     const stmt = db.prepare(query);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const rows = stmt.all(...params) as any[];
 
     return rows.map(row => ({
@@ -479,6 +482,7 @@ class DatabaseService {
       WHERE w.id = ?
     `);
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const row = stmt.get(id) as any;
     if (!row) return null;
 
@@ -552,7 +556,7 @@ class DatabaseService {
       LEFT JOIN participants p ON w.participant_id = p.id
     `;
 
-    const params: any[] = [];
+    const params: (string | null)[] = [];
 
     if (category) {
       query += ' WHERE w.category = ?';
@@ -561,6 +565,7 @@ class DatabaseService {
 
     query += ' ORDER BY w.position ASC';
     const stmt = db.prepare(query);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const rows = stmt.all(...params) as any[];
 
     return rows.map(row => ({

@@ -4,7 +4,7 @@
 PRAGMA foreign_keys = ON;
 
 -- Categories enum (SQLite doesn't have enums, so we'll use CHECK constraints)
--- Values: 'video', 'ui_ux', 'graphics'
+-- Values: 'video', 'ui_ux', 'graphics', 'all'
 
 -- Participants table
 CREATE TABLE IF NOT EXISTS participants (
@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS participants (
   name TEXT NOT NULL,
   email TEXT NOT NULL UNIQUE,
   whatsapp_no TEXT NOT NULL,
-  category TEXT NOT NULL CHECK (category IN ('video', 'ui_ux', 'graphics')),
+  category TEXT NOT NULL CHECK (category IN ('video', 'ui_ux', 'graphics', 'all')),
   city TEXT NOT NULL,
   portfolio_url TEXT,
   portfolio_file_path TEXT,
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS participants (
 -- Tasks table
 CREATE TABLE IF NOT EXISTS tasks (
   id TEXT PRIMARY KEY,
-  category TEXT NOT NULL CHECK (category IN ('video', 'ui_ux', 'graphics')),
+  category TEXT NOT NULL CHECK (category IN ('video', 'ui_ux', 'graphics', 'all')),
   title TEXT NOT NULL,
   description TEXT NOT NULL,
   created_at TEXT DEFAULT (datetime('now')),
@@ -72,7 +72,7 @@ CREATE TABLE IF NOT EXISTS winners (
   id TEXT PRIMARY KEY,
   participant_id TEXT NOT NULL,
   position INTEGER NOT NULL,
-  category TEXT NOT NULL CHECK (category IN ('video', 'ui_ux', 'graphics')),
+  category TEXT NOT NULL CHECK (category IN ('video', 'ui_ux', 'graphics', 'all')),
   announcement_text TEXT NOT NULL,
   created_at TEXT DEFAULT (datetime('now')),
   updated_at TEXT DEFAULT (datetime('now')),

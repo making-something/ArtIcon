@@ -3,8 +3,13 @@
  * Centralized API communication layer
  */
 
-const API_BASE_URL =
-	process.env.NEXT_PUBLIC_API_URL || "https://api.articon.multiicon.in";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+
+if (!API_BASE_URL) {
+	console.error(
+		"Error: NEXT_PUBLIC_API_URL environment variable is not defined. API requests will fail."
+	);
+}
 
 /**
  * Generic API request handler
@@ -123,6 +128,7 @@ export async function registerParticipant(formData) {
 		"Video Editing": "video",
 		"UI/UX Design": "ui_ux",
 		"Graphic Design": "graphics",
+		"All": "all",
 	};
 
 	const category =
@@ -234,6 +240,16 @@ export async function login(email, password) {
 	}
 
 	throw new Error("Login failed. Please check your credentials.");
+}
+
+/**
+ * Forgot Password
+ */
+export async function forgotPassword(email) {
+	return apiRequest("/api/participants/forgot-password", {
+		method: "POST",
+		body: JSON.stringify({ email }),
+	});
 }
 
 /**
@@ -404,7 +420,16 @@ export async function exportParticipantsCSV(
 	}
 }
 
-export default {
+/**
+ * Scan QR Code for attendance
+ */
+export async function scanParticipantQRCode(participantId) {
+	return apiRequest(`/api/participants/${participantId}/scan-qr`, {
+		method: "POST",
+	});
+}
+
+const api = {
 	registerParticipant,
 	uploadPortfolioFile,
 	loginParticipant,
@@ -424,4 +449,8 @@ export default {
 	approveParticipant,
 	rejectParticipant,
 	exportParticipantsCSV,
+	scanParticipantQRCode,
+	forgotPassword,
 };
+
+export default api;

@@ -155,6 +155,38 @@
 	stroke-width: 2;
 }
 
+/* Forgot Password Link */
+.forgot-password-link {
+	margin-top: 1rem;
+	font-family: "Barlow Condensed", sans-serif;
+	font-size: 1rem;
+	color: var(--base-300);
+	cursor: pointer;
+	text-decoration: underline;
+	opacity: 0.8;
+	transition: opacity 0.2s ease, color 0.2s ease;
+}
+
+.forgot-password-link:hover {
+	opacity: 1;
+	color: var(--base-100);
+}
+
+/* Success Popup Styling Override */
+.success-popup .error-popup-content {
+	background: linear-gradient(135deg, #e3e3db 0%, #ffffff 100%);
+	border-color: #28a745 !important;
+	box-shadow: 0 10px 40px rgba(40, 167, 69, 0.3);
+}
+
+.success-popup .error-popup-content p {
+	color: #28a745 !important;
+}
+
+.success-popup .error-icon {
+	stroke: #28a745 !important;
+}
+
 /* Error Popup Responsive */
 @media (max-width: 768px) {
 	.error-popup {
@@ -199,586 +231,6 @@
 		width: 18px;
 		height: 18px;
 	}
-}
-
-.register-page {
-	/* Layout styles */
-	position: relative;
-	width: 100vw;
-	height: 100svh;
-	background-color: var(--base-400); /* Dark BG */
-	color: var(--base-100); /* Light Text */
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: flex-start;
-	padding: 0 10vw;
-	overflow: hidden;
-}
-
-/* --- TOP BAR --- */
-.register-top-bar {
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 100%;
-	padding: 2rem 3rem;
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	z-index: 10;
-	pointer-events: none; /* Let clicks pass through empty areas */
-}
-
-.page-title {
-	font-family: "Barlow Condensed", sans-serif;
-	font-weight: 700;
-	text-transform: uppercase;
-	font-size: 1.5rem;
-	color: var(--base-300);
-	pointer-events: auto;
-}
-
-.cursive-accent {
-	font-family: "Dancing Script", cursive;
-	text-transform: none; /* Cursive usually looks bad in all-caps */
-	font-weight: 400;
-	font-size: 1.8rem;
-	color: var(--accent-3); /* Or var(--base-100) */
-	margin-left: 0.5rem;
-}
-
-.top-nav-buttons {
-	display: flex;
-	gap: 1rem;
-	align-items: center;
-}
-
-.login-nav-btn,
-.back-nav-btn {
-	pointer-events: auto;
-	background: transparent;
-	border: 1px solid var(--base-300);
-	color: var(--base-100);
-	padding: 0.75rem 2rem;
-	border-radius: 2rem;
-	font-family: "Barlow Condensed", sans-serif;
-	font-weight: 600;
-	text-transform: uppercase;
-	font-size: 1rem;
-	cursor: pointer;
-	transition: all 0.3s ease;
-}
-
-.login-nav-btn:hover,
-.back-nav-btn:hover {
-	background-color: var(--base-100);
-	color: var(--base-400);
-}
-
-/* --- MAIN CONTAINER --- */
-.register-container {
-	position: relative;
-	width: 100%;
-	max-width: 1400px;
-	margin: 0 auto;
-	padding-top: 4rem; /* Space for top bar */
-}
-
-/* The Sentence Flow */
-.form-sentence {
-	font-family: "Barlow Condensed", sans-serif;
-	font-weight: 600;
-	font-size: clamp(
-		1.8rem,
-		3.5vw,
-		3.5rem
-	); /* Slightly smaller to fit more text */
-	line-height: 1.6;
-	text-transform: uppercase;
-}
-
-.sentence-part {
-	display: inline;
-	opacity: 0;
-	will-change: transform, opacity;
-}
-
-.sentence-part.visible {
-	opacity: 1;
-}
-
-/* Input Styling */
-.input-wrapper {
-	display: inline-block;
-	position: relative;
-	margin: 0 0.2em;
-}
-
-.register-input {
-	background: transparent;
-	border: none;
-	border-bottom: 2px solid var(--base-300);
-	color: var(--accent-3);
-	font-family: "Barlow Condensed", sans-serif;
-	font-size: inherit;
-	font-weight: 900;
-	text-transform: uppercase;
-	padding: 0 0.2rem;
-	outline: none;
-	transition: border-color 0.3s ease;
-	border-radius: 0; /* Fix for iOS */
-}
-
-.register-input:focus {
-	border-bottom-color: var(--base-100);
-}
-
-.register-input::placeholder {
-	color: var(--base-300);
-	opacity: 0.3;
-	font-weight: 400;
-}
-
-/* Dynamic Input Widths based on content expectation */
-.register-input[name="fullName"] {
-	width: 300px;
-}
-.register-input[name="city"] {
-	width: 200px;
-}
-.register-input[name="role"] {
-	width: 300px;
-}
-.register-input[name="experience"] {
-	width: 80px;
-	text-align: center;
-}
-.register-input[name="organization"] {
-	width: 400px;
-}
-.register-input[name="specialization"] {
-	width: 350px;
-}
-.register-input[name="source"] {
-	width: 250px;
-}
-.register-input[name="portfolio"] {
-	width: 500px;
-}
-.register-input[name="phone"] {
-	width: 250px;
-}
-.register-input[name="email"],
-.register-input[name="loginEmail"] {
-	width: 400px;
-}
-.register-input[type="password"] {
-	width: 300px;
-}
-
-/* Submit Button */
-.submit-wrapper {
-	margin-top: 3rem;
-	opacity: 0;
-	transform: translateY(20px);
-}
-
-.submit-btn {
-	background-color: var(--base-100);
-	color: var(--base-400);
-	border: none;
-	padding: 1.5rem 4rem;
-	border-radius: 3rem;
-	font-family: "Barlow Condensed", sans-serif;
-	font-weight: 900;
-	font-size: 1.5rem;
-	text-transform: uppercase;
-	cursor: pointer;
-	transition: transform 0.2s ease, background-color 0.2s ease;
-}
-
-.submit-btn:hover:not(:disabled) {
-	background-color: var(--accent-1);
-	transform: scale(1.05);
-}
-
-.submit-btn:disabled {
-	opacity: 0.6;
-	cursor: not-allowed;
-}
-
-.back-btn:disabled {
-	opacity: 0.5;
-	cursor: not-allowed;
-}
-
-/* Navigation Hint */
-.nav-hint {
-	position: fixed;
-	bottom: 3rem;
-	right: 3rem;
-	font-family: "DM Mono", monospace;
-	font-size: 0.8rem;
-	color: var(--base-300);
-	opacity: 0;
-	display: flex;
-	align-items: center;
-	gap: 0.5rem;
-	pointer-events: none;
-}
-
-.enter-key-icon {
-	border: 1px solid var(--base-300);
-	padding: 0.2rem 0.4rem;
-	border-radius: 4px;
-}
-
-/* Mobile Adjustments - CONSOLIDATED */
-@media (max-width: 1000px) {
-	.register-page {
-		padding: 0 1.5rem;
-		padding-top: 8rem; /* Space for fixed top bar */
-		justify-content: flex-start;
-		overflow: hidden; /* Prevent body scroll */
-		height: 100vh;
-		height: 100dvh; /* Use dynamic viewport height for mobile */
-	}
-
-	.register-top-bar {
-		padding: 1.5rem;
-		background: linear-gradient(
-			to bottom,
-			var(--base-400) 0%,
-			var(--base-400) 70%,
-			transparent 100%
-		);
-		z-index: 100;
-	}
-
-	.top-nav-buttons {
-		gap: 0.5rem;
-	}
-
-	.login-nav-btn,
-	.back-nav-btn {
-		padding: 0.5rem 1rem;
-		font-size: 0.85rem;
-	}
-
-	.page-title {
-		font-size: 1.2rem;
-	}
-
-	.cursive-accent {
-		font-size: 1.5rem;
-	}
-
-	.register-container {
-		width: 100%;
-		max-width: 100%;
-	}
-
-	.form-scroll-container {
-		max-height: calc(100dvh - 12rem); /* Account for top bar + submit button */
-		overflow-y: auto;
-		overflow-x: hidden;
-		-webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
-		padding-bottom: 2rem;
-	}
-
-	.form-sentence {
-		font-size: clamp(1.5rem, 5vw, 2rem);
-		line-height: 1.5;
-	}
-
-	.register-input {
-		width: 100% !important;
-		display: block;
-		margin: 0.5rem 0;
-	}
-
-	.input-wrapper {
-		display: block;
-		width: 100%;
-		margin: 0;
-	}
-
-	.submit-wrapper {
-		position: relative;
-		margin-top: 1rem;
-		padding-bottom: 1rem;
-	}
-
-	.nav-hint {
-		display: none; /* Hide hint on mobile */
-	}
-}
-
-/* ... Existing CSS ... */
-
-/* --- SELECT DROPDOWN STYLING --- */
-.register-select {
-	-webkit-appearance: none; /* Remove default arrow on Safari/Chrome */
-	-moz-appearance: none;
-	appearance: none;
-	background: transparent;
-	border: none;
-	border-bottom: 2px solid var(--base-300);
-	color: var(--accent-3);
-	font-family: "Barlow Condensed", sans-serif;
-	font-size: inherit;
-	font-weight: 900;
-	text-transform: uppercase;
-	padding: 0 0.2rem;
-	outline: none;
-	cursor: pointer;
-	border-radius: 0;
-	transition: border-color 0.3s ease;
-
-	/* Add a custom tiny arrow or just rely on context */
-	background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%238c7e77%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
-	background-repeat: no-repeat;
-	background-position: right 0 top 50%;
-	background-size: 0.65rem auto;
-	padding-right: 1.5rem; /* Space for arrow */
-}
-
-.register-select:focus {
-	border-bottom-color: var(--base-100);
-}
-
-/* Style the dropdown options for Dark Mode */
-.register-select option {
-	background-color: var(--base-400);
-	color: var(--base-100);
-	font-family: "Barlow Condensed", sans-serif;
-	font-size: 1rem;
-	padding: 10px;
-}
-
-/* --- INPUT WIDTH UPDATES --- */
-.register-input[name="experience"] {
-	width: 60px;
-	text-align: center;
-}
-
-/* Adjust select widths */
-.register-select[name="role"] {
-	width: 220px;
-}
-.register-select[name="specialization"] {
-	width: 300px;
-}
-.register-select[name="source"] {
-	width: 280px;
-}
-
-.register-page {
-	position: relative;
-	width: 100vw;
-	height: 100svh;
-	background-color: var(--base-400);
-	color: var(--base-100);
-	display: flex;
-	flex-direction: column;
-	/* CHANGED: Removed justify-content: center to prevent top clipping */
-	/* CHANGED: Allow scrolling if form gets too long */
-	overflow-y: auto;
-	overflow-x: hidden;
-	/* CHANGED: Add padding top to strictly reserve space for Navbar */
-	padding: 140px 10vw 4rem 10vw;
-}
-
-.register-container {
-	position: relative;
-	width: 100%;
-	max-width: 1400px;
-	/* CHANGED: 'margin: auto' centers it vertically when small, 
-     but allows scrolling when tall */
-	margin: auto;
-}
-
-/* ... Previous imports and styles ... */
-
-/* --- LAYOUT UPDATES --- */
-
-.register-page {
-	position: relative;
-	width: 100vw;
-	height: 100svh;
-	background-color: var(--base-400);
-	color: var(--base-100);
-	display: flex;
-	flex-direction: column;
-	justify-content: center; /* Re-center vertically */
-	align-items: center;
-	padding: 0 5vw;
-	overflow: hidden; /* Prevent body scroll, we handle it inside container */
-}
-
-.register-container {
-	position: relative;
-	width: 100%;
-	max-width: 1400px;
-	display: flex;
-	flex-direction: column;
-	align-items: flex-start;
-	/* No margin auto needed here as flex parent handles centering */
-}
-
-/* --- NEW: SAFE AREA CONTAINER --- */
-/* This container holds the paragraph and scrolls internally if text is too long */
-.form-scroll-container {
-	width: 100%;
-	/* Height calc: 100vh - TopBar(100px) - BottomButtonArea(150px) */
-	max-height: calc(100vh - 250px);
-	overflow-y: auto; /* Enable scroll inside this box */
-	padding-right: 1rem; /* Prevent text hitting scrollbar */
-
-	/* Hide Scrollbar for Chrome/Safari/Opera */
-	-ms-overflow-style: none; /* IE and Edge */
-	scrollbar-width: none; /* Firefox */
-}
-
-.form-scroll-container::-webkit-scrollbar {
-	display: none;
-}
-
-/* --- BACK BUTTON --- */
-.back-btn {
-	background: transparent;
-	border: none;
-	color: var(--base-300);
-	font-family: "Barlow Condensed", sans-serif;
-	font-weight: 600;
-	text-transform: uppercase;
-	font-size: 1rem;
-	cursor: pointer;
-	margin-bottom: 1rem;
-	display: flex;
-	align-items: center;
-	gap: 0.5rem;
-	transition: color 0.3s ease;
-	padding: 0;
-}
-
-.back-btn:hover {
-	color: var(--base-100);
-}
-
-/* --- SUBMIT AREA --- */
-.submit-wrapper {
-	margin-top: 2rem;
-	width: 100%;
-	display: flex;
-	align-items: center;
-	gap: 2rem; /* Space between Back button and Submit */
-	opacity: 0;
-	transform: translateY(20px);
-	pointer-events: none; /* Disabled until visible */
-}
-
-.register-input,
-.register-select {
-	background: transparent;
-	border: none;
-	border-bottom: 2px solid var(--base-300);
-	color: var(--accent-3);
-	font-family: "Barlow Condensed", sans-serif;
-	font-size: inherit;
-	font-weight: 900;
-	text-transform: uppercase;
-	padding: 0 0.2rem;
-	outline: none;
-	transition: border-color 0.3s ease, width 0.1s ease; /* Animate width smoothly */
-	border-radius: 0;
-
-	min-width: 300px;
-	width: auto;
-	box-sizing: content-box;
-}
-
-.register-select {
-	min-width: 300px;
-}
-
-.register-input:focus,
-.register-select:focus {
-	border-bottom-color: var(--base-100);
-}
-
-.register-input::placeholder {
-	color: var(--base-300);
-	opacity: 0.3;
-	font-weight: 400;
-}
-
-.input-sizer-ghost {
-	position: absolute;
-	top: -9999px;
-	left: -9999px;
-	visibility: hidden;
-	white-space: pre;
-	font-family: "Barlow Condensed", sans-serif;
-	font-size: clamp(1.8rem, 3.5vw, 3.5rem); /* Must match .form-sentence size */
-	font-weight: 900;
-	text-transform: uppercase;
-	padding: 0 0.2rem;
-	height: auto;
-	width: auto;
-	pointer-events: none;
-}
-
-/* Adjust spacing for select arrow */
-.register-select {
-	padding-right: 1.5rem;
-}
-
-.portfolio-wrapper {
-	display: inline-flex;
-	align-items: baseline;
-	gap: 0.5rem;
-	position: relative;
-}
-
-/* The hidden file input */
-.hidden-file-input {
-	display: none;
-}
-
-/* The Attachment Button (Paperclip) */
-.file-upload-btn {
-	background: transparent;
-	border: 1px solid var(--base-300);
-	color: var(--base-300);
-	width: 2rem;
-	height: 2rem;
-	border-radius: 50%;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	cursor: pointer;
-	transition: all 0.3s ease;
-	transform: translateY(5px); /* Visual alignment with text baseline */
-}
-
-.file-upload-btn:hover {
-	border-color: var(--accent-3);
-	color: var(--accent-3);
-	background-color: rgba(255, 255, 255, 0.05);
-}
-
-.file-upload-btn svg {
-	width: 1rem;
-	height: 1rem;
-	fill: currentColor;
-}
-
-/* When a file is selected, make the text look distinct */
-.register-input.has-file {
-	color: var(--accent-1); /* Different color to indicate it's a file */
-	font-style: italic;
 }
 
 /* Import Cursive Font */
@@ -842,6 +294,34 @@
 	font-size: 1.8rem;
 	color: var(--accent-3);
 	margin-left: 0.5rem;
+}
+
+.top-nav-buttons {
+	display: flex;
+	gap: 1rem;
+	align-items: center;
+}
+
+.login-nav-btn,
+.back-nav-btn {
+	pointer-events: auto;
+	background: transparent;
+	border: 1px solid var(--base-300);
+	color: var(--base-100);
+	padding: 0.75rem 2rem;
+	border-radius: 2rem;
+	font-family: "Barlow Condensed", sans-serif;
+	font-weight: 600;
+	text-transform: uppercase;
+	font-size: 1rem;
+	cursor: pointer;
+	transition: all 0.3s ease;
+}
+
+.login-nav-btn:hover,
+.back-nav-btn:hover {
+	background-color: var(--base-100);
+	color: var(--base-400);
 }
 
 /* --- MAIN CONTAINER --- */
@@ -1005,9 +485,19 @@
 	transition: transform 0.2s ease, background-color 0.2s ease;
 }
 
-.submit-btn:hover {
+.submit-btn:hover:not(:disabled) {
 	background-color: var(--accent-1);
 	transform: scale(1.05);
+}
+
+.submit-btn:disabled {
+	opacity: 0.6;
+	cursor: not-allowed;
+}
+
+.back-btn:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
 }
 
 /* Portfolio */
@@ -1060,7 +550,112 @@
 	height: 2rem;
 }
 
-@media (max-width: 768px) {
+/* Navigation Hint */
+.nav-hint {
+	position: fixed;
+	bottom: 3rem;
+	right: 3rem;
+	font-family: "DM Mono", monospace;
+	font-size: 0.8rem;
+	color: var(--base-300);
+	opacity: 0;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	pointer-events: none;
+}
+
+.enter-key-icon {
+	border: 1px solid var(--base-300);
+	padding: 0.2rem 0.4rem;
+	border-radius: 4px;
+}
+
+/* Mobile Adjustments */
+@media (max-width: 1000px) {
+	.register-page {
+		padding: 0 1.5rem;
+		padding-top: 8rem;
+		justify-content: flex-start;
+		overflow: hidden;
+		height: 100vh;
+		height: 100dvh;
+	}
+
+	.register-top-bar {
+		padding: 1.5rem;
+		background: linear-gradient(
+			to bottom,
+			var(--base-400) 0%,
+			var(--base-400) 70%,
+			transparent 100%
+		);
+		z-index: 100;
+	}
+
+	.top-nav-buttons {
+		gap: 0.5rem;
+	}
+
+	.login-nav-btn,
+	.back-nav-btn {
+		padding: 0.5rem 1rem;
+		font-size: 0.85rem;
+	}
+
+	.page-title {
+		font-size: 1.2rem;
+	}
+
+	.cursive-accent {
+		font-size: 1.5rem;
+	}
+
+	.register-container {
+		width: 100%;
+		max-width: 100%;
+	}
+
+	.form-scroll-container {
+		max-height: calc(100dvh - 12rem);
+		overflow-y: auto;
+		overflow-x: hidden;
+		-webkit-overflow-scrolling: touch;
+		padding-bottom: 2rem;
+	}
+
+	.form-sentence {
+		font-size: clamp(1.5rem, 5vw, 2rem);
+		line-height: 1.5;
+	}
+
+	/* Force block layout for inputs on mobile */
+	.register-page .register-input,
+	.register-page .register-select {
+		width: 100% !important;
+		display: block;
+		margin: 0.5rem 0;
+	}
+
+	.input-wrapper {
+		display: block;
+		width: 100%;
+		margin: 0;
+	}
+
+	.submit-wrapper {
+		position: relative;
+		margin-top: 1rem;
+		padding-bottom: 1rem;
+		flex-direction: column; /* Stack buttons on mobile */
+		align-items: stretch;
+		gap: 1rem;
+	}
+
+	.nav-hint {
+		display: none;
+	}
+
 	.hidden-in-mobile {
 		display: none;
 	}

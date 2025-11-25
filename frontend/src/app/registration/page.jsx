@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import "./registration.css";
-import { registerParticipant, login } from "@/services/api";
+import { registerParticipant, login, forgotPassword } from "@/services/api";
 
 const Register = () => {
 	const router = useRouter();
@@ -19,6 +19,7 @@ const Register = () => {
 	const [showPassword, setShowPassword] = useState(false);
 	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 	const [showLoginPassword, setShowLoginPassword] = useState(false);
+	const [successMessage, setSuccessMessage] = useState("");
 
 	const [formData, setFormData] = useState({
 		fullName: "",
@@ -33,6 +34,7 @@ const Register = () => {
 		confirmPassword: "",
 		loginEmail: "",
 		loginPassword: "",
+		forgotEmail: "", // For forgot password flow
 	});
 
 	const sizerRef = useRef(null);
@@ -144,10 +146,22 @@ const Register = () => {
 		},
 	];
 
+	const forgotPasswordSteps = [
+		{
+			id: 0,
+			field: "forgotEmail",
+			type: "email",
+			pre: "Please enter your registered email address: ",
+			post: " ",
+			placeholder: "YOUR EMAIL",
+		},
+	];
+
 	const getCurrentSteps = () => {
 		if (phase === "register") return registerSteps;
 		if (phase === "password") return passwordSteps;
 		if (phase === "login") return loginSteps;
+		if (phase === "forgot") return forgotPasswordSteps;
 		return [];
 	};
 
@@ -230,7 +244,11 @@ const Register = () => {
 		}
 
 		// Email - Valid email format
-		if (field === "email" || field === "loginEmail") {
+		if (
+			field === "email" ||
+			field === "loginEmail" ||
+			field === "forgotEmail"
+		) {
 			const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 			if (!emailRegex.test(value)) {
 				showError("Please enter a valid email address");
@@ -397,6 +415,10 @@ const Register = () => {
 
 	// Updated Phase Transition to handle "Go Back"
 	const handlePhaseTransition = (newPhase, restoreState = false) => {
+		// Reset success message on transition
+		setSuccessMessage("");
+		setError("");
+
 		// 1. Fade Out Current Content
 		gsap.to(".form-sentence, .submit-wrapper", {
 			opacity: 0,
@@ -441,6 +463,7 @@ const Register = () => {
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		setError("");
+		setSuccessMessage("");
 
 		if (phase === "register") {
 			// Validate all registration fields before moving to password
@@ -486,7 +509,7 @@ const Register = () => {
 
 				if (response.success) {
 					console.log("Registration successful:", response.data);
-					handlePhaseTransition("login");
+					router.push("/dashboard");
 				}
 			} catch (error) {
 				console.error("Registration error:", error);
@@ -528,6 +551,28 @@ const Register = () => {
 				showError(
 					error.message || "Login failed. Please check your credentials."
 				);
+			} finally {
+				setIsSubmitting(false);
+			}
+		} else if (phase === "forgot") {
+			if (!validateField("forgotEmail", formData.forgotEmail)) {
+				return;
+			}
+
+			setIsSubmitting(true);
+			try {
+				const response = await forgotPassword(formData.forgotEmail);
+				if (response.success) {
+					setSuccessMessage("Password reset sent! Check your email.");
+					setTimeout(() => {
+						handlePhaseTransition("login");
+					}, 3000);
+				} else {
+					showError(response.message);
+				}
+			} catch (error) {
+				console.error("Forgot password error:", error);
+				showError(error.message || "Request failed. Please try again.");
 			} finally {
 				setIsSubmitting(false);
 			}
@@ -580,7 +625,7 @@ const Register = () => {
 							{/* <ArrowLeftIcon className="hidden-in-mobile" /> */}
 							Back
 						</button>
-						{phase !== "login" && (
+						{phase !== "login" && phase !== "forgot" && (
 							<button
 								className="login-nav-btn"
 								onClick={() => handlePhaseTransition("login")}
@@ -588,7 +633,7 @@ const Register = () => {
 								Login
 							</button>
 						)}
-						{phase === "login" && (
+						{(phase === "login" || phase === "forgot") && (
 							<button
 								className="login-nav-btn"
 								onClick={() => handlePhaseTransition("register")}
@@ -616,6 +661,28 @@ const Register = () => {
 							<line x1="12" y1="16" x2="12.01" y2="16" />
 						</svg>
 						<p>{fieldError}</p>
+					</div>
+				</div>
+			)}
+
+			{/* Success Popup */}
+			{successMessage && (
+				<div className="error-popup success-popup">
+					<div
+						className="error-popup-content"
+						style={{ borderColor: "#28a745" }}
+					>
+						<svg
+							className="error-icon"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="#28a745"
+							strokeWidth="2"
+						>
+							<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+							<polyline points="22 4 12 14.01 9 11.01"></polyline>
+						</svg>
+						<p style={{ color: "#28a745" }}>{successMessage}</p>
 					</div>
 				</div>
 			)}
@@ -814,6 +881,16 @@ const Register = () => {
 						</div>
 					</div>
 
+					{/* Forgot Password Link (Only in Login Phase) */}
+					{phase === "login" && step === loginSteps.length && (
+						<div
+							className="forgot-password-link"
+							onClick={() => handlePhaseTransition("forgot")}
+						>
+							Forgot Password?
+						</div>
+					)}
+
 					{/* SUBMIT AREA */}
 					<div className="submit-wrapper" ref={submitRef}>
 						{phase === "password" && (
@@ -826,6 +903,16 @@ const Register = () => {
 								← Back
 							</button>
 						)}
+						{phase === "forgot" && (
+							<button
+								type="button"
+								className="back-btn"
+								onClick={() => handlePhaseTransition("login")}
+								disabled={isSubmitting}
+							>
+								← Back to Login
+							</button>
+						)}
 						<button
 							type="submit"
 							className="submit-btn"
@@ -835,12 +922,14 @@ const Register = () => {
 								<>
 									{phase === "password" && "Registering..."}
 									{phase === "login" && "Logging in..."}
+									{phase === "forgot" && "Sending Request..."}
 								</>
 							) : (
 								<>
 									{phase === "register" && "Set Password →"}
 									{phase === "password" && "Complete Registration"}
 									{phase === "login" && "Enter Visual Vault"}
+									{phase === "forgot" && "Reset Password"}
 								</>
 							)}
 						</button>

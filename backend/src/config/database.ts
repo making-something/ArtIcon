@@ -14,7 +14,7 @@ if (!fs.existsSync(dbDir)) {
 // Create database connection with optimal settings
 const database = new Database(dbPath, {
   verbose: process.env.NODE_ENV === 'development' ? console.log : undefined,
-}) as any;
+}) as Database.Database;
 
 // Configure SQLite for performance and concurrency
 database.pragma('journal_mode = WAL');

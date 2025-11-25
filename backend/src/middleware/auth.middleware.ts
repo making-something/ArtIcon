@@ -8,6 +8,7 @@ interface JwtPayload {
 }
 
 declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Express {
     interface Request {
       user?: JwtPayload;
@@ -32,7 +33,7 @@ export const authenticateToken = (req: Request, res: Response, next: NextFunctio
       const decoded = verifyToken(token);
       req.user = decoded as JwtPayload;
       next();
-    } catch (err) {
+    } catch {
       res.status(403).json({
         success: false,
         message: 'Invalid or expired token',

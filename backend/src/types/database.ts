@@ -9,7 +9,7 @@ export type Json =
 	| Json[];
 
 // Enums (represented as strings with CHECK constraints in SQLite)
-export type Category = "video" | "ui_ux" | "graphics";
+export type Category = "video" | "ui_ux" | "graphics" | "all";
 export type NotificationTarget = "all" | "winners" | "specific";
 export type NotificationStatus = "pending" | "sent" | "failed";
 export type ApprovalStatus = "pending" | "approved" | "rejected";
