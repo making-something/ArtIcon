@@ -95,6 +95,17 @@ export class ParticipantController {
 				return;
 			}
 
+			// Check if phone already exists
+			const existingPhone = await databaseService.getParticipantByPhone(phone);
+
+			if (existingPhone) {
+				res.status(409).json({
+					success: false,
+					message: "Phone number already registered",
+				});
+				return;
+			}
+
 			// Hash password
 			const bcrypt = await import("bcryptjs");
 			const password_hash = await bcrypt.hash(password, 10);
@@ -514,6 +525,74 @@ export class ParticipantController {
 			});
 		} catch (error) {
 			console.error("Error in checkEventStatus:", error);
+			res.status(500).json({
+				success: false,
+				message: "Internal server error",
+			});
+		}
+	}
+
+	/**
+	 * Change Password
+	 */
+	async changePassword(req: Request, res: Response): Promise<void> {
+		try {
+			const { currentPassword, newPassword } = req.body;
+			const userId = req.user?.id;
+
+			if (!userId) {
+				res.status(401).json({
+					success: false,
+					message: "Unauthorized",
+				});
+				return;
+			}
+
+			if (!currentPassword || !newPassword) {
+				res.status(400).json({
+					success: false,
+					message: "Current and new passwords are required",
+				});
+				return;
+			}
+
+			const participant = await databaseService.getParticipantById(userId);
+
+			if (!participant) {
+				res.status(404).json({
+					success: false,
+					message: "Participant not found",
+				});
+				return;
+			}
+
+			// Verify current password
+			const bcrypt = await import("bcryptjs");
+			const isPasswordValid = await bcrypt.compare(
+				currentPassword,
+				participant.password_hash || ""
+			);
+
+			if (!isPasswordValid) {
+				res.status(401).json({
+					success: false,
+					message: "Invalid current password",
+				});
+				return;
+			}
+
+			// Hash new password
+			const password_hash = await bcrypt.hash(newPassword, 10);
+
+			// Update password
+			await databaseService.updateParticipant(userId, { password_hash });
+
+			res.status(200).json({
+				success: true,
+				message: "Password updated successfully",
+			});
+		} catch (error) {
+			console.error("Error in changePassword:", error);
 			res.status(500).json({
 				success: false,
 				message: "Internal server error",

@@ -1,6 +1,6 @@
 import { Router, IRouter } from 'express';
 import participantController from '@/controllers/participant.controller';
-import { authenticateAdmin } from '@/middleware/auth.middleware';
+import { authenticateAdmin, authenticateParticipant } from '@/middleware/auth.middleware';
 
 const router: IRouter = Router();
 
@@ -17,6 +17,13 @@ router.post('/register', participantController.register.bind(participantControll
  * @access  Public
  */
 router.post('/login', participantController.login.bind(participantController));
+
+/**
+ * @route   POST /api/participants/change-password
+ * @desc    Change participant password
+ * @access  Private
+ */
+router.post('/change-password', authenticateParticipant, participantController.changePassword.bind(participantController));
 
 /**
  * @route   POST /api/participants/forgot-password

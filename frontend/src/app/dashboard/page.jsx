@@ -1,12 +1,16 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { getCurrentParticipant, isAuthenticated, logout } from "@/services/api";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
+import SplitType from "split-type";
 import "./dashboard.css";
 
 const Dashboard = () => {
 	const router = useRouter();
 	const [participant, setParticipant] = useState(null);
+	const containerRef = useRef(null);
 	const [timeRemaining, setTimeRemaining] = useState({
 		days: 0,
 		hours: 0,
@@ -77,6 +81,110 @@ const Dashboard = () => {
 		return () => clearInterval(interval);
 	}, [router, targetDate]);
 
+	useGSAP(
+		() => {
+			if (participant && containerRef.current) {
+				// Split text for animation
+				// We use a timeout to ensure DOM is ready and layout is settled
+				const splitTitle = new SplitType(".countdown-label", {
+					types: "chars",
+					tagName: "span",
+				});
+
+				const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+
+				// 1. Header Slide Down
+				tl.from(".dashboard-header", {
+					yPercent: -100,
+					opacity: 0,
+					duration: 1.2,
+				})
+					// 2. "Event Starts In" Text Reveal (Char by Char)
+					.from(
+						splitTitle.chars,
+						{
+							y: 100,
+							opacity: 0,
+							stagger: 0.02,
+							duration: 1,
+							ease: "back.out(1.7)",
+						},
+						"-=0.8"
+					)
+					// 3. Date Fade In
+					.from(
+						".countdown-date",
+						{
+							opacity: 0,
+							y: 20,
+							duration: 0.8,
+						},
+						"-=0.6"
+					)
+					// 4. Countdown Numbers Slide Up (Slot Machine Effect)
+					.from(
+						".time-value",
+						{
+							yPercent: 100, // Slides up from within the mask
+							duration: 1.5,
+							stagger: 0.1,
+							ease: "elastic.out(1, 0.5)",
+						},
+						"-=0.8"
+					)
+					// 5. Separators Pop In
+					.from(
+						".time-separator",
+						{
+							scale: 0,
+							opacity: 0,
+							duration: 0.8,
+							ease: "back.out(2)",
+						},
+						"-=1.2"
+					)
+					// 6. Labels Fade In
+					.from(
+						".time-label",
+						{
+							opacity: 0,
+							y: 10,
+							stagger: 0.05,
+							duration: 0.6,
+						},
+						"-=1.0"
+					)
+					// 7. Footer Details Slide Up
+					.from(
+						".participant-details",
+						{
+							yPercent: 100,
+							opacity: 0,
+							duration: 1,
+							ease: "power2.out",
+						},
+						"-=1.0"
+					)
+					.from(
+						".detail-item",
+						{
+							y: 20,
+							opacity: 0,
+							stagger: 0.1,
+							duration: 0.8,
+						},
+						"-=0.5"
+					);
+
+				// Cleanup SplitType on unmount
+				return () => {
+					splitTitle.revert();
+				};
+			}
+		},
+		{ dependencies: [participant], scope: containerRef }
+	);
+
 	const handleLogout = () => {
 		logout();
 		router.push("/registration");
@@ -91,11 +199,11 @@ const Dashboard = () => {
 	}
 
 	return (
-		<div className="dashboard-page">
+		<div className="dashboard-page" ref={containerRef}>
 			<header className="dashboard-header">
 				<div className="header-content">
 					<h1 className="dashboard-title">
-						Visual <span className="accent">Vault</span>
+						Art<span className="accent">Icon</span>
 					</h1>
 					<div className="header-right">
 						<div className="user-info">
@@ -111,7 +219,9 @@ const Dashboard = () => {
 
 			<main className="dashboard-main">
 				<div className="countdown-container">
-					<h2 className="countdown-label">Event Starts In</h2>
+					<div className="text-reveal-mask">
+						<h2 className="countdown-label">Event Starts In</h2>
+					</div>
 					<div className="countdown-date">
 						November 30, 2025 • 9:00 AM
 					</div>
@@ -119,27 +229,35 @@ const Dashboard = () => {
 					{timeRemaining.total > 0 ? (
 						<div className="countdown-timer">
 							<div className="time-block">
-								<div className="time-value">{timeRemaining.days}</div>
+								<div className="time-value-mask">
+									<div className="time-value">{timeRemaining.days}</div>
+								</div>
 								<div className="time-label">Days</div>
 							</div>
 							<div className="time-separator">:</div>
 							<div className="time-block">
-								<div className="time-value">
-									{String(timeRemaining.hours).padStart(2, "0")}
+								<div className="time-value-mask">
+									<div className="time-value">
+										{String(timeRemaining.hours).padStart(2, "0")}
+									</div>
 								</div>
 								<div className="time-label">Hours</div>
 							</div>
 							<div className="time-separator">:</div>
 							<div className="time-block">
-								<div className="time-value">
-									{String(timeRemaining.minutes).padStart(2, "0")}
+								<div className="time-value-mask">
+									<div className="time-value">
+										{String(timeRemaining.minutes).padStart(2, "0")}
+									</div>
 								</div>
 								<div className="time-label">Minutes</div>
 							</div>
 							<div className="time-separator">:</div>
 							<div className="time-block">
-								<div className="time-value">
-									{String(timeRemaining.seconds).padStart(2, "0")}
+								<div className="time-value-mask">
+									<div className="time-value">
+										{String(timeRemaining.seconds).padStart(2, "0")}
+									</div>
 								</div>
 								<div className="time-label">Seconds</div>
 							</div>
@@ -150,20 +268,20 @@ const Dashboard = () => {
 							<p>The competition has started. Good luck!</p>
 						</div>
 					)}
+				</div>
 
-					<div className="participant-details">
-						<div className="detail-item">
-							<span className="detail-label">Email:</span>
-							<span className="detail-value">{participant.email}</span>
-						</div>
-						<div className="detail-item">
-							<span className="detail-label">Category:</span>
-							<span className="detail-value">{getCategoryLabel(participant.category)}</span>
-						</div>
-						<div className="detail-item">
-							<span className="detail-label">City:</span>
-							<span className="detail-value">{participant.city}</span>
-						</div>
+				<div className="participant-details">
+					<div className="detail-item">
+						<span className="detail-label">Email</span>
+						<span className="detail-value">{participant.email}</span>
+					</div>
+					<div className="detail-item">
+						<span className="detail-label">Category</span>
+						<span className="detail-value">{getCategoryLabel(participant.category)}</span>
+					</div>
+					<div className="detail-item">
+						<span className="detail-label">City</span>
+						<span className="detail-value">{participant.city}</span>
 					</div>
 				</div>
 			</main>

@@ -33,6 +33,11 @@ class DatabaseService {
     return stmt.get(email) as Participant | null;
   }
 
+  async getParticipantByPhone(phone: string): Promise<Participant | null> {
+    const stmt = db.prepare('SELECT * FROM participants WHERE whatsapp_no = ?');
+    return stmt.get(phone) as Participant | null;
+  }
+
   async getParticipants(filters: {
     category?: Category;
     is_present?: boolean;
