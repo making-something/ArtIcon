@@ -23,7 +23,7 @@ const Clients = () => {
 				name: "RITA",
 				logoSrc: "/rita.avif",
 				alt: "Rita logo",
-				topText: "Supported By",
+				topText: "Supported By me",
 				bottomText: "Empowering Gujarat's Creative Community",
 			},
 		],
