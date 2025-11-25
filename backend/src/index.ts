@@ -40,6 +40,7 @@ const parseOrigins = (origins?: string) => {
 		.map((origin) => normalizeOrigin(origin.trim()))
 		.filter(Boolean);
 };
+//hellu
 
 const managedOrigins = ["https://articon.multiicon.in"];
 
