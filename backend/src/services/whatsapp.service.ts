@@ -48,7 +48,7 @@ class WhatsAppService {
 		}
 
 		try {
-			const payload = {
+			const requestBody = {
 				messaging_product: "whatsapp",
 				to: options.to,
 				type: "template",
@@ -57,10 +57,11 @@ class WhatsAppService {
 
 			console.log(`📱 Sending WhatsApp template to ${options.to}`);
 			console.log(`   Template: ${options.template.name}`);
+			console.log(`   Request Body:`, JSON.stringify(requestBody, null, 2));
 
 			const response = await whatsappClient.post(
 				`/${phoneNumberId}/messages`,
-				payload
+				requestBody
 			);
 
 			if (
@@ -144,6 +145,12 @@ class WhatsAppService {
 				language: {
 					code: "en_US",
 				},
+				components: [
+					{
+						type: "body",
+						parameters: [],
+					},
+				],
 			},
 		});
 	}
@@ -197,12 +204,7 @@ class WhatsAppService {
 				components: [
 					{
 						type: "body",
-						parameters: [
-							{
-								type: "text",
-								text: participantName,
-							},
-						],
+						parameters: [],
 					},
 				],
 			},
@@ -234,12 +236,7 @@ class WhatsAppService {
 				components: [
 					{
 						type: "body",
-						parameters: [
-							{
-								type: "text",
-								text: participantName,
-							},
-						],
+						parameters: [],
 					},
 				],
 			},
@@ -258,6 +255,12 @@ class WhatsAppService {
 				language: {
 					code: "en_US",
 				},
+				components: [
+					{
+						type: "body",
+						parameters: [],
+					},
+				],
 			},
 		});
 	}
