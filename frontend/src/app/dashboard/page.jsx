@@ -28,7 +28,7 @@ const Dashboard = () => {
 			video: "Video Editing",
 			ui_ux: "UI/UX Design",
 			graphics: "Graphic Design",
-			all: "All",
+			all: "All Rounder",
 		};
 		return map[cat] || cat;
 	};
@@ -198,15 +198,7 @@ const Dashboard = () => {
 			<header className="dashboard-header">
 				<div className="header-content">
 					<div className="header-left-group">
-						<h1 className="dashboard-title">
-							Art<span className="accent">Icon</span>
-						</h1>
-						<button
-							className="edit-profile-btn"
-							onClick={() => setShowEditForm(!showEditForm)}
-						>
-							{showEditForm ? "Cancel" : "Edit Profile"}
-						</button>
+						<img src="/logo.avif" alt="ArtIcon" className="dashboard-logo" />
 					</div>
 					<div className="header-right">
 						<div className="user-info">
@@ -215,6 +207,12 @@ const Dashboard = () => {
 								{getCategoryLabel(participant.category)}
 							</span>
 						</div>
+						<button
+							className="edit-profile-btn"
+							onClick={() => setShowEditForm(!showEditForm)}
+						>
+							{showEditForm ? "Cancel" : "Edit Profile"}
+						</button>
 						<button className="logout-btn" onClick={handleLogout}>
 							Logout
 						</button>
@@ -224,12 +222,44 @@ const Dashboard = () => {
 
 			<main className="dashboard-main">
 				{/* Registration Status Section */}
-				<div className="registration-status">
-					<p className="status-line">You're Officially Registered!!</p>
-					<p className="status-line">Your Portfolio is Under Review.</p>
-					<p className="status-line">
-						Your ArtIcon Journey begins when the Countdown Hits Zero.
-					</p>
+				<div
+					className={`registration-status ${
+						participant.approval_status === "rejected"
+							? "status-rejected"
+							: participant.approval_status === "approved"
+							? "status-approved"
+							: ""
+					}`}
+				>
+					{participant.approval_status === "approved" ? (
+						<>
+							<p className="status-line">
+								Congratulations! You've officially secured your spot in ArtIcon
+								2025.
+							</p>
+							<p className="status-line">
+								Get ready! Your creative journey starts now!
+							</p>
+						</>
+					) : participant.approval_status === "rejected" ? (
+						<>
+							<p className="status-line">
+								Unfortunately, You're not selected for ArtIcon 2025 this time,
+								but don't stop yourself for creating.
+							</p>
+							<p className="status-line">
+								Better luck next time! Stay connected. Thank you for applying.
+							</p>
+						</>
+					) : (
+						<>
+							<p className="status-line">You're Officially Registered!!</p>
+							<p className="status-line">Your Portfolio is Under Review.</p>
+							<p className="status-line">
+								Your ArtIcon Journey begins when the Countdown Hits Zero.
+							</p>
+						</>
+					)}
 				</div>
 
 				<div className="countdown-container">

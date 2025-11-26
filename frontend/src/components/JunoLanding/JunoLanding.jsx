@@ -582,7 +582,6 @@ const JunoLanding = () => {
 								</svg>
 								<div className="card-title">
 									<p className="mono">02</p>
-
 									<p className="mono">Graphic Designer</p>
 								</div>
 							</div>
