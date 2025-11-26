@@ -1,12 +1,13 @@
 .dashboard-page {
-	height: 100vh;
+	min-height: 100vh;
 	width: 100vw;
 	background-color: var(--base-100);
 	color: var(--base-400);
 	display: flex;
 	flex-direction: column;
 	position: relative;
-	overflow: hidden;
+	overflow-y: auto;
+	overflow-x: hidden;
 }
 
 /* Animated Gradient Background */
@@ -182,16 +183,11 @@
 .registration-status {
 	text-align: center;
 	padding: 2vh 2vw;
-	background: linear-gradient(
-		135deg,
-		rgba(237, 106, 90, 0.08) 0%,
-		rgba(155, 193, 188, 0.08) 100%
-	);
-	border: 1px solid rgba(237, 106, 90, 0.2);
+	background: transparent;
+	border: none;
 	border-radius: 8px;
 	max-width: 600px;
 	width: 90%;
-	backdrop-filter: blur(10px);
 }
 
 .status-line {
@@ -211,12 +207,8 @@
 
 /* Approved Status Styling */
 .registration-status.status-approved {
-	background: linear-gradient(
-		135deg,
-		rgba(155, 193, 188, 0.12) 0%,
-		rgba(155, 193, 188, 0.08) 100%
-	);
-	border: 1px solid rgba(155, 193, 188, 0.3);
+	background: transparent;
+	border: none;
 }
 
 .registration-status.status-approved .status-line:first-child {
@@ -225,12 +217,8 @@
 
 /* Rejected Status Styling */
 .registration-status.status-rejected {
-	background: linear-gradient(
-		135deg,
-		rgba(237, 106, 90, 0.12) 0%,
-		rgba(237, 106, 90, 0.08) 100%
-	);
-	border: 1px solid rgba(237, 106, 90, 0.3);
+	background: transparent;
+	border: none;
 }
 
 .registration-status.status-rejected .status-line:first-child {
@@ -378,16 +366,17 @@
 	font-size: clamp(0.8rem, 1vw, 1rem);
 	color: var(--base-400);
 	flex-wrap: wrap;
+	justify-content: flex-end;
 }
 
 .sponsor-logo {
-	height: clamp(1.5rem, 2.5vw, 2.5rem);
+	height: clamp(2.5rem, 4vw, 4rem);
 	width: auto;
 	mix-blend-mode: multiply;
 }
 
 .venue-section {
-	text-align: right;
+	text-align: left;
 	font-family: "Geist Mono", monospace;
 	font-size: clamp(0.65rem, 0.8vw, 0.8rem);
 	color: var(--base-300);
@@ -396,6 +385,16 @@
 
 .venue-section p {
 	margin: 0;
+}
+
+.venue-section .company-name {
+	font-family: "Big Shoulders Display", sans-serif;
+	font-size: clamp(1.2rem, 2vw, 1.8rem);
+	font-weight: 900;
+	color: var(--base-400);
+	text-transform: uppercase;
+	margin-bottom: 0.5rem;
+	letter-spacing: 0.02em;
 }
 
 .detail-item {
