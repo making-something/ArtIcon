@@ -107,12 +107,11 @@ class WhatsAppService {
 		}
 	}
 
-	async sendRegistrationMessage(
-		phoneNumber: string,
-		participantName: string
-	): Promise<WhatsAppResult> {
+	async sendRegistrationMessage(): // phoneNumber: string,
+	// participantName: string
+	Promise<WhatsAppResult> {
 		// Format phone number (remove spaces, dashes, and add country code if not present)
-		const formattedPhone = this.formatPhoneNumber(phoneNumber);
+		// const formattedPhone = this.formatPhoneNumber(phoneNumber);
 
 		return await this.sendTemplate({
 			to: "9023151861",
