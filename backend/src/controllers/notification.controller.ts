@@ -290,7 +290,7 @@ export class NotificationController {
 
 				// Send WhatsApp approval message
 				await whatsappService
-					.sendApprovalMessage(participant.whatsapp_no, participant.name)
+					.sendApprovalMessage(participant.whatsapp_no)
 					.catch((error) => {
 						console.error(
 							`Failed to send approval WhatsApp to ${participant.whatsapp_no}:`,

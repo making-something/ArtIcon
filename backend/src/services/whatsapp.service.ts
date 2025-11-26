@@ -179,17 +179,14 @@ class WhatsAppService {
 		};
 	}
 
-	async sendApprovalMessage(
-		phoneNumber: string,
-		participantName: string
-	): Promise<WhatsAppResult> {
+	async sendApprovalMessage(phoneNumber: string): Promise<WhatsAppResult> {
 		// Format phone number
 		const formattedPhone = this.formatPhoneNumber(phoneNumber);
 
 		if (!isWhatsAppConfigured) {
 			console.log(`📱 [WHATSAPP LOG] To: ${formattedPhone}`);
 			console.log(
-				`   Message: Portfolio Approved - Hi ${participantName}, your portfolio has been approved!`
+				`   Message: Portfolio Approved - Your portfolio has been approved!`
 			);
 			return { success: true, messageId: "mock-approval-id" };
 		}
@@ -211,17 +208,14 @@ class WhatsAppService {
 		});
 	}
 
-	async sendRejectionMessage(
-		phoneNumber: string,
-		participantName: string
-	): Promise<WhatsAppResult> {
+	async sendRejectionMessage(phoneNumber: string): Promise<WhatsAppResult> {
 		// Format phone number
 		const formattedPhone = this.formatPhoneNumber(phoneNumber);
 
 		if (!isWhatsAppConfigured) {
 			console.log(`📱 [WHATSAPP LOG] To: ${formattedPhone}`);
 			console.log(
-				`   Message: Portfolio Update - Hi ${participantName}, we've reviewed your portfolio.`
+				`   Message: Portfolio Update - We've reviewed your portfolio.`
 			);
 			return { success: true, messageId: "mock-rejection-id" };
 		}
