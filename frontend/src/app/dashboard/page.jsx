@@ -323,11 +323,7 @@ const Dashboard = () => {
 					</div>
 					<div className="sponsors-section">
 						<span>Sponcered by</span>
-						<img
-							src="/multiicon.avif"
-							alt="Multiicon"
-							className="sponsor-logo"
-						/>
+						<img src="/logo.png" alt="Multiicon" className="sponsor-logo" />
 						<span>and supported by</span>
 						<img src="/rita.avif" alt="Rita" className="sponsor-logo" />
 					</div>
