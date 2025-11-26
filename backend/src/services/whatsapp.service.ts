@@ -125,10 +125,10 @@ class WhatsAppService {
 					{
 						type: "body",
 						parameters: [
-							{
-								type: "text",
-								text: participantName,
-							},
+							// {
+							// 	type: "text",
+							// 	text: "",
+							// },
 						],
 					},
 				],
