@@ -189,15 +189,15 @@
 	}
 
 	.timeline-header-title {
-		font-size: clamp(1.5rem, 6vw, 2.5rem);
-	}
-
-	.timeline-header-title .fancy-word {
 		font-size: clamp(2rem, 8vw, 3.5rem);
 	}
 
+	.timeline-header-title .fancy-word {
+		font-size: clamp(2.5rem, 10vw, 4.5rem);
+	}
+
 	.timeline-work {
-		padding: 2em 0;
+		padding: 2em 0 0 0;
 		height: auto;
 	}
 
@@ -212,19 +212,20 @@
 	}
 
 	.timeline-work .timeline-title-wrapper:nth-child(1) {
-		margin-bottom: 2em;
+		margin-bottom: 1em;
 		margin-left: 0;
 	}
 
 	.timeline-work .timeline-title-wrapper h1 {
 		transform: translateY(0);
 		width: 75%;
-		font-size: clamp(2rem, 10vw, 4rem);
+		font-size: clamp(1.5rem, 7vw, 3rem);
 	}
 
 	.timeline-work .timeline-work-footer {
 		position: relative;
-		margin-top: 4em;
+		margin-top: 2em;
+		margin-bottom: 0;
 		justify-content: center;
 	}
 

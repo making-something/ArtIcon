@@ -733,7 +733,7 @@
 /* Mobile Responsive (max-width: 768px) */
 @media (max-width: 768px) {
 	.about-hero {
-		padding: 4em 2em 4em 2em;
+		padding: 2em 2em 4em 2em;
 	}
 	.about-hero-header h1 {
 		font-size: 4rem;
