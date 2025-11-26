@@ -56,7 +56,7 @@ export class ParticipantController {
 					"Video Editing": "video",
 					"UI/UX Design": "ui_ux",
 					"Graphic Design": "graphics",
-					All: "all",
+					"All": "all",
 				};
 				category = specializationToCategoryMap[specialization];
 			} else if (req.body.category) {
@@ -66,10 +66,10 @@ export class ParticipantController {
 				const categoryToSpecializationMap: {
 					[key: string]: string;
 				} = {
-					video: "Video Editing",
-					ui_ux: "UI/UX Design",
-					graphics: "Graphic Design",
-					all: "All",
+					"video": "Video Editing",
+					"ui_ux": "UI/UX Design",
+					"graphics": "Graphic Design",
+					"all": "All",
 				};
 				specialization = categoryToSpecializationMap[category] || category;
 			} else {
@@ -85,9 +85,7 @@ export class ParticipantController {
 			}
 
 			// Check if email already exists
-			const existingParticipant = await databaseService.getParticipantByEmail(
-				email
-			);
+			const existingParticipant = await databaseService.getParticipantByEmail(email);
 
 			if (existingParticipant) {
 				res.status(409).json({
@@ -130,9 +128,7 @@ export class ParticipantController {
 				is_present: false,
 			};
 
-			const participant = await databaseService.createParticipant(
-				participantData
-			);
+			const participant = await databaseService.createParticipant(participantData);
 
 			if (!participant) {
 				console.error("Error creating participant");
@@ -143,51 +139,37 @@ export class ParticipantController {
 				return;
 			}
 
-			// Send registration email asynchronously
-			console.log(
-				`📧 Attempting to send registration email to: ${participant.email}`
-			);
-			emailService
-				.sendRegistrationEmail(participant)
-				.then((result) => {
-					if (result.success) {
-						console.log(
-							`✅ Registration email sent successfully to ${participant.email}`
-						);
-						console.log(`   Message ID: ${result.messageId}`);
-					} else {
-						console.error(
-							`❌ Failed to send registration email to ${participant.email}`
-						);
-						console.error(`   Error: ${result.error}`);
-					}
-				})
-				.catch((error) => {
-					console.error("❌ Error sending registration email:", error);
-				});
+		// Send registration email asynchronously
+		console.log(`📧 Attempting to send registration email to: ${participant.email}`);
+		emailService.sendRegistrationEmail(participant)
+			.then((result) => {
+				if (result.success) {
+					console.log(`✅ Registration email sent successfully to ${participant.email}`);
+					console.log(`   Message ID: ${result.messageId}`);
+				} else {
+					console.error(`❌ Failed to send registration email to ${participant.email}`);
+					console.error(`   Error: ${result.error}`);
+				}
+			})
+			.catch((error) => {
+				console.error("❌ Error sending registration email:", error);
+			});
 
-			// Send registration WhatsApp message asynchronously
-			console.log(
-				`📱 Attempting to send registration WhatsApp to: ${participant.whatsapp_no}`
-			);
-			whatsappService
-				.sendRegistrationMessage(participant.whatsapp_no)
-				.then((result) => {
-					if (result.success) {
-						console.log(
-							`✅ Registration WhatsApp sent successfully to ${participant.whatsapp_no}`
-						);
-						console.log(`   Message ID: ${result.messageId}`);
-					} else {
-						console.error(
-							`❌ Failed to send registration WhatsApp to ${participant.whatsapp_no}`
-						);
-						console.error(`   Error: ${result.error}`);
-					}
-				})
-				.catch((error) => {
-					console.error("❌ Error sending registration WhatsApp:", error);
-				}); // Generate token for auto-login
+		// Send registration WhatsApp message asynchronously
+		console.log(`📱 Attempting to send registration WhatsApp to: ${participant.whatsapp_no}`);
+		whatsappService.sendRegistrationMessage(participant.whatsapp_no, participant.name)
+			.then((result) => {
+				if (result.success) {
+					console.log(`✅ Registration WhatsApp sent successfully to ${participant.whatsapp_no}`);
+					console.log(`   Message ID: ${result.messageId}`);
+				} else {
+					console.error(`❌ Failed to send registration WhatsApp to ${participant.whatsapp_no}`);
+					console.error(`   Error: ${result.error}`);
+				}
+			})
+			.catch((error) => {
+				console.error("❌ Error sending registration WhatsApp:", error);
+			});			// Generate token for auto-login
 			const { signToken } = await import("@/utils/jwt");
 			const token = signToken({
 				id: participant.id,
@@ -326,9 +308,7 @@ export class ParticipantController {
 			}
 
 			// Update is_present to true
-			const updatedParticipant = await databaseService.updateParticipant(id, {
-				is_present: true,
-			});
+			const updatedParticipant = await databaseService.updateParticipant(id, { is_present: true });
 
 			if (!updatedParticipant) {
 				res.status(500).json({
@@ -372,9 +352,7 @@ export class ParticipantController {
 				return;
 			}
 
-			const participant = await databaseService.updateParticipant(id, {
-				is_present,
-			});
+			const participant = await databaseService.updateParticipant(id, { is_present });
 
 			if (!participant) {
 				res.status(404).json({
@@ -658,9 +636,7 @@ export class ParticipantController {
 			const password_hash = await bcrypt.hash(newPassword, 10);
 
 			// Update database
-			await databaseService.updateParticipant(participant.id, {
-				password_hash,
-			});
+			await databaseService.updateParticipant(participant.id, { password_hash });
 
 			// Send email
 			await emailService.sendPasswordResetEmail(participant, newPassword);
