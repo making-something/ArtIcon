@@ -733,7 +733,7 @@
 /* Mobile Responsive (max-width: 768px) */
 @media (max-width: 768px) {
 	.about-hero {
-		padding: 8em 2em 4em 2em;
+		padding: 4em 2em 4em 2em;
 	}
 	.about-hero-header h1 {
 		font-size: 4rem;
@@ -834,6 +834,16 @@
 		text-align: center;
 		gap: 4em;
 		aspect-ratio: auto;
+	}
+
+	/* Fix first card width on mobile */
+	.stats-row-1 .stats-item-1 {
+		width: 100%;
+		max-width: 100%;
+	}
+
+	.stats-cards-container {
+		width: 95%;
 	}
 	.stats-header {
 		gap: 2em;

@@ -6,6 +6,7 @@
 	background-color: var(--base-400, #1a1614);
 	color: var(--base-100, #e3e3db);
 	overflow: hidden;
+	padding: 4rem 0 2rem 0;
 }
 
 .clients .clients-header {
@@ -150,6 +151,17 @@
 
 /* Mobile Styles */
 @media (max-width: 1000px) {
+	.clients {
+		height: auto;
+		min-height: 100svh;
+		padding: 2rem 0 4rem 0;
+	}
+
+	.clients .clients-header {
+		padding-top: 2rem;
+		margin-bottom: 2rem;
+	}
+
 	.clients .grid {
 		width: 95%;
 		height: auto;

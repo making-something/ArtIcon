@@ -542,10 +542,11 @@
 	}
 
 	.about-copy-content {
-		width: 100%;
+		width: calc(100% - 8rem);
 		padding: 2em 1.5em;
 		gap: 1.2em;
 		z-index: 10;
+		margin: 0 4rem;
 	}
 
 	.about-copy-content p {

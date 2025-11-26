@@ -22,6 +22,9 @@
 	display: flex;
 	gap: 1rem;
 	margin-bottom: 1rem;
+	background-color: var(--base-100);
+	will-change: transform;
+	transform: translateZ(0);
 }
 
 .spotlight .marquee {
@@ -34,6 +37,9 @@
 	display: flex;
 	gap: 1em;
 	will-change: transform;
+	background-color: var(--base-100);
+	backface-visibility: hidden;
+	perspective: 1000px;
 }
 
 .spotlight #marquee-1 .marquee,
@@ -48,10 +54,13 @@
 	align-items: center;
 	border-radius: 1rem;
 	overflow: hidden;
+	transform: translateZ(0);
+	backface-visibility: hidden;
 }
 
 .spotlight .marquee-img-item.marquee-text-item {
 	flex: 1;
+	background-color: var(--base-100);
 }
 
 .spotlight .marquee-img-item h1 {
@@ -71,6 +80,8 @@
 
 .spotlight .marquee-img-item h1 .char {
 	will-change: font-weight;
+	transform: translateZ(0);
+	backface-visibility: hidden;
 }
 
 @media (max-width: 1000px) {

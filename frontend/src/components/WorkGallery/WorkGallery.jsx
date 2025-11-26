@@ -116,9 +116,7 @@ const WorkGallery = () => {
 						{row.map((item) => (
 							<div key={item.id} className="work-item">
 								<div className="work-item-img">
-									<a href="/project">
-										<img src={item.img} alt={item.title} />
-									</a>
+									<img src={item.img} alt={item.title} />
 								</div>
 								<div className="work-item-content">
 									<h3>{item.title}</h3>

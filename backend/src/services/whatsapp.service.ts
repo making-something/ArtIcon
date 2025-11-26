@@ -112,6 +112,14 @@ class WhatsAppService {
 		// Format phone number (remove spaces, dashes, and add country code if not present)
 		const formattedPhone = this.formatPhoneNumber(phoneNumber);
 
+		if (!isWhatsAppConfigured) {
+			console.log(`📱 [WHATSAPP LOG] To: ${formattedPhone}`);
+			console.log(
+				`   Message: Application Received - Your application has been received!`
+			);
+			return { success: true, messageId: "mock-registration-id" };
+		}
+
 		return await this.sendTemplate({
 			to: formattedPhone,
 			template: {
@@ -137,6 +145,12 @@ class WhatsAppService {
 		_daysUntilEvent: number
 	): Promise<WhatsAppResult> {
 		const formattedPhone = this.formatPhoneNumber(phoneNumber);
+
+		if (!isWhatsAppConfigured) {
+			console.log(`📱 [WHATSAPP LOG] To: ${formattedPhone}`);
+			console.log(`   Message: Event Reminder - Hello World!`);
+			return { success: true, messageId: "mock-reminder-id" };
+		}
 
 		return await this.sendTemplate({
 			to: formattedPhone,
@@ -241,6 +255,12 @@ class WhatsAppService {
 		console.log("🧪 Testing WhatsApp service...");
 
 		const formattedPhone = this.formatPhoneNumber(testPhoneNumber);
+
+		if (!isWhatsAppConfigured) {
+			console.log(`📱 [WHATSAPP LOG] To: ${formattedPhone}`);
+			console.log(`   Message: Test - Hello World!`);
+			return { success: true, messageId: "mock-test-id" };
+		}
 
 		return await this.sendTemplate({
 			to: formattedPhone,

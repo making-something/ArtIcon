@@ -185,7 +185,7 @@
 /* Responsive Mobile Styles */
 @media (max-width: 1000px) {
 	.timeline-header-section {
-		padding: 4rem 1.5rem 3rem 1.5rem;
+		padding: 4rem 1.5rem 1rem 1.5rem;
 	}
 
 	.timeline-header-title {
@@ -197,7 +197,7 @@
 	}
 
 	.timeline-work {
-		padding: 4em 0;
+		padding: 2em 0;
 		height: auto;
 	}
 

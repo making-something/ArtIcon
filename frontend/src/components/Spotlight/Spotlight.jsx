@@ -31,10 +31,14 @@ const Spotlight = () => {
 							scrollTrigger: {
 								trigger: container,
 								start: "top bottom",
-								end: "150% top",
-								scrub: true,
+								end: "bottom top",
+								scrub: 0.1,
+								invalidateOnRefresh: true,
+								anticipatePin: 1,
 							},
+							ease: "none",
 							force3D: true,
+							immediateRender: false,
 						});
 
 						const charsTrigger = gsap.fromTo(
@@ -51,10 +55,13 @@ const Spotlight = () => {
 								},
 								scrollTrigger: {
 									trigger: container,
-									start: "50% bottom",
-									end: "top top",
-									scrub: true,
+									start: "top bottom",
+									end: "center center",
+									scrub: 0.1,
+									invalidateOnRefresh: true,
+									anticipatePin: 1,
 								},
+								immediateRender: false,
 							}
 						);
 

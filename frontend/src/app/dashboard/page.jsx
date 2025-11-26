@@ -19,8 +19,9 @@ const Dashboard = () => {
 		total: 0,
 	});
 
-	// Target date: November 30, 2025, 9:00 AM
-	const targetDate = new Date("2025-11-30T09:00:00").getTime();
+	// Target date: December 7, 2025, 9:00 AM
+	const targetDate = new Date("2025-12-07T09:00:00").getTime();
+	const [showEditForm, setShowEditForm] = useState(false);
 
 	const getCategoryLabel = (cat) => {
 		const map = {
@@ -50,8 +51,12 @@ const Dashboard = () => {
 
 			if (difference > 0) {
 				const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-				const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-				const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+				const hours = Math.floor(
+					(difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+				);
+				const minutes = Math.floor(
+					(difference % (1000 * 60 * 60)) / (1000 * 60)
+				);
 				const seconds = Math.floor((difference % (1000 * 60)) / 1000);
 
 				setTimeRemaining({
@@ -208,7 +213,9 @@ const Dashboard = () => {
 					<div className="header-right">
 						<div className="user-info">
 							<span className="user-name">{participant.name}</span>
-							<span className="user-category">{getCategoryLabel(participant.category)}</span>
+							<span className="user-category">
+								{getCategoryLabel(participant.category)}
+							</span>
 						</div>
 						<button className="logout-btn" onClick={handleLogout}>
 							Logout
@@ -218,13 +225,20 @@ const Dashboard = () => {
 			</header>
 
 			<main className="dashboard-main">
+				{/* Registration Status Section */}
+				<div className="registration-status">
+					<p className="status-line">You're Officially Registered!!</p>
+					<p className="status-line">Your Portfolio is Under Review.</p>
+					<p className="status-line">
+						Your ArtIcon Journey begins when the Countdown Hits Zero.
+					</p>
+				</div>
+
 				<div className="countdown-container">
 					<div className="text-reveal-mask">
 						<h2 className="countdown-label">Event Starts In</h2>
 					</div>
-					<div className="countdown-date">
-						November 30, 2025 • 9:00 AM
-					</div>
+					<div className="countdown-date">December 7, 2025 • 9:00 AM</div>
 
 					{timeRemaining.total > 0 ? (
 						<div className="countdown-timer">
@@ -277,13 +291,80 @@ const Dashboard = () => {
 					</div>
 					<div className="detail-item">
 						<span className="detail-label">Category</span>
-						<span className="detail-value">{getCategoryLabel(participant.category)}</span>
+						<span className="detail-value">
+							{getCategoryLabel(participant.category)}
+						</span>
 					</div>
 					<div className="detail-item">
 						<span className="detail-label">City</span>
 						<span className="detail-value">{participant.city}</span>
 					</div>
+					<button
+						className="edit-profile-btn"
+						onClick={() => setShowEditForm(!showEditForm)}
+					>
+						{showEditForm ? "Cancel" : "Edit Profile"}
+					</button>
 				</div>
+
+				{/* Edit Profile Form */}
+				{showEditForm && (
+					<div className="edit-form-overlay">
+						<div className="edit-form-container">
+							<h3 className="form-title">Edit Profile</h3>
+							<form className="edit-form">
+								<div className="form-group">
+									<label htmlFor="name">Name</label>
+									<input
+										type="text"
+										id="name"
+										defaultValue={participant.name}
+										placeholder="Your Name"
+									/>
+								</div>
+								<div className="form-group">
+									<label htmlFor="email">Email</label>
+									<input
+										type="email"
+										id="email"
+										defaultValue={participant.email}
+										placeholder="your@email.com"
+									/>
+								</div>
+								<div className="form-group">
+									<label htmlFor="city">City</label>
+									<input
+										type="text"
+										id="city"
+										defaultValue={participant.city}
+										placeholder="Your City"
+									/>
+								</div>
+								<div className="form-group">
+									<label htmlFor="category">Category</label>
+									<select id="category" defaultValue={participant.category}>
+										<option value="ui_ux">UI/UX Design</option>
+										<option value="graphics">Graphic Design</option>
+										<option value="video">Video Editing</option>
+										<option value="all">All</option>
+									</select>
+								</div>
+								<div className="form-actions">
+									<button
+										type="button"
+										className="btn-cancel"
+										onClick={() => setShowEditForm(false)}
+									>
+										Cancel
+									</button>
+									<button type="submit" className="btn-save">
+										Save Changes
+									</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				)}
 			</main>
 		</div>
 	);

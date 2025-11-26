@@ -162,6 +162,38 @@
 	align-items: center;
 	position: relative;
 	z-index: 2;
+	gap: 3vh;
+}
+
+/* Registration Status Section */
+.registration-status {
+	text-align: center;
+	padding: 2vh 2vw;
+	background: linear-gradient(
+		135deg,
+		rgba(237, 106, 90, 0.08) 0%,
+		rgba(155, 193, 188, 0.08) 100%
+	);
+	border: 1px solid rgba(237, 106, 90, 0.2);
+	border-radius: 8px;
+	max-width: 600px;
+	width: 90%;
+	backdrop-filter: blur(10px);
+}
+
+.status-line {
+	font-family: "PP Neue Montreal", sans-serif;
+	font-size: clamp(0.9rem, 1.2vw, 1.1rem);
+	color: var(--base-400);
+	margin: 0.5vh 0;
+	line-height: 1.6;
+	font-weight: 500;
+}
+
+.status-line:first-child {
+	color: var(--accent-1);
+	font-weight: 600;
+	font-size: clamp(1rem, 1.4vw, 1.3rem);
 }
 
 .countdown-container {
@@ -269,9 +301,33 @@
 	padding: 3vh 4vw;
 	display: flex;
 	justify-content: space-between;
+	align-items: center;
 	border-top: 1px solid rgba(0, 0, 0, 0.05);
 	background: rgba(255, 255, 255, 0.1);
 	backdrop-filter: blur(5px);
+}
+
+/* Edit Profile Button */
+.edit-profile-btn {
+	background: transparent;
+	border: 1px solid var(--accent-1);
+	color: var(--accent-1);
+	padding: 0.8vh 2vw;
+	font-family: "Geist Mono", monospace;
+	font-weight: 500;
+	text-transform: uppercase;
+	font-size: clamp(0.7rem, 0.9vw, 0.9rem);
+	cursor: pointer;
+	transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+	border-radius: 4px;
+	letter-spacing: 0.05em;
+}
+
+.edit-profile-btn:hover {
+	background-color: var(--accent-1);
+	color: var(--base-100);
+	transform: translateY(-2px);
+	box-shadow: 0 4px 12px rgba(237, 106, 90, 0.3);
 }
 
 .detail-item {
@@ -295,6 +351,153 @@
 	font-weight: 500;
 }
 
+/* Edit Form Overlay */
+.edit-form-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	background: rgba(26, 22, 20, 0.85);
+	backdrop-filter: blur(8px);
+	z-index: 1000;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+.edit-form-container {
+	background: var(--base-100);
+	border: 2px solid var(--accent-1);
+	border-radius: 12px;
+	padding: 3rem 2.5rem;
+	max-width: 500px;
+	width: 90%;
+	box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+	animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideUp {
+	from {
+		transform: translateY(30px);
+		opacity: 0;
+	}
+	to {
+		transform: translateY(0);
+		opacity: 1;
+	}
+}
+
+.form-title {
+	font-family: "Big Shoulders Display", sans-serif;
+	font-weight: 900;
+	text-transform: uppercase;
+	font-size: clamp(1.8rem, 3vw, 2.5rem);
+	color: var(--base-400);
+	margin: 0 0 2rem 0;
+	text-align: center;
+	letter-spacing: -0.02em;
+}
+
+.edit-form {
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
+}
+
+.form-group {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
+.form-group label {
+	font-family: "Geist Mono", monospace;
+	font-size: 0.85rem;
+	color: var(--base-300);
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	font-weight: 500;
+}
+
+.form-group input,
+.form-group select {
+	font-family: "PP Neue Montreal", sans-serif;
+	font-size: 1rem;
+	padding: 0.9rem 1.2rem;
+	border: 1px solid var(--base-200);
+	background: var(--base-100);
+	color: var(--base-400);
+	border-radius: 6px;
+	transition: all 0.3s ease;
+	outline: none;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+	border-color: var(--accent-1);
+	box-shadow: 0 0 0 3px rgba(237, 106, 90, 0.1);
+}
+
+.form-group input::placeholder {
+	color: var(--base-200);
+}
+
+.form-actions {
+	display: flex;
+	gap: 1rem;
+	margin-top: 1rem;
+}
+
+.btn-cancel,
+.btn-save {
+	flex: 1;
+	padding: 1rem;
+	font-family: "Geist Mono", monospace;
+	font-weight: 500;
+	text-transform: uppercase;
+	font-size: 0.85rem;
+	letter-spacing: 0.05em;
+	border-radius: 6px;
+	cursor: pointer;
+	transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+	border: none;
+}
+
+.btn-cancel {
+	background: transparent;
+	border: 1px solid var(--base-300);
+	color: var(--base-400);
+}
+
+.btn-cancel:hover {
+	background: var(--base-200);
+	border-color: var(--base-400);
+}
+
+.btn-save {
+	background: var(--accent-1);
+	color: var(--base-100);
+	border: 1px solid var(--accent-1);
+}
+
+.btn-save:hover {
+	background: var(--base-400);
+	border-color: var(--base-400);
+	transform: translateY(-2px);
+	box-shadow: 0 6px 20px rgba(237, 106, 90, 0.4);
+}
+
 /* Mobile Adjustments */
 @media (max-width: 768px) {
 	.dashboard-header {
@@ -306,10 +509,28 @@
 	}
 	/* Let's keep a logout icon or minimal version if needed, but simpler for now */
 
+	.registration-status {
+		padding: 1.5rem 1rem;
+		width: 95%;
+	}
+
+	.status-line {
+		font-size: 0.9rem;
+	}
+
+	.status-line:first-child {
+		font-size: 1rem;
+	}
+
 	.participant-details {
 		padding: 2rem 1.5rem;
 		flex-wrap: wrap;
 		gap: 1rem;
+	}
+
+	.edit-profile-btn {
+		width: 100%;
+		margin-top: 1rem;
 	}
 
 	.countdown-timer {
@@ -320,5 +541,19 @@
 		font-size: 8vw;
 		margin-top: 0;
 		align-self: center;
+	}
+
+	.edit-form-container {
+		padding: 2rem 1.5rem;
+		width: 95%;
+	}
+
+	.form-actions {
+		flex-direction: column;
+	}
+
+	.btn-cancel,
+	.btn-save {
+		width: 100%;
 	}
 }

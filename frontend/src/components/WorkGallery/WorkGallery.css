@@ -71,11 +71,7 @@
 	width: 100%;
 	height: 100%;
 	object-fit: cover;
-	transition: transform 0.3s ease;
-}
-
-.work-items .row .work-item .work-item-img:hover img {
-	transform: scale(1.05);
+	/* Removed transition and hover effect since click is disabled */
 }
 
 .work-items .row .work-item .work-item-content {
