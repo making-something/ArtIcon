@@ -1,68 +1,75 @@
-import { Request, Response } from 'express';
-import { databaseService } from '@/services/database.service';
-import emailService from '@/services/email.service';
-import { whatsappService } from '@/services/whatsapp.service';
-import { NotificationInsert, Participant, NotificationStatus, NotificationUpdate } from '@/types/database';
+import { Request, Response } from "express";
+import { databaseService } from "@/services/database.service";
+import emailService from "@/services/email.service";
+import { whatsappService } from "@/services/whatsapp.service";
+import {
+	NotificationInsert,
+	Participant,
+	NotificationStatus,
+	NotificationUpdate,
+} from "@/types/database";
+import { whatsappLogger } from "@/utils/whatsapp-logger";
 
 export class NotificationController {
-  /**
-   * Send immediate notification
-   */
-  async sendImmediateNotification(req: Request, res: Response): Promise<void> {
-    try {
-      const { message, target_audience, target_ids } = req.body;
+	/**
+	 * Send immediate notification
+	 */
+	async sendImmediateNotification(req: Request, res: Response): Promise<void> {
+		try {
+			const { message, target_audience, target_ids } = req.body;
 
-      if (!message || !target_audience) {
-        res.status(400).json({
-          success: false,
-          message: 'Message and target_audience are required',
-        });
-        return;
-      }
+			if (!message || !target_audience) {
+				res.status(400).json({
+					success: false,
+					message: "Message and target_audience are required",
+				});
+				return;
+			}
 
-      // Get recipients based on target_audience
-      let participants: Participant[] = [];
+			// Get recipients based on target_audience
+			let participants: Participant[] = [];
 
-      if (target_audience === 'all') {
-        const { participants: allParticipants } = await databaseService.getParticipants();
-        participants = allParticipants;
-      } else if (target_audience === 'winners') {
-        const winners = await databaseService.getAllWinners();
-        participants = winners.map(w => w.participant);
-      } else if (target_audience === 'specific') {
-        if (!target_ids || target_ids.length === 0) {
-          res.status(400).json({
-            success: false,
-            message: 'target_ids are required when target_audience is specific',
-          });
-          return;
-        }
+			if (target_audience === "all") {
+				const { participants: allParticipants } =
+					await databaseService.getParticipants();
+				participants = allParticipants;
+			} else if (target_audience === "winners") {
+				const winners = await databaseService.getAllWinners();
+				participants = winners.map((w) => w.participant);
+			} else if (target_audience === "specific") {
+				if (!target_ids || target_ids.length === 0) {
+					res.status(400).json({
+						success: false,
+						message: "target_ids are required when target_audience is specific",
+					});
+					return;
+				}
 
-        // Get specific participants by IDs
-        for (const id of target_ids) {
-          const participant = await databaseService.getParticipantById(id);
-          if (participant) {
-            participants.push(participant);
-          }
-        }
-      }
+				// Get specific participants by IDs
+				for (const id of target_ids) {
+					const participant = await databaseService.getParticipantById(id);
+					if (participant) {
+						participants.push(participant);
+					}
+				}
+			}
 
-      if (participants.length === 0) {
-        res.status(400).json({
-          success: false,
-          message: 'No recipients found',
-        });
-        return;
-      }
+			if (participants.length === 0) {
+				res.status(400).json({
+					success: false,
+					message: "No recipients found",
+				});
+				return;
+			}
 
-      // Send email and WhatsApp notifications
-      // Note: Individual messages should be sent per participant
-      for (const participant of participants) {
-        // Send email
-        await emailService.sendEmail({
-          to: participant.email,
-          subject: '📢 Articon Hackathon Update',
-          html: `
+			// Send email and WhatsApp notifications
+			// Note: Individual messages should be sent per participant
+			for (const participant of participants) {
+				// Send email
+				await emailService.sendEmail({
+					to: participant.email,
+					subject: "📢 Articon Hackathon Update",
+					html: `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
               <h2>Hi ${participant.name}! 👋</h2>
               <p>${message}</p>
@@ -71,310 +78,433 @@ export class NotificationController {
               </p>
             </div>
           `,
-          text: `Hi ${participant.name}!\n\n${message}\n\nStay tuned for more updates! 🚀`,
-        });
+					text: `Hi ${participant.name}!\n\n${message}\n\nStay tuned for more updates! 🚀`,
+				});
 
-        // Send WhatsApp (using hello_world template for now)
-        await whatsappService.sendRegistrationMessage(
-          participant.whatsapp_no,
-          participant.name
-        ).catch((error) => {
-          console.error(`Failed to send WhatsApp to ${participant.whatsapp_no}:`, error);
-        });
-      }
+				// Send WhatsApp (using hello_world template for now)
+				whatsappLogger.info("Sending immediate notification via WhatsApp", {
+					function: "sendImmediateNotification",
+					to: participant.whatsapp_no,
+					participantName: participant.name,
+				});
 
-      // Log notification
-      const notificationData: NotificationInsert = {
-        message,
-        scheduled_time: new Date().toISOString(),
-        target_audience,
-        target_ids: target_audience === 'specific' ? target_ids : null,
-        status: 'sent',
-        sent_at: new Date().toISOString(),
-      };
+				await whatsappService
+					.sendRegistrationMessage(participant.whatsapp_no, participant.name)
+					.then((result) => {
+						if (result.success) {
+							whatsappLogger.success(
+								"Immediate notification WhatsApp sent successfully",
+								{
+									function: "sendImmediateNotification",
+									to: participant.whatsapp_no,
+									messageId: result.messageId,
+								}
+							);
+						} else {
+							whatsappLogger.error(
+								"Failed to send immediate notification WhatsApp",
+								{
+									function: "sendImmediateNotification",
+									to: participant.whatsapp_no,
+									error: result.error,
+								}
+							);
+						}
+					})
+					.catch((error) => {
+						whatsappLogger.error(
+							"Error sending immediate notification WhatsApp",
+							{
+								function: "sendImmediateNotification",
+								to: participant.whatsapp_no,
+								error,
+							}
+						);
+					});
+			}
 
-      await databaseService.createNotification(notificationData);
+			// Log notification
+			const notificationData: NotificationInsert = {
+				message,
+				scheduled_time: new Date().toISOString(),
+				target_audience,
+				target_ids: target_audience === "specific" ? target_ids : null,
+				status: "sent",
+				sent_at: new Date().toISOString(),
+			};
 
-      res.status(200).json({
-        success: true,
-        message: 'Notifications sent successfully',
-        data: {
-          recipientCount: participants.length,
-        },
-      });
-    } catch (error) {
-      console.error('Error in sendImmediateNotification:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Internal server error',
-      });
-    }
-  }
+			await databaseService.createNotification(notificationData);
 
-  /**
-   * Get all notifications
-   */
-  async getAllNotifications(req: Request, res: Response): Promise<void> {
-    try {
-      const { status } = req.query;
+			res.status(200).json({
+				success: true,
+				message: "Notifications sent successfully",
+				data: {
+					recipientCount: participants.length,
+				},
+			});
+		} catch (error) {
+			console.error("Error in sendImmediateNotification:", error);
+			res.status(500).json({
+				success: false,
+				message: "Internal server error",
+			});
+		}
+	}
 
-      const notifications = await databaseService.getAllNotifications(status as NotificationStatus);
+	/**
+	 * Get all notifications
+	 */
+	async getAllNotifications(req: Request, res: Response): Promise<void> {
+		try {
+			const { status } = req.query;
 
-      res.status(200).json({
-        success: true,
-        data: notifications,
-        count: notifications.length,
-      });
-    } catch (error) {
-      console.error('Error in getAllNotifications:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Internal server error',
-      });
-    }
-  }
+			const notifications = await databaseService.getAllNotifications(
+				status as NotificationStatus
+			);
 
-  /**
-   * Get notification by ID
-   */
-  async getNotificationById(req: Request, res: Response): Promise<void> {
-    try {
-      const { id } = req.params;
+			res.status(200).json({
+				success: true,
+				data: notifications,
+				count: notifications.length,
+			});
+		} catch (error) {
+			console.error("Error in getAllNotifications:", error);
+			res.status(500).json({
+				success: false,
+				message: "Internal server error",
+			});
+		}
+	}
 
-      const notification = await databaseService.getNotificationById(id);
+	/**
+	 * Get notification by ID
+	 */
+	async getNotificationById(req: Request, res: Response): Promise<void> {
+		try {
+			const { id } = req.params;
 
-      if (!notification) {
-        res.status(404).json({
-          success: false,
-          message: 'Notification not found',
-        });
-        return;
-      }
+			const notification = await databaseService.getNotificationById(id);
 
-      res.status(200).json({
-        success: true,
-        data: notification,
-      });
-    } catch (error) {
-      console.error('Error in getNotificationById:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Internal server error',
-      });
-    }
-  }
+			if (!notification) {
+				res.status(404).json({
+					success: false,
+					message: "Notification not found",
+				});
+				return;
+			}
 
-  /**
-   * Update notification
-   */
-  async updateNotification(req: Request, res: Response): Promise<void> {
-    try {
-      const { id } = req.params;
-      const { message, scheduled_time, status } = req.body;
+			res.status(200).json({
+				success: true,
+				data: notification,
+			});
+		} catch (error) {
+			console.error("Error in getNotificationById:", error);
+			res.status(500).json({
+				success: false,
+				message: "Internal server error",
+			});
+		}
+	}
 
-      const updateData: NotificationUpdate = {};
-      if (message) updateData.message = message;
-      if (scheduled_time) updateData.scheduled_time = scheduled_time;
-      if (status) updateData.status = status;
+	/**
+	 * Update notification
+	 */
+	async updateNotification(req: Request, res: Response): Promise<void> {
+		try {
+			const { id } = req.params;
+			const { message, scheduled_time, status } = req.body;
 
-      if (Object.keys(updateData).length === 0) {
-        res.status(400).json({
-          success: false,
-          message: 'At least one field is required to update',
-        });
-        return;
-      }
+			const updateData: NotificationUpdate = {};
+			if (message) updateData.message = message;
+			if (scheduled_time) updateData.scheduled_time = scheduled_time;
+			if (status) updateData.status = status;
 
-      // For simplicity, we'll just return success without implementing the full update logic
-      // In a real implementation, you'd add an updateNotification method to the database service
-      res.status(200).json({
-        success: true,
-        message: 'Notification updated successfully',
-        data: { notificationId: id, ...updateData },
-      });
-    } catch (error) {
-      console.error('Error in updateNotification:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Internal server error',
-      });
-    }
-  }
+			if (Object.keys(updateData).length === 0) {
+				res.status(400).json({
+					success: false,
+					message: "At least one field is required to update",
+				});
+				return;
+			}
 
-  /**
-   * Delete notification
-   */
-  async deleteNotification(req: Request, res: Response): Promise<void> {
-    try {
-      const { id } = req.params;
+			// For simplicity, we'll just return success without implementing the full update logic
+			// In a real implementation, you'd add an updateNotification method to the database service
+			res.status(200).json({
+				success: true,
+				message: "Notification updated successfully",
+				data: { notificationId: id, ...updateData },
+			});
+		} catch (error) {
+			console.error("Error in updateNotification:", error);
+			res.status(500).json({
+				success: false,
+				message: "Internal server error",
+			});
+		}
+	}
 
-      console.log(`Deleting notification: ${id}`);
+	/**
+	 * Delete notification
+	 */
+	async deleteNotification(req: Request, res: Response): Promise<void> {
+		try {
+			const { id } = req.params;
 
-      // For simplicity, we'll just return success without implementing the full delete logic
-      // In a real implementation, you'd add a deleteNotification method to the database service
-      res.status(200).json({
-        success: true,
-        message: 'Notification deleted successfully',
-      });
-    } catch (error) {
-      console.error('Error in deleteNotification:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Internal server error',
-      });
-    }
-  }
+			console.log(`Deleting notification: ${id}`);
 
-  /**
-   * Send portfolio approval notification
-   */
-  async sendPortfolioApprovalNotification(req: Request, res: Response): Promise<void> {
-    try {
-      const { participant_ids, event_date } = req.body;
+			// For simplicity, we'll just return success without implementing the full delete logic
+			// In a real implementation, you'd add a deleteNotification method to the database service
+			res.status(200).json({
+				success: true,
+				message: "Notification deleted successfully",
+			});
+		} catch (error) {
+			console.error("Error in deleteNotification:", error);
+			res.status(500).json({
+				success: false,
+				message: "Internal server error",
+			});
+		}
+	}
 
-      if (!participant_ids || !Array.isArray(participant_ids) || participant_ids.length === 0) {
-        res.status(400).json({
-          success: false,
-          message: 'participant_ids array is required',
-        });
-        return;
-      }
+	/**
+	 * Send portfolio approval notification
+	 */
+	async sendPortfolioApprovalNotification(
+		req: Request,
+		res: Response
+	): Promise<void> {
+		try {
+			const { participant_ids, event_date } = req.body;
 
-      // Get participants
-      const participants = [];
-      for (const id of participant_ids) {
-        const participant = await databaseService.getParticipantById(id);
-        if (participant) {
-          participants.push(participant);
-        }
-      }
+			if (
+				!participant_ids ||
+				!Array.isArray(participant_ids) ||
+				participant_ids.length === 0
+			) {
+				res.status(400).json({
+					success: false,
+					message: "participant_ids array is required",
+				});
+				return;
+			}
 
-      if (participants.length === 0) {
-        res.status(404).json({
-          success: false,
-          message: 'No participants found',
-        });
-        return;
-      }
+			// Get participants
+			const participants = [];
+			for (const id of participant_ids) {
+				const participant = await databaseService.getParticipantById(id);
+				if (participant) {
+					participants.push(participant);
+				}
+			}
 
-      const eventDateObj = event_date ? new Date(event_date) : new Date();
+			if (participants.length === 0) {
+				res.status(404).json({
+					success: false,
+					message: "No participants found",
+				});
+				return;
+			}
 
-      // Send approval notifications
-      for (const participant of participants) {
-        // Send email
-        await emailService.sendPortfolioSelectedEmail(participant, eventDateObj)
-          .catch((error) => {
-            console.error(`Failed to send approval email to ${participant.email}:`, error);
-          });
+			const eventDateObj = event_date ? new Date(event_date) : new Date();
 
-        // Send WhatsApp approval message
-        await whatsappService.sendApprovalMessage(
-          participant.whatsapp_no,
-          participant.name
-        ).catch((error) => {
-          console.error(`Failed to send approval WhatsApp to ${participant.whatsapp_no}:`, error);
-        });
-      }
+			// Send approval notifications
+			for (const participant of participants) {
+				// Send email
+				await emailService
+					.sendPortfolioSelectedEmail(participant, eventDateObj)
+					.catch((error) => {
+						console.error(
+							`Failed to send approval email to ${participant.email}:`,
+							error
+						);
+					});
 
-      res.status(200).json({
-        success: true,
-        message: 'Portfolio approval notifications sent successfully',
-        data: {
-          recipientCount: participants.length,
-        },
-      });
-    } catch (error) {
-      console.error('Error in sendPortfolioApprovalNotification:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Internal server error',
-      });
-    }
-  }
+				// Send WhatsApp approval message
+				whatsappLogger.info("Sending portfolio approval via WhatsApp", {
+					function: "sendPortfolioApprovalNotification",
+					to: participant.whatsapp_no,
+					participantName: participant.name,
+				});
 
-  /**
-   * Send event reminder notification
-   */
-  async sendEventReminderNotification(req: Request, res: Response): Promise<void> {
-    try {
-      const { event_name, event_date, days_until_event } = req.body;
+				await whatsappService
+					.sendApprovalMessage(participant.whatsapp_no, participant.name)
+					.then((result) => {
+						if (result.success) {
+							whatsappLogger.success(
+								"Portfolio approval WhatsApp sent successfully",
+								{
+									function: "sendPortfolioApprovalNotification",
+									to: participant.whatsapp_no,
+									messageId: result.messageId,
+								}
+							);
+						} else {
+							whatsappLogger.error("Failed to send approval WhatsApp", {
+								function: "sendPortfolioApprovalNotification",
+								to: participant.whatsapp_no,
+								error: result.error,
+							});
+						}
+					})
+					.catch((error) => {
+						whatsappLogger.error("Error sending approval WhatsApp", {
+							function: "sendPortfolioApprovalNotification",
+							to: participant.whatsapp_no,
+							error,
+						});
+					});
+			}
 
-      if (!event_name || !event_date) {
-        res.status(400).json({
-          success: false,
-          message: 'event_name and event_date are required',
-        });
-        return;
-      }
+			res.status(200).json({
+				success: true,
+				message: "Portfolio approval notifications sent successfully",
+				data: {
+					recipientCount: participants.length,
+				},
+			});
+		} catch (error) {
+			console.error("Error in sendPortfolioApprovalNotification:", error);
+			res.status(500).json({
+				success: false,
+				message: "Internal server error",
+			});
+		}
+	}
 
-      const eventDateObj = new Date(event_date);
-      const daysUntil = days_until_event || 2;
+	/**
+	 * Send event reminder notification
+	 */
+	async sendEventReminderNotification(
+		req: Request,
+		res: Response
+	): Promise<void> {
+		try {
+			const { event_name, event_date, days_until_event } = req.body;
 
-      // Get all participants (or you can filter based on approval status)
-      const { participants } = await databaseService.getParticipants();
+			if (!event_name || !event_date) {
+				res.status(400).json({
+					success: false,
+					message: "event_name and event_date are required",
+				});
+				return;
+			}
 
-      if (participants.length === 0) {
-        res.status(404).json({
-          success: false,
-          message: 'No participants found',
-        });
-        return;
-      }
+			const eventDateObj = new Date(event_date);
+			const daysUntil = days_until_event || 2;
 
-      // Send reminder notifications
-      for (const participant of participants) {
-        // Send email based on days until event
-        if (daysUntil === 2) {
-          await emailService.sendReminder2DaysEmail(participant)
-            .catch((error) => {
-              console.error(`Failed to send 2-day reminder email to ${participant.email}:`, error);
-            });
-        } else if (daysUntil === 1) {
-          await emailService.sendReminder1DayEmail(participant)
-            .catch((error) => {
-              console.error(`Failed to send 1-day reminder email to ${participant.email}:`, error);
-            });
-        } else if (daysUntil === 0) {
-          await emailService.sendReminderMorningEmail(participant)
-            .catch((error) => {
-              console.error(`Failed to send morning reminder email to ${participant.email}:`, error);
-            });
-        } else {
-          // Fallback to generic reminder
-          await emailService.sendEventReminderEmail(participant, eventDateObj)
-            .catch((error) => {
-              console.error(`Failed to send generic reminder email to ${participant.email}:`, error);
-            });
-        }
+			// Get all participants (or you can filter based on approval status)
+			const { participants } = await databaseService.getParticipants();
 
-        // Send WhatsApp (using hello_world template for now)
-        await whatsappService.sendEventReminderMessage(
-          participant.whatsapp_no,
-          participant.name,
-          event_name,
-          eventDateObj,
-          daysUntil
-        ).catch((error) => {
-          console.error(`Failed to send reminder WhatsApp to ${participant.whatsapp_no}:`, error);
-        });
-      }
+			if (participants.length === 0) {
+				res.status(404).json({
+					success: false,
+					message: "No participants found",
+				});
+				return;
+			}
 
-      res.status(200).json({
-        success: true,
-        message: 'Event reminder notifications sent successfully',
-        data: {
-          recipientCount: participants.length,
-        },
-      });
-    } catch (error) {
-      console.error('Error in sendEventReminderNotification:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Internal server error',
-      });
-    }
-  }
+			// Send reminder notifications
+			for (const participant of participants) {
+				// Send email based on days until event
+				if (daysUntil === 2) {
+					await emailService
+						.sendReminder2DaysEmail(participant)
+						.catch((error) => {
+							console.error(
+								`Failed to send 2-day reminder email to ${participant.email}:`,
+								error
+							);
+						});
+				} else if (daysUntil === 1) {
+					await emailService
+						.sendReminder1DayEmail(participant)
+						.catch((error) => {
+							console.error(
+								`Failed to send 1-day reminder email to ${participant.email}:`,
+								error
+							);
+						});
+				} else if (daysUntil === 0) {
+					await emailService
+						.sendReminderMorningEmail(participant)
+						.catch((error) => {
+							console.error(
+								`Failed to send morning reminder email to ${participant.email}:`,
+								error
+							);
+						});
+				} else {
+					// Fallback to generic reminder
+					await emailService
+						.sendEventReminderEmail(participant, eventDateObj)
+						.catch((error) => {
+							console.error(
+								`Failed to send generic reminder email to ${participant.email}:`,
+								error
+							);
+						});
+				}
 
+				// Send WhatsApp (using hello_world template for now)
+				whatsappLogger.info("Sending event reminder via WhatsApp", {
+					function: "sendEventReminderNotification",
+					to: participant.whatsapp_no,
+					participantName: participant.name,
+					eventName: event_name,
+					daysUntil,
+				});
+
+				await whatsappService
+					.sendEventReminderMessage(
+						participant.whatsapp_no,
+						participant.name,
+						event_name,
+						eventDateObj,
+						daysUntil
+					)
+					.then((result) => {
+						if (result.success) {
+							whatsappLogger.success(
+								"Event reminder WhatsApp sent successfully",
+								{
+									function: "sendEventReminderNotification",
+									to: participant.whatsapp_no,
+									messageId: result.messageId,
+								}
+							);
+						} else {
+							whatsappLogger.error("Failed to send reminder WhatsApp", {
+								function: "sendEventReminderNotification",
+								to: participant.whatsapp_no,
+								error: result.error,
+							});
+						}
+					})
+					.catch((error) => {
+						whatsappLogger.error("Error sending reminder WhatsApp", {
+							function: "sendEventReminderNotification",
+							to: participant.whatsapp_no,
+							error,
+						});
+					});
+			}
+
+			res.status(200).json({
+				success: true,
+				message: "Event reminder notifications sent successfully",
+				data: {
+					recipientCount: participants.length,
+				},
+			});
+		} catch (error) {
+			console.error("Error in sendEventReminderNotification:", error);
+			res.status(500).json({
+				success: false,
+				message: "Internal server error",
+			});
+		}
+	}
 }
 
 export default new NotificationController();
