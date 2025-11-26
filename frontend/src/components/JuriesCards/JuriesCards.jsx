@@ -200,7 +200,9 @@ export default function JuriesCards() {
 							<img src="/juries/JURY 1-01.avif" alt="Ronak Raiyani" />
 						</div>
 						<div className="jury-member-info">
-							<p>President of RAJKOT IT ASSOCIATION</p>
+							<p>
+								President <br /> RAJKOT IT ASSOCIATION
+							</p>
 						</div>
 					</div>
 				</div>
@@ -214,7 +216,9 @@ export default function JuriesCards() {
 							<img src="/juries/JURY 2-01.avif" alt="Kashyap Pandya" />
 						</div>
 						<div className="jury-member-info">
-							<p>Senior Project Manager at Multiicon</p>
+							<p>
+								Senior Project Manager <br /> Multiicon
+							</p>
 						</div>
 					</div>
 				</div>
@@ -228,7 +232,10 @@ export default function JuriesCards() {
 							<img src="/juries/JURY 3-01.avif" alt="Vandana Mehta" />
 						</div>
 						<div className="jury-member-info">
-							<p>Founder, Elevate Consulting Partner</p>
+							<p>
+								Founder
+								<br /> Elevate Consulting Partner
+							</p>
 						</div>
 					</div>
 				</div>

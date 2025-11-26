@@ -63,7 +63,7 @@
 .clients .grid-row {
 	display: flex;
 	justify-content: center;
-	align-items: center;
+	align-items: flex-start;
 	height: 100%;
 }
 
@@ -80,9 +80,10 @@
 	flex: 1;
 	display: flex;
 	justify-content: center;
-	align-items: center;
+	align-items: flex-start;
 	height: 100%;
 	cursor: pointer;
+	padding-top: 2rem;
 }
 
 .clients .grid-item-content {
@@ -93,7 +94,7 @@
 	text-align: center;
 	position: relative;
 	z-index: 2;
-	padding: 2rem;
+	padding: 0 2rem 2rem 2rem;
 }
 
 .clients .client-top-text {

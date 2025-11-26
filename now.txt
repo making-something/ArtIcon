@@ -6,3 +6,8 @@ mobile responsive
 link preview
 forgot pass workflow
 number and mail both unique
+
+prize,
+sponcer 
+juries two line 
+footer - multiicon address
