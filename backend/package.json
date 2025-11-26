@@ -12,7 +12,8 @@
     "lint": "eslint src/**/*.ts",
     "clean": "rm -rf dist",
     "setup-db": "tsx scripts/setup-database.ts",
-    "create-admin": "tsx scripts/create-admin.ts",
+    "migrate": "tsx src/scripts/run-migrations.ts",
+    "create-admin": "tsx create-admin.ts",
     "setup-tasks": "tsx scripts/setup-tasks.ts"
   },
   "keywords": [
