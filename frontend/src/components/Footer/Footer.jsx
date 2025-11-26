@@ -1,7 +1,7 @@
 "use client";
 import "./Footer.css";
 import { useEffect, useRef } from "react";
-import { FaFacebookF, FaInstagram, FaLinkedinIn } from 'react-icons/fa';
+import { FaFacebookF, FaInstagram, FaLinkedinIn } from "react-icons/fa";
 
 const imageParticleCount = 10;
 const imagePaths = Array.from(
@@ -186,19 +186,17 @@ const Footer = () => {
 				</div>
 				<div className="footer-row">
 					<div className="footer-col footer-col-address">
-						<div
-							className="footer-col-heading"
-							role="img"
-							aria-label="MultiIcon HQ"
-						>
-							<img src="/multiicon.avif" alt="MultiIcon" />
+						<div className="footer-col-heading">
+							<h2 className="footer-company-name">
+								Multiicon ideotechnology Pvt. Ltd.
+							</h2>
 						</div>
 						<p className="footer-address-line">
-							Office No 301,
-							<br /> Rumi Plaza,
-							<br /> Third Floor,
-							<br /> Maruti Nagar 3 Corner,
-							<br /> Airport Road, Rajkot, Gujarat 360005, India
+							3rd floor, Rumi Plaza,
+							<br /> Old Airport Road,
+							<br /> Near Race Course Ring Road,
+							<br /> Rajkot - 360001.
+							<br /> Gujarat
 						</p>
 					</div>
 					<div className="footer-col footer-col-contact">
@@ -213,7 +211,7 @@ const Footer = () => {
 							<div>
 								<p className="footer-contact-label"></p>
 								<p className="footer-contact-link">
-									<a href="mailto:media@multiicon.com">media@multiicon.com</a>
+									<a href="mailto:media@multiicon.com">media@multiicon.in</a>
 								</p>
 							</div>
 						</div>

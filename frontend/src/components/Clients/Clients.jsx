@@ -14,7 +14,7 @@ const Clients = () => {
 		[
 			{
 				name: "MULTIICON",
-				logoSrc: "/multiicon.avif",
+				logoSrc: "/LOGO.png",
 				alt: "Multiicon logo",
 				topText: "Sponsored By",
 				bottomText: "Your Creative Partner in Innovation",

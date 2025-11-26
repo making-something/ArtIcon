@@ -90,10 +90,22 @@
 	display: block;
 }
 
+.otis-footer .footer-company-name {
+	font-family: "Big Shoulders Display", sans-serif;
+	font-size: clamp(1rem, 2.3vw, 1.5rem);
+	font-weight: 900;
+	text-transform: uppercase;
+	color: var(--base-100);
+	margin: 0;
+	line-height: 1.1;
+	text-align: center;
+	letter-spacing: 0.02em;
+}
+
 .otis-footer .footer-col p:first-child {
 	text-transform: uppercase;
 	font-family: "supply-mono", "Geist Mono", monospace;
-	font-size: 0.85rem;
+	font-size: clamp(0.6rem, 1.8vw, 1rem);
 	letter-spacing: 0.08em;
 }
 
