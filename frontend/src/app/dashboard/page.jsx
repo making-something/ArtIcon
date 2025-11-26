@@ -169,16 +169,6 @@ const Dashboard = () => {
 							ease: "power2.out",
 						},
 						"-=1.0"
-					)
-					.from(
-						".detail-item",
-						{
-							y: 20,
-							opacity: 0,
-							stagger: 0.1,
-							duration: 0.8,
-						},
-						"-=0.5"
 					);
 
 				// Cleanup SplitType on unmount
@@ -207,9 +197,17 @@ const Dashboard = () => {
 		<div className="dashboard-page" ref={containerRef}>
 			<header className="dashboard-header">
 				<div className="header-content">
-					<h1 className="dashboard-title">
-						Art<span className="accent">Icon</span>
-					</h1>
+					<div className="header-left-group">
+						<h1 className="dashboard-title">
+							Art<span className="accent">Icon</span>
+						</h1>
+						<button
+							className="edit-profile-btn"
+							onClick={() => setShowEditForm(!showEditForm)}
+						>
+							{showEditForm ? "Cancel" : "Edit Profile"}
+						</button>
+					</div>
 					<div className="header-right">
 						<div className="user-info">
 							<span className="user-name">{participant.name}</span>
@@ -285,26 +283,24 @@ const Dashboard = () => {
 				</div>
 
 				<div className="participant-details">
-					<div className="detail-item">
-						<span className="detail-label">Email</span>
-						<span className="detail-value">{participant.email}</span>
+					<div className="sponsors-section">
+						<span>Sponcered by</span>
+						<img
+							src="/multiicon.avif"
+							alt="Multiicon"
+							className="sponsor-logo"
+						/>
+						<span>and supported by</span>
+						<img src="/rita.avif" alt="Rita" className="sponsor-logo" />
 					</div>
-					<div className="detail-item">
-						<span className="detail-label">Category</span>
-						<span className="detail-value">
-							{getCategoryLabel(participant.category)}
-						</span>
+					<div className="venue-section">
+						<p>Multiicon ideotechnology Pvt. Ltd.</p>
+						<p>3rd floor, Rumi Plaza,</p>
+						<p>Old Airport Road,</p>
+						<p>Near Race Course Ring Road,</p>
+						<p>Rajkot - 360001.</p>
+						<p>Gujarat</p>
 					</div>
-					<div className="detail-item">
-						<span className="detail-label">City</span>
-						<span className="detail-value">{participant.city}</span>
-					</div>
-					<button
-						className="edit-profile-btn"
-						onClick={() => setShowEditForm(!showEditForm)}
-					>
-						{showEditForm ? "Cancel" : "Edit Profile"}
-					</button>
 				</div>
 
 				{/* Edit Profile Form */}

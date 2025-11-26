@@ -104,6 +104,12 @@
 	color: var(--accent-1);
 }
 
+.header-left-group {
+	display: flex;
+	align-items: center;
+	gap: 2vw;
+}
+
 .header-right {
 	display: flex;
 	align-items: center;
@@ -330,6 +336,34 @@
 	box-shadow: 0 4px 12px rgba(237, 106, 90, 0.3);
 }
 
+.sponsors-section {
+	display: flex;
+	align-items: center;
+	gap: 1vw;
+	font-family: "PP Neue Montreal", sans-serif;
+	font-size: clamp(0.8rem, 1vw, 1rem);
+	color: var(--base-400);
+	flex-wrap: wrap;
+}
+
+.sponsor-logo {
+	height: clamp(1.5rem, 2.5vw, 2.5rem);
+	width: auto;
+	mix-blend-mode: multiply;
+}
+
+.venue-section {
+	text-align: right;
+	font-family: "Geist Mono", monospace;
+	font-size: clamp(0.65rem, 0.8vw, 0.8rem);
+	color: var(--base-300);
+	line-height: 1.4;
+}
+
+.venue-section p {
+	margin: 0;
+}
+
 .detail-item {
 	display: flex;
 	flex-direction: column;
@@ -504,6 +538,12 @@
 		padding: 1.5rem;
 	}
 
+	.header-left-group {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 1rem;
+	}
+
 	.header-right {
 		display: none; /* Hide user info in header on mobile to save space? Or keep minimal */
 	}
@@ -524,13 +564,23 @@
 
 	.participant-details {
 		padding: 2rem 1.5rem;
-		flex-wrap: wrap;
-		gap: 1rem;
+		flex-direction: column;
+		align-items: center;
+		text-align: center;
+		gap: 2rem;
 	}
+    
+    .sponsors-section {
+        justify-content: center;
+    }
+    
+    .venue-section {
+        text-align: center;
+    }
 
 	.edit-profile-btn {
 		width: 100%;
-		margin-top: 1rem;
+		margin-top: 0; /* Reset margin */
 	}
 
 	.countdown-timer {

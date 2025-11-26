@@ -123,6 +123,11 @@
 	aspect-ratio: 4 / 1.5;
 }
 
+/* Make MULTIICON logo bigger */
+.clients .grid-item[data-client="multiicon"] .logo-wrapper {
+	width: clamp(200px, 42vw, 450px);
+}
+
 /* Make RITA logo bigger */
 .clients .grid-item[data-client="rita"] .logo-wrapper {
 	width: clamp(180px, 38vw, 420px);
