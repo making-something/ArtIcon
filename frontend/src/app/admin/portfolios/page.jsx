@@ -184,7 +184,7 @@ export default function AdminPortfolios() {
 			if (participant.portfolio_url.startsWith('http')) {
 				return participant.portfolio_url;
 			} else {
-				return window.location.origin + (participant.portfolio_url.startsWith('/') ? '' : '/') + participant.portfolio_url;
+				return `https://${participant.portfolio_url}`;
 			}
 		}
 		return null;

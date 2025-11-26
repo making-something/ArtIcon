@@ -70,7 +70,7 @@ async function apiRequest(endpoint, options = {}) {
 			error.message.includes("NetworkError")
 		) {
 			throw new Error(
-				"Cannot connect to server. Please ensure the backend is running on http://localhost:8000"
+				"Cannot connect to server. Please ensure the backend is running and accessible."
 			);
 		}
 		throw error;
