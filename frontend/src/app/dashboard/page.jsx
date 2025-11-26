@@ -313,23 +313,19 @@ const Dashboard = () => {
 				</div>
 
 				<div className="participant-details">
-					<div className="sponsors-section">
-						<span>Sponcered by</span>
-						<img
-							src="/multiicon.avif"
-							alt="Multiicon"
-							className="sponsor-logo"
-						/>
-						<span>and supported by</span>
-						<img src="/rita.avif" alt="Rita" className="sponsor-logo" />
-					</div>
 					<div className="venue-section">
-						<p>Multiicon ideotechnology Pvt. Ltd.</p>
+						<p className="company-name">Multiicon ideotechnology Pvt. Ltd.</p>
 						<p>3rd floor, Rumi Plaza,</p>
 						<p>Old Airport Road,</p>
 						<p>Near Race Course Ring Road,</p>
 						<p>Rajkot - 360001.</p>
 						<p>Gujarat</p>
+					</div>
+					<div className="sponsors-section">
+						<span>Sponcered by</span>
+						<img src="/logo.png" alt="Multiicon" className="sponsor-logo" />
+						<span>and supported by</span>
+						<img src="/rita.avif" alt="Rita" className="sponsor-logo" />
 					</div>
 				</div>
 
