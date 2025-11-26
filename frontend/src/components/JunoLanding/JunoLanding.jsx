@@ -582,7 +582,7 @@ const JunoLanding = () => {
 								</svg>
 								<div className="card-title">
 									<p className="mono">02</p>
-									<p className="mono">Graphic Designer</p>
+									<p className="mono" style={{fontSize:"12px"}}>Graphic<br></br> Designer</p>
 								</div>
 							</div>
 						</div>
