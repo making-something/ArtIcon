@@ -180,7 +180,14 @@ export default function AdminPortfolios() {
 		if (participant.portfolio_file_path) {
 			return `${API_URL}${participant.portfolio_file_path}`;
 		}
-		return participant.portfolio_url;
+		if (participant.portfolio_url) {
+			if (participant.portfolio_url.startsWith('http')) {
+				return participant.portfolio_url;
+			} else {
+				return window.location.origin + (participant.portfolio_url.startsWith('/') ? '' : '/') + participant.portfolio_url;
+			}
+		}
+		return null;
 	};
 
 	return (

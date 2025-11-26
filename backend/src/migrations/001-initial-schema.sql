@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS participants (
   id TEXT PRIMARY KEY,
   name TEXT NOT NULL,
   email TEXT NOT NULL UNIQUE,
-  whatsapp_no TEXT NOT NULL,
+  whatsapp_no TEXT NOT NULL UNIQUE,
   category TEXT NOT NULL CHECK (category IN ('video', 'ui_ux', 'graphics', 'all')),
   city TEXT NOT NULL,
   portfolio_url TEXT,

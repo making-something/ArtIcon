@@ -5,7 +5,7 @@ async function createAdmin() {
   try {
     const adminData = {
       email: 'admin@multiicon.in',
-      password_hash: await bcrypt.hash('admin123', 10),
+      password_hash: await bcrypt.hash('admin#234', 10),
     };
 
     const admin = await databaseService.createAdmin(adminData);
