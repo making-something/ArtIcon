@@ -198,7 +198,7 @@ const Dashboard = () => {
 			<header className="dashboard-header">
 				<div className="header-content">
 					<div className="header-left-group">
-						<img src="/logo.avif" alt="ArtIcon" className="dashboard-logo"  />
+						<img src="/art.png" alt="ArtIcon" className="dashboard-logo"  />
 					</div>
 					<div className="header-right">
 						<div className="user-info">
