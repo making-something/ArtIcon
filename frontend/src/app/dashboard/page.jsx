@@ -198,7 +198,7 @@ const Dashboard = () => {
 			<header className="dashboard-header">
 				<div className="header-content">
 					<div className="header-left-group">
-						<img src="/logo.avif" alt="ArtIcon" className="dashboard-logo" />
+						<img src="/art.png" alt="ArtIcon" className="dashboard-logo"  />
 					</div>
 					<div className="header-right">
 						<div className="user-info">
@@ -323,9 +323,9 @@ const Dashboard = () => {
 					</div>
 					<div className="sponsors-section">
 						<span>Sponcered by</span>
-						<img src="/logo.png" alt="Multiicon" className="sponsor-logo" />
+						<img src="/milogo.svg" alt="Multiicon" className="sponsor-logo" style={{height:"120px",width:"120px"}}/>
 						<span>and supported by</span>
-						<img src="/rita.avif" alt="Rita" className="sponsor-logo" />
+						<img src="/rita.avif" alt="Rita" className="sponsor-logo" style={{height:"100px",width:"100px"}}/>
 					</div>
 				</div>
 
