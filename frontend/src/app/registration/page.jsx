@@ -373,8 +373,10 @@ const Register = () => {
 	};
 
 	const handleKeyDown = (e, index) => {
-		if (e.key === "Enter") {
+		if (e.key === "Enter" || e.keyCode === 13) {
 			e.preventDefault();
+			e.stopPropagation();
+
 			const currentStep = currentSteps[index];
 			const value = e.target.value.trim();
 
@@ -389,18 +391,20 @@ const Register = () => {
 				return;
 			}
 
-			// Scroll logic: Ensure next field is in view
-			if (scrollContainerRef.current) {
-				// Small timeout to allow render, then scroll slightly if needed
-				setTimeout(() => {
-					const nextEl = inputRefs.current[index + 1];
-					if (nextEl)
-						nextEl.scrollIntoView({ behavior: "smooth", block: "center" });
-				}, 100);
-			}
-
+			// Progress to next step
 			if (index < currentSteps.length - 1) {
 				setStep(index + 1);
+
+				// Focus and scroll to next field
+				setTimeout(() => {
+					const nextEl = inputRefs.current[index + 1];
+					if (nextEl) {
+						nextEl.focus();
+						if (scrollContainerRef.current) {
+							nextEl.scrollIntoView({ behavior: "smooth", block: "center" });
+						}
+					}
+				}, 150);
 			} else {
 				setStep(index + 1);
 				gsap.to(submitRef.current, {
@@ -760,6 +764,8 @@ const Register = () => {
 															}
 															onKeyDown={(e) => handleKeyDown(e, index)}
 															autoComplete="off"
+															inputMode="url"
+															enterKeyHint="next"
 															required
 														/>
 
@@ -869,6 +875,14 @@ const Register = () => {
 														}
 														onKeyDown={(e) => handleKeyDown(e, index)}
 														autoComplete="off"
+														inputMode={
+															item.field === "phone"
+																? "tel"
+																: item.type === "email"
+																? "email"
+																: "text"
+														}
+														enterKeyHint="next"
 														required
 													/>
 												)}

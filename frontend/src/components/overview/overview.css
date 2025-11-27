@@ -1277,103 +1277,157 @@
 
 	/* Check card mobile adjustments */
 	.stats-item-1.check-card {
-		aspect-ratio: 1.5/1 !important;
+		aspect-ratio: 1.4/1 !important;
+		overflow: hidden !important;
+		padding: 0.8em !important;
 	}
 
 	.check-header {
-		flex-direction: column;
-		gap: 0.8em;
-		padding: 1.2em 1.2em 0.6em 1.2em;
+		flex-direction: row;
+		gap: 0.6em;
+		padding: 0.6em 0.7em 0.5em 0.7em;
+		justify-content: space-between;
+		border-bottom: 1px solid rgba(26, 58, 15, 0.1);
 	}
 
 	.check-bank-info {
 		align-items: flex-start;
+		flex: 1;
+		min-width: 0;
 	}
 
 	.check-number-date {
-		align-items: flex-start;
-		flex-direction: row;
-		gap: 1em;
+		align-items: flex-end;
+		flex-direction: column;
+		gap: 0.15em;
+		flex-shrink: 0;
 	}
 
 	.bank-name {
-		font-size: 1.3rem;
+		font-size: 1rem;
+		line-height: 1.1;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 
 	.bank-address,
 	.check-number,
 	.check-date {
-		font-size: 0.7rem;
+		font-size: 0.55rem;
+		line-height: 1.2;
 	}
 
 	.check-body {
-		padding: 1em 1.2em;
-		gap: 0.8em;
+		padding: 0.6em 0.7em;
+		gap: 0.5em;
 	}
 
 	.check-payee-section {
 		flex-direction: column;
 		align-items: stretch;
-		gap: 0.8em;
+		gap: 0.15em;
+		justify-content: flex-start;
+	}
+
+	.payee-line {
+		flex-direction: column;
+		gap: 0.15em;
+		/* margin-bottom: 0.5rem; */
+		align-items: flex-start;
+		width: 100%;
+	}
+
+	.payee-label {
+		font-size: 0.5rem;
+		line-height: 1;
 	}
 
 	.payee-name {
-		font-size: 1.4rem;
+		font-size: 1.1rem;
+		line-height: 1.1;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		max-width: 100%;
 	}
 
 	.amount-box {
 		min-width: auto;
 		width: 100%;
-		padding: 0.6em 1em;
+		padding: 0.35em 0.6em;
+		flex-shrink: 0;
+		align-self: flex-start;
+		margin-top: -0.1em;
 	}
 
 	.currency,
 	.amount-number {
-		font-size: 1.5rem;
+		font-size: 1.3rem;
+	}
+
+	.amount-words-line {
+		display: none;
 	}
 
 	.amount-words {
-		font-size: 0.9rem;
+		font-size: 0.6rem;
 	}
 
 	.check-memo-section {
 		flex-direction: column;
-		gap: 1em;
+		gap: 0.4em;
+	}
+
+	.memo-line {
+		flex-direction: column;
+		gap: 0.25em;
+	}
+
+	.memo-label {
+		font-size: 0.55rem;
 	}
 
 	.memo-items {
 		gap: 0.2em;
+		flex-wrap: wrap;
 	}
 
 	.memo-items span {
-		font-size: 0.8rem;
+		font-size: 0.6rem;
+		padding: 0.25em 0.45em;
+		line-height: 1.2;
+	}
+
+	.memo-items span:nth-child(3) {
+		display: none;
 	}
 
 	.signature-line {
-		align-items: stretch;
-		min-width: auto;
+		display: none;
 	}
 
 	.signature-placeholder {
 		min-width: auto;
-		padding: 1.2em 0.8em 0.3em 0.8em;
+		padding: 0.6em 0.4em 0.15em 0.4em;
 	}
 
 	.signature-text {
-		font-size: 0.6rem;
+		font-size: 0.45rem;
 	}
 
 	.check-footer {
-		padding: 0.6em 1.2em;
+		padding: 0.5em 0.7em;
 	}
 
 	.micr-line {
-		font-size: 0.75rem;
-		letter-spacing: 0.2em;
+		font-size: 0.6rem;
+		letter-spacing: 0.1em;
 	}
 
 	.stats-item-1.check-card::after {
-		font-size: 8rem;
+		font-size: 5rem;
+		opacity: 0.02;
 	}
 
 	/* Card Icons */

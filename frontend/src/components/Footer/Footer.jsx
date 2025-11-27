@@ -22,7 +22,7 @@ const socialLinks = [
 	{
 		label: "IN",
 		name: "Instagram",
-		href: "https://www.instagram.com/account",
+		href: "https://www.instagram.com/multiicon.official",
 		icon: FaInstagram,
 	},
 	{
