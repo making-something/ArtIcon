@@ -478,12 +478,14 @@
 	flex: 1;
 	background-color: var(--accent-teal);
 	position: relative;
+	overflow: hidden;
 }
 
 .stats-item-3 {
 	flex: 1;
 	background-color: var(--text-main);
 	position: relative;
+	overflow: hidden;
 }
 
 /* White text for 3rd card (Goodies card) */
@@ -503,24 +505,27 @@
 
 .card-icon {
 	position: absolute;
-	width: 120px;
-	height: 120px;
+	width: 250px;
+	height: 250px;
 	opacity: 0.08;
 	pointer-events: none;
 	z-index: 0;
+	overflow: hidden;
 }
 
 .trophy-icon {
-	top: 50%;
-	right: 1.5em;
-	transform: translateY(-50%);
+	top: auto;
+	bottom: 0;
+	right: -15%;
+	transform: rotate(-15deg);
 	color: var(--text-main);
 }
 
 .gift-icon {
-	top: 50%;
-	right: 1.5em;
-	transform: translateY(-50%);
+	top: auto;
+	bottom: 0;
+	right: -15%;
+	transform: rotate(-15deg);
 	color: #fff;
 }
 
@@ -1016,8 +1021,14 @@
 
 	/* Card Icons */
 	.card-icon {
-		width: 100px;
-		height: 100px;
+		width: 200px;
+		height: 200px;
+	}
+
+	.trophy-icon,
+	.gift-icon {
+		bottom: 0;
+		right: -12%;
 	}
 
 	/* Contact Section */
@@ -1127,8 +1138,14 @@
 
 	/* Card Icons */
 	.card-icon {
-		width: 90px;
-		height: 90px;
+		width: 180px;
+		height: 180px;
+	}
+
+	.trophy-icon,
+	.gift-icon {
+		bottom: 0;
+		right: -10%;
 	}
 
 	/* Contact Section */
@@ -1361,14 +1378,15 @@
 
 	/* Card Icons */
 	.card-icon {
-		width: 70px;
-		height: 70px;
+		width: 140px;
+		height: 140px;
 		opacity: 0.1;
 	}
 
 	.trophy-icon,
 	.gift-icon {
-		right: 1em;
+		bottom: 0;
+		right: -8%;
 	}
 
 	.stats-cards-container {
