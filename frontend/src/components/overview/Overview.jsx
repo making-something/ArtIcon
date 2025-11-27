@@ -283,7 +283,7 @@ const Overview = () => {
 							{/* Check Header */}
 							<div className="check-header">
 								<div className="check-bank-info">
-									<h2 className="bank-name">MULTIICON BANK</h2>
+									<h2 className="bank-name">MULTIICON</h2>
 									<p className="bank-address">Gujarat, India</p>
 								</div>
 								<div className="check-number-date">
