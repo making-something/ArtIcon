@@ -323,8 +323,9 @@ const Overview = () => {
 									</div>
 									<div className="signature-line">
 										<div className="signature-placeholder">
-											<span className="signature-text">
-												Authorized Signature
+											<img src="/sign.svg" alt="Authorized Signature" className="signature-image" style={{ width: '120px', height: 'auto', display: 'block', margin: '0 auto 5px' }} />
+<span className="signature-text">
+												Bhavin Thakkar
 											</span>
 										</div>
 									</div>
