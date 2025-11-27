@@ -263,6 +263,7 @@
 	letter-spacing: 0.1em;
 	position: relative;
 	z-index: 10;
+	opacity: 1;
 }
 
 .countdown-timer {
