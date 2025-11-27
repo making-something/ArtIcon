@@ -359,7 +359,7 @@ const Dashboard = () => {
 						<p>Gujarat</p>
 					</div>
 					<div className="sponsors-section">
-						<span>Sponcered by</span>
+						<span>Sponsored by</span>
 						<img
 							src="/milogo.svg"
 							alt="Multiicon"
