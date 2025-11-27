@@ -1,7 +1,12 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { getCurrentParticipant, isAuthenticated, logout } from "@/services/api";
+import {
+	getCurrentParticipant,
+	isAuthenticated,
+	logout,
+	refreshParticipantData,
+} from "@/services/api";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import SplitType from "split-type";
@@ -44,6 +49,18 @@ const Dashboard = () => {
 		const userData = getCurrentParticipant();
 		setParticipant(userData);
 
+		// Refresh participant data from backend to get latest approval status
+		const refreshData = async () => {
+			const freshData = await refreshParticipantData();
+			if (freshData) {
+				setParticipant(freshData);
+			}
+		};
+		refreshData();
+
+		// Set up interval to refresh data every 30 seconds
+		const refreshInterval = setInterval(refreshData, 30000);
+
 		// Countdown timer
 		const calculateTimeRemaining = () => {
 			const now = new Date().getTime();
@@ -83,7 +100,10 @@ const Dashboard = () => {
 		// Update every second
 		const interval = setInterval(calculateTimeRemaining, 1000);
 
-		return () => clearInterval(interval);
+		return () => {
+			clearInterval(interval);
+			clearInterval(refreshInterval);
+		};
 	}, [router, targetDate]);
 
 	useGSAP(

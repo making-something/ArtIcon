@@ -283,6 +283,31 @@ export function getCurrentParticipant() {
 }
 
 /**
+ * Refresh participant data from backend and update localStorage
+ */
+export async function refreshParticipantData() {
+	if (typeof window === "undefined") return null;
+
+	const participant = getCurrentParticipant();
+	if (!participant || !participant.id) return null;
+
+	try {
+		const response = await apiRequest(`/api/participants/${participant.id}`);
+
+		if (response.success && response.data) {
+			// Update localStorage with fresh data
+			localStorage.setItem("participant", JSON.stringify(response.data));
+			return response.data;
+		}
+
+		return null;
+	} catch (error) {
+		console.error("Error refreshing participant data:", error);
+		return null;
+	}
+}
+
+/**
  * Check if user is authenticated
  */
 export function isAuthenticated() {
