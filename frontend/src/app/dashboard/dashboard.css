@@ -238,7 +238,7 @@
 
 /* Mask for text reveal animations */
 .text-reveal-mask {
-	overflow: hidden;
+	overflow: visible;
 	display: inline-block;
 }
 
@@ -284,7 +284,7 @@
 /* Mask for numbers to slide up */
 .time-value-mask {
 	height: clamp(4rem, 18vw, 14rem); /* Matches approx font size */
-	overflow: hidden;
+	overflow: visible;
 	display: flex;
 	align-items: flex-end;
 }

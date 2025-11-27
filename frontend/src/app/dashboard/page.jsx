@@ -109,6 +109,22 @@ const Dashboard = () => {
 	useGSAP(
 		() => {
 			if (participant && containerRef.current) {
+				// Ensure all elements are visible first
+				gsap.set(
+					[
+						".countdown-label",
+						".countdown-date",
+						".time-value",
+						".time-separator",
+						".time-label",
+						".participant-details",
+					],
+					{
+						opacity: 1,
+						clearProps: "transform",
+					}
+				);
+
 				// Split text for animation
 				// We use a timeout to ensure DOM is ready and layout is settled
 				const splitTitle = new SplitType(".countdown-label", {
