@@ -2,6 +2,30 @@
 const nextConfig = {
 	devIndicators: false,
 
+	// Add cache headers for static assets
+	async headers() {
+		return [
+			{
+				source: "/fonts/:path*",
+				headers: [
+					{
+						key: "Cache-Control",
+						value: "public, max-age=31536000, immutable",
+					},
+				],
+			},
+			{
+				source: "/:all*(svg|jpg|jpeg|png|gif|ico|webp)",
+				headers: [
+					{
+						key: "Cache-Control",
+						value: "public, max-age=31536000, immutable",
+					},
+				],
+			},
+		];
+	},
+
 	// Optimize GSAP for production builds
 	webpack: (config, { isServer }) => {
 		// Don't bundle GSAP on server-side

@@ -28,48 +28,20 @@ export default function RootLayout({ children }) {
 					rel="stylesheet"
 				/>
 
-				{/* Preload critical local fonts for better performance */}
+				{/* Preload only critical fonts used immediately */}
 				<link
 					rel="preload"
-					href="/fonts/geist-mono/geist-mono-variable.ttf"
+					href="/fonts/big-shoulders-display/BigShouldersDisplay.ttf"
 					as="font"
 					type="font/ttf"
-					crossOrigin=""
+					crossOrigin="anonymous"
 				/>
 				<link
 					rel="preload"
 					href="/fonts/neue-montral/PPNeueMontreal-Regular.otf"
 					as="font"
 					type="font/otf"
-					crossOrigin=""
-				/>
-				<link
-					rel="preload"
-					href="/fonts/neue-montral/PPNeueMontreal-Medium.otf"
-					as="font"
-					type="font/otf"
-					crossOrigin=""
-				/>
-				<link
-					rel="preload"
-					href="/fonts/pangram-sans/PPPangramSans-Regular.otf"
-					as="font"
-					type="font/otf"
-					crossOrigin=""
-				/>
-				<link
-					rel="preload"
-					href="/fonts/pangram-sans/PPPangramSans-Extrabold.otf"
-					as="font"
-					type="font/otf"
-					crossOrigin=""
-				/>
-				<link
-					rel="preload"
-					href="/fonts/big-shoulders-display/BigShouldersDisplay.ttf"
-					as="font"
-					type="font/ttf"
-					crossOrigin=""
+					crossOrigin="anonymous"
 				/>
 			</head>
 			<body>
