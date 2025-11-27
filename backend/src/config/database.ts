@@ -29,17 +29,32 @@ database.pragma("foreign_keys = ON");
 // Enable query optimizer
 database.pragma("optimize");
 
-// Graceful shutdown
+// Checkpoint WAL to main database file
+// This ensures all data from WAL is written to the main .db file
+function checkpointDatabase() {
+	try {
+		console.log("💾 Checkpointing WAL to main database...");
+		database.pragma("wal_checkpoint(TRUNCATE)");
+		console.log("✅ WAL checkpoint complete");
+	} catch (error) {
+		console.error("❌ WAL checkpoint failed:", error);
+	}
+}
+
+// Graceful shutdown with WAL checkpoint
 process.on("exit", () => {
+	checkpointDatabase();
 	database.close();
 });
 
 process.on("SIGINT", () => {
+	checkpointDatabase();
 	database.close();
 	process.exit(0);
 });
 
 process.on("SIGTERM", () => {
+	checkpointDatabase();
 	database.close();
 	process.exit(0);
 });
