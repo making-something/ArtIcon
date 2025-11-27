@@ -129,7 +129,7 @@ export async function registerParticipant(formData) {
 		"Video Editing": "video",
 		"UI/UX Design": "ui_ux",
 		"Graphic Design": "graphics",
-		All: "all",
+		"All": "all", 
 	};
 
 	const category =
