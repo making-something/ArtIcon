@@ -112,6 +112,7 @@ const Dashboard = () => {
 				// Ensure all elements are visible first
 				gsap.set(
 					[
+						".dashboard-header",
 						".countdown-label",
 						".countdown-date",
 						".time-value",
