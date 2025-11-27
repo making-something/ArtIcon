@@ -37,7 +37,8 @@ nav .nav-logo img {
 nav .nav-scroll-hidden {
 	opacity: 0;
 	transform: translateY(-25%);
-	pointer-events: none;
+	pointer-events: none !important;
+	visibility: hidden;
 }
 
 /* --- REGISTER BUTTON --- */
