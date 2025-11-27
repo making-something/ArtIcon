@@ -129,15 +129,11 @@ export async function registerParticipant(formData) {
 		"Video Editing": "video",
 		"UI/UX Design": "ui_ux",
 		"Graphic Design": "graphics",
-		"All": "all", 
+		All: "all",
 	};
 
 	const category =
 		specializationToCategoryMap[formData.specialization] || "ui_ux";
-
-	// Transform specialization value: "All-rounder" -> "all"
-	const specializationValue =
-		formData.specialization === "All-rounder" ? "all" : formData.specialization;
 
 	const response = await apiRequest("/api/participants/register", {
 		method: "POST",
@@ -152,7 +148,7 @@ export async function registerParticipant(formData) {
 			role: formData.role,
 			experience: formData.experience,
 			organization: formData.organization,
-			specialization: specializationValue,
+			specialization: formData.specialization,
 			source: formData.source,
 			password: formData.password,
 		}),

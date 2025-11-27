@@ -7,7 +7,14 @@ const CTACard = () => {
 	return (
 		<section className="cta">
 			<div className="container">
-				<div className="cta-copy" style={{ backgroundColor: "#e0dede", borderRadius: "15px", padding: "2em" }}>
+				<div
+					className="cta-copy"
+					style={{
+						backgroundColor: "#e0dede",
+						borderRadius: "15px",
+						padding: "2em",
+					}}
+				>
 					<Copy animateOnScroll={true}>
 						<p className="lg">
 							Every Great Creation Starts With Understanding The Guidelines!
@@ -17,6 +24,7 @@ const CTACard = () => {
 					<Button
 						animateOnScroll={true}
 						delay={0.25}
+						target="_blank"
 						variant="dark"
 						href="/rules.pdf"
 						download
