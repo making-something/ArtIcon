@@ -11,11 +11,7 @@
 		"type-check": "tsc --noEmit",
 		"lint": "eslint src/**/*.ts",
 		"clean": "rm -rf dist",
-		"create-admin": "tsx create-admin.ts",
-		"check-db": "node check-db.js",
-		"checkpoint": "node checkpoint-db.js",
-		"backup-users": "node backup-users.js",
-		"restore-users": "node restore-users.js"
+		"create-admin": "tsx create-admin.ts"
 	},
 	"keywords": [
 		"hackathon",
