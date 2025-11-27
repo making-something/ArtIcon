@@ -259,10 +259,13 @@ const Register = () => {
 		// Portfolio - Must be a valid URL or file
 		if (field === "portfolio") {
 			if (!formData.portfolioFile) {
-				// If no file, check if it's a valid URL
-				const urlRegex =
-					/^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
-				if (!urlRegex.test(value)) {
+				let trimmedValue = value.trim();
+				if (!trimmedValue.match(/^https?:\/\//)) {
+					trimmedValue = 'https://' + trimmedValue;
+				}
+				try {
+					new URL(trimmedValue);
+				} catch {
 					showError("Please enter a valid URL or attach a file");
 					return false;
 				}
@@ -307,6 +310,33 @@ const Register = () => {
 		}
 
 		updateInputWidth(e.target);
+
+		// Auto-progress phone on 10 digits (iPhone fix)
+		if (field === "phone" && value.length === 10) {
+			const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+			if (isMobile && validateField(field, value)) {
+				if (index < currentSteps.length - 1) {
+					setStep(index + 1);
+					setTimeout(() => {
+						const nextEl = inputRefs.current[index + 1];
+						if (nextEl) {
+							nextEl.focus();
+							if (scrollContainerRef.current) {
+								nextEl.scrollIntoView({ behavior: "smooth", block: "center" });
+							}
+						}
+					}, 150);
+				} else {
+					setStep(index + 1);
+					gsap.to(submitRef.current, {
+						opacity: 1,
+						y: 0,
+						duration: 0.5,
+						pointerEvents: "auto",
+					});
+				}
+			}
+		}
 
 		// Auto-progress for select dropdowns
 		if (type === "select" && value !== "") {
@@ -374,8 +404,11 @@ const Register = () => {
 
 	const handleKeyDown = (e, index) => {
 		if (e.key === "Enter" || e.keyCode === 13) {
-			e.preventDefault();
-			e.stopPropagation();
+			const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+			if (!isMobile) {
+				e.preventDefault();
+				e.stopPropagation();
+			}
 
 			const currentStep = currentSteps[index];
 			const value = e.target.value.trim();
@@ -415,6 +448,32 @@ const Register = () => {
 				});
 			}
 		}
+	};
+
+	const handleAutoNext = (index) => {
+	  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+	  if (!isMobile) return;
+	  const item = currentSteps[index];
+	  const value = formData[item.field]?.trim();
+
+	  if (!value) return;
+	  if (!validateField(item.field, value)) return;
+
+	  if (index < currentSteps.length - 1) {
+	    setStep(index + 1);
+	    setTimeout(() => {
+	      const nextEl = inputRefs.current[index + 1];
+	      nextEl?.focus();
+	      nextEl?.scrollIntoView({ behavior: "smooth", block: "center" });
+	    }, 100);
+	  } else {
+	    gsap.to(submitRef.current, {
+	      opacity: 1,
+	      y: 0,
+	      duration: 0.5,
+	      pointerEvents: "auto",
+	    });
+	  }
 	};
 
 	// Updated Phase Transition to handle "Go Back"
@@ -708,7 +767,7 @@ const Register = () => {
 					"--accent-5": "#2f72a9",
 				}}
 			>
-				<form className="register-container" onSubmit={handleSubmit}>
+				<form className="register-container" onSubmit={handleSubmit} noValidate>
 					{/* SAFE AREA CONTAINER (Solves the navbar overlap issue) */}
 
 					<span ref={sizerRef} className="input-sizer-ghost"></span>
@@ -752,7 +811,7 @@ const Register = () => {
 													<div className="portfolio-wrapper">
 														<input
 															ref={(el) => (inputRefs.current[index] = el)}
-															type="text"
+															type="url"
 															name={item.field}
 															className={`register-input ${
 																formData.portfolioFile ? "has-file" : ""
@@ -764,9 +823,6 @@ const Register = () => {
 															}
 															onKeyDown={(e) => handleKeyDown(e, index)}
 															autoComplete="off"
-															inputMode="url"
-															enterKeyHint="next"
-															required
 														/>
 
 														{/* Attachment Trigger */}
@@ -819,7 +875,6 @@ const Register = () => {
 															}
 															onKeyDown={(e) => handleKeyDown(e, index)}
 															autoComplete="off"
-															required
 														/>
 														<button
 															type="button"
@@ -882,7 +937,7 @@ const Register = () => {
 																? "email"
 																: "text"
 														}
-														enterKeyHint="next"
+														enterKeyHint={item.field !== "phone" ? "next" : undefined}
 														required
 													/>
 												)}
