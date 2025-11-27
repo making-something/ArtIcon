@@ -17,30 +17,10 @@ class MigrationRunner {
 	})();
 
 	async runMigrations(): Promise<void> {
-		console.log("🔄 Running database migrations...");
+		console.log("🔄 Checking database migrations...");
 
 		// Create migrations table if it doesn't exist
 		this.createMigrationsTable();
-
-		// Safety check: If database has participants, skip migrations
-		try {
-			const checkParticipants = db.prepare(
-				"SELECT COUNT(*) as count FROM participants"
-			);
-			const result = checkParticipants.get() as { count: number };
-
-			if (result && result.count > 0) {
-				console.log(
-					`✅ Database already has ${result.count} participants - skipping migrations to preserve data`
-				);
-				return;
-			}
-		} catch (error) {
-			// Table doesn't exist yet, continue with migrations
-			console.log(
-				"📝 Participants table not found - will run migrations if needed"
-			);
-		}
 
 		// Get all migration files
 		const migrationFiles = fs
@@ -51,11 +31,19 @@ class MigrationRunner {
 		// Get executed migrations
 		const executedMigrations = this.getExecutedMigrations();
 
+		// Check if there are pending migrations
+		const pendingMigrations = migrationFiles.filter(
+			(file) => !executedMigrations.includes(file)
+		);
+
+		if (pendingMigrations.length === 0) {
+			console.log("✅ All migrations up to date");
+			return;
+		}
+
 		// Run pending migrations
-		for (const file of migrationFiles) {
-			if (!executedMigrations.includes(file)) {
-				await this.runMigration(file);
-			}
+		for (const file of pendingMigrations) {
+			await this.runMigration(file);
 		}
 
 		console.log("✅ All migrations completed successfully!");

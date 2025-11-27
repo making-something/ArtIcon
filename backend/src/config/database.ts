@@ -5,24 +5,12 @@ import fs from "fs";
 // Database file path - store in project root for easy access
 const dbPath = path.join(process.cwd(), "articon.db");
 
-// Check if database file exists
-const dbExists = fs.existsSync(dbPath);
-
-if (!dbExists) {
-	console.warn("⚠️  WARNING: Database file does not exist!");
-	console.warn("⚠️  A new database will be created.");
-	console.warn("⚠️  If this is production, you may have lost user data!");
-	console.warn(`⚠️  Database path: ${dbPath}`);
-} else {
-	console.log(`✅ Database file found: ${dbPath}`);
+// Log database status
+if (fs.existsSync(dbPath)) {
 	const stats = fs.statSync(dbPath);
-	console.log(`📊 Database size: ${(stats.size / 1024).toFixed(2)} KB`);
-}
-
-// Ensure database directory exists
-const dbDir = path.dirname(dbPath);
-if (!fs.existsSync(dbDir)) {
-	fs.mkdirSync(dbDir, { recursive: true });
+	console.log(`✅ Database: ${dbPath} (${(stats.size / 1024).toFixed(2)} KB)`);
+} else {
+	console.log(`📝 Creating new database: ${dbPath}`);
 }
 
 // Create database connection with optimal settings

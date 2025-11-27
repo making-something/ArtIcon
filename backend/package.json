@@ -11,10 +11,7 @@
 		"type-check": "tsc --noEmit",
 		"lint": "eslint src/**/*.ts",
 		"clean": "rm -rf dist",
-		"setup-db": "tsx scripts/setup-database.ts",
-		"migrate": "tsx src/scripts/run-migrations.ts",
 		"create-admin": "tsx create-admin.ts",
-		"setup-tasks": "tsx scripts/setup-tasks.ts",
 		"backup-users": "node backup-users.js",
 		"restore-users": "node restore-users.js"
 	},

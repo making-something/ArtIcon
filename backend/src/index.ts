@@ -10,15 +10,15 @@ import submissionRoutes from "@/routes/submission.routes";
 import adminRoutes from "@/routes/admin.routes";
 import notificationRoutes from "@/routes/notification.routes";
 import portfolioRoutes from "@/routes/portfolio.routes";
-import migrationRunner from "@/config/migration-runner";
+// import migrationRunner from "@/config/migration-runner";
 
 // Validate required environment variables
 
 // Initialize database migrations
-migrationRunner.runMigrations().catch((error) => {
-	console.error("❌ Database migration failed:", error);
-	process.exit(1);
-});
+// migrationRunner.runMigrations().catch((error) => {
+// 	console.error("❌ Database migration failed:", error);
+// 	process.exit(1);
+// });
 
 // Initialize Express app
 const app: Application = express();
@@ -49,9 +49,7 @@ allowedOrigins.push("https://articon.multiicon.in"); // Temporary addition for t
 
 if (process.env.NODE_ENV !== "test") {
 	if (envOrigins.length === 0) {
-		console.warn(
-			"No FRONTEND_URL configured; CORS will block all requests."
-		);
+		console.warn("No FRONTEND_URL configured; CORS will block all requests.");
 	} else {
 		console.log(
 			`CORS allowed origins: ${allowedOrigins
