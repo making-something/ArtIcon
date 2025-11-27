@@ -260,11 +260,7 @@ const Overview = () => {
 
 				{/* Header Section */}
 				<div className="stats-header">
-					<h1>
-						Rewards &
-						Recognition
-						Await You
-					</h1>
+					<h1>Rewards & Recognition Await You</h1>
 					<p>Win big prizes and recognition for your creativity</p>
 				</div>
 
@@ -281,15 +277,63 @@ const Overview = () => {
 						</h1>
 						<p>Win big prizes and recognition for your creativity</p>
 					</div> */}
-					{/* First Row - Single Centered Card - ArtIcon Champion */}
+					{/* First Row - Single Centered Card - ArtIcon Champion CHECK */}
 					<div className="stats-row stats-row-1">
-						<div className="stats-col stats-item-1">
-							<h1>ArtIcon Champion</h1>
-							<div className="desc">
-								<p>₹10,000 Cash Prize</p>
-								<p>ArtIcon 2025 Winner Trophy</p>
-								<p>Featured on Official Social Media</p>
-								<p>6-Month Internship Opportunity at Multiicon</p>
+						<div className="stats-col stats-item-1 check-card">
+							{/* Check Header */}
+							<div className="check-header">
+								<div className="check-bank-info">
+									<h2 className="bank-name">MULTIICON BANK</h2>
+									<p className="bank-address">Gujarat, India</p>
+								</div>
+								<div className="check-number-date">
+									<p className="check-number">No. 001</p>
+									<p className="check-date">07-12-2025</p>
+								</div>
+							</div>
+
+							{/* Check Body */}
+							<div className="check-body">
+								{/* Payee Line */}
+								<div className="check-payee-section">
+									<div className="payee-line">
+										<span className="payee-label">PAY TO THE ORDER OF</span>
+										<span className="payee-name">ARTICON CHAMPION</span>
+									</div>
+									<div className="amount-box">
+										<span className="currency">₹</span>
+										<span className="amount-number">10,000</span>
+									</div>
+								</div>
+
+								{/* Amount in Words */}
+								<div className="amount-words-line">
+									<span className="amount-words">Ten Thousand Rupees Only</span>
+								</div>
+
+								{/* Memo Section */}
+								<div className="check-memo-section">
+									<div className="memo-line">
+										<span className="memo-label">FOR:</span>
+										<div className="memo-items">
+											<span>Winner Trophy</span>
+											<span>Social Media Feature</span>
+											<span>6-Month Internship at Multiicon</span>
+										</div>
+									</div>
+									<div className="signature-line">
+										<div className="signature-placeholder">
+											<span className="signature-text">
+												Authorized Signature
+											</span>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							{/* Check Footer - MICR Line */}
+							<div className="check-footer">
+								<span className="micr-line">⑆001⑆ ⑈2025120701⑈ ⑆10000⑆</span>
 							</div>
 						</div>
 					</div>
@@ -312,9 +356,7 @@ const Overview = () => {
 						{/* E-Certificate & Goodies */}
 						<div className="stats-col stats-item-3">
 							<h1>For All Participants</h1>
-							<p className="category-text">
-								Because every effort matters!
-							</p>
+							<p className="category-text">Because every effort matters!</p>
 							<div className="desc">
 								<p>E-Certificate</p>
 								<p>Goodies</p>

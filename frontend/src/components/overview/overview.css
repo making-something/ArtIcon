@@ -411,8 +411,8 @@
 }
 
 .stats-row-1 .stats-item-1 {
-	width: 70%;
-	max-width: 600px;
+	width: 85%;
+	max-width: 900px;
 }
 
 /* Second Row - Two Cards */
@@ -420,9 +420,58 @@
 	justify-content: center;
 }
 
-/* Card Styles */
-.stats-item-1 {
-	background-color: var(--accent-orange);
+/* ============================================
+   CHECK CARD DESIGN - ARTICON CHAMPION
+   ============================================ */
+
+.stats-item-1.check-card {
+	background: linear-gradient(to bottom, #fdfbf7 0%, #f8f6f0 100%);
+	position: relative;
+	overflow: visible;
+	border: 2px solid #1a3a0f;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15),
+		inset 0 0 0 1px rgba(26, 58, 15, 0.1), inset 0 0 0 12px #fdfbf7,
+		inset 0 0 0 14px #1a3a0f;
+	aspect-ratio: 2.5/1 !important;
+	padding: 0 !important;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+/* Subtle background pattern */
+.stats-item-1.check-card::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-image: repeating-linear-gradient(
+		0deg,
+		transparent,
+		transparent 20px,
+		rgba(26, 58, 15, 0.02) 20px,
+		rgba(26, 58, 15, 0.02) 21px
+	);
+	pointer-events: none;
+	z-index: 0;
+}
+
+/* Large watermark */
+.stats-item-1.check-card::after {
+	content: "₹";
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%) rotate(-12deg);
+	font-size: 18rem;
+	font-weight: 900;
+	color: rgba(26, 58, 15, 0.025);
+	pointer-events: none;
+	z-index: 0;
+	font-family: "Barlow Condensed", sans-serif;
+	line-height: 1;
 }
 
 .stats-item-2 {
@@ -454,11 +503,268 @@
 	border-radius: 1em;
 }
 
+/* Check Card Override */
+.stats-item-1.check-card {
+	border-radius: 0.4em;
+}
+
+/* ============================================
+   CHECK HEADER SECTION
+   ============================================ */
+
+.check-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	padding: 1.5em 2em 0.8em 2em;
+	border-bottom: 1px solid rgba(26, 58, 15, 0.15);
+	position: relative;
+	z-index: 1;
+}
+
+.check-bank-info {
+	display: flex;
+	flex-direction: column;
+	gap: 0.2em;
+}
+
+.bank-name {
+	font-family: "Barlow Condensed", sans-serif;
+	font-size: 1.8rem;
+	font-weight: 900;
+	font-style: italic;
+	text-transform: uppercase;
+	color: #1a3a0f;
+	margin: 0;
+	letter-spacing: 0.05em;
+	line-height: 1;
+}
+
+.bank-address {
+	font-family: "DM Mono", monospace;
+	font-size: 0.75rem;
+	color: #1a3a0f;
+	opacity: 0.6;
+	margin: 0;
+	font-weight: 500;
+}
+
+.check-number-date {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	gap: 0.3em;
+}
+
+.check-number,
+.check-date {
+	font-family: "DM Mono", monospace;
+	font-size: 0.85rem;
+	color: #1a3a0f;
+	margin: 0;
+	font-weight: 600;
+	letter-spacing: 0.05em;
+}
+
+/* ============================================
+   CHECK BODY SECTION
+   ============================================ */
+
+.check-body {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	gap: 1em;
+	padding: 1.2em 2em;
+	position: relative;
+	z-index: 1;
+}
+
+/* Payee Section */
+.check-payee-section {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 1em;
+}
+
+.payee-line {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	gap: 0.3em;
+}
+
+.payee-label {
+	font-family: "DM Mono", monospace;
+	font-size: 0.65rem;
+	color: #1a3a0f;
+	opacity: 0.6;
+	text-transform: uppercase;
+	letter-spacing: 0.1em;
+	font-weight: 600;
+}
+
+.payee-name {
+	font-family: "Barlow Condensed", sans-serif;
+	font-size: 2rem;
+	font-weight: 900;
+	font-style: italic;
+	text-transform: uppercase;
+	color: #1a3a0f;
+	border-bottom: 2px solid #1a3a0f;
+	padding-bottom: 0.2em;
+	letter-spacing: 0.03em;
+}
+
+.amount-box {
+	display: flex;
+	align-items: center;
+	gap: 0.3em;
+	border: 2px solid #1a3a0f;
+	padding: 0.5em 1em;
+	background: rgba(255, 255, 255, 0.5);
+	border-radius: 0.2em;
+	min-width: 150px;
+	justify-content: center;
+}
+
+.currency {
+	font-family: "Barlow Condensed", sans-serif;
+	font-size: 1.8rem;
+	font-weight: 900;
+	color: #1a3a0f;
+}
+
+.amount-number {
+	font-family: "Barlow Condensed", sans-serif;
+	font-size: 1.8rem;
+	font-weight: 900;
+	color: #1a3a0f;
+	font-style: italic;
+}
+
+/* Amount in Words */
+.amount-words-line {
+	border-bottom: 1px solid rgba(26, 58, 15, 0.3);
+	padding-bottom: 0.5em;
+}
+
+.amount-words {
+	font-family: "Barlow Condensed", sans-serif;
+	font-size: 1.1rem;
+	font-weight: 600;
+	color: #1a3a0f;
+	font-style: italic;
+	text-transform: capitalize;
+}
+
 /* Text alignment in grid */
 .stats-col {
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
+	position: relative;
+	z-index: 1;
+}
+
+/* ============================================
+   CHECK MEMO & SIGNATURE SECTION
+   ============================================ */
+
+.check-memo-section {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-end;
+	gap: 2em;
+	margin-top: auto;
+}
+
+.memo-line {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	gap: 0.4em;
+}
+
+.memo-label {
+	font-family: "DM Mono", monospace;
+	font-size: 0.7rem;
+	color: #1a3a0f;
+	opacity: 0.6;
+	text-transform: uppercase;
+	letter-spacing: 0.1em;
+	font-weight: 600;
+}
+
+.memo-items {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25em;
+	border-bottom: 1px solid rgba(26, 58, 15, 0.3);
+	padding-bottom: 0.5em;
+}
+
+.memo-items span {
+	font-family: "Barlow Condensed", sans-serif;
+	font-size: 0.95rem;
+	font-weight: 600;
+	color: #1a3a0f;
+	position: relative;
+	padding-left: 1.2em;
+}
+
+.memo-items span::before {
+	content: "•";
+	position: absolute;
+	left: 0;
+	color: #1a3a0f;
+	font-weight: 900;
+}
+
+.signature-line {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	min-width: 200px;
+}
+
+.signature-placeholder {
+	border-bottom: 2px solid #1a3a0f;
+	padding: 1.5em 1em 0.3em 1em;
+	min-width: 180px;
+	text-align: center;
+}
+
+.signature-text {
+	font-family: "DM Mono", monospace;
+	font-size: 0.65rem;
+	color: #1a3a0f;
+	opacity: 0.5;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	font-weight: 600;
+}
+
+/* ============================================
+   CHECK FOOTER - MICR LINE
+   ============================================ */
+
+.check-footer {
+	padding: 0.8em 2em;
+	border-top: 1px solid rgba(26, 58, 15, 0.15);
+	background: rgba(26, 58, 15, 0.02);
+	position: relative;
+	z-index: 1;
+}
+
+.micr-line {
+	font-family: "DM Mono", monospace;
+	font-size: 1.1rem;
+	color: #1a3a0f;
+	opacity: 0.4;
+	letter-spacing: 0.3em;
+	font-weight: 700;
 }
 
 /* Card Titles */
@@ -640,6 +946,28 @@
 		padding: 1.75em;
 	}
 
+	/* Check card specific adjustments */
+	.stats-item-1.check-card {
+		aspect-ratio: 2.3/1 !important;
+	}
+
+	.bank-name {
+		font-size: 1.6rem;
+	}
+
+	.payee-name {
+		font-size: 1.8rem;
+	}
+
+	.amount-box {
+		min-width: 130px;
+	}
+
+	.currency,
+	.amount-number {
+		font-size: 1.6rem;
+	}
+
 	.stats-col h1 {
 		font-size: 1.85rem;
 	}
@@ -701,6 +1029,48 @@
 	.stats-item-3 {
 		aspect-ratio: 16/8;
 		padding: 1.5em;
+	}
+
+	/* Check card tablet adjustments */
+	.stats-item-1.check-card {
+		aspect-ratio: 2.2/1 !important;
+	}
+
+	.check-header,
+	.check-body,
+	.check-footer {
+		padding-left: 1.5em;
+		padding-right: 1.5em;
+	}
+
+	.bank-name {
+		font-size: 1.5rem;
+	}
+
+	.payee-name {
+		font-size: 1.6rem;
+	}
+
+	.amount-box {
+		min-width: 120px;
+		padding: 0.4em 0.8em;
+	}
+
+	.currency,
+	.amount-number {
+		font-size: 1.4rem;
+	}
+
+	.amount-words {
+		font-size: 1rem;
+	}
+
+	.memo-items span {
+		font-size: 0.85rem;
+	}
+
+	.stats-item-1.check-card::after {
+		font-size: 14rem;
 	}
 
 	.stats-col h1 {
@@ -840,6 +1210,107 @@
 	.stats-row-1 .stats-item-1 {
 		width: 100%;
 		max-width: 100%;
+	}
+
+	/* Check card mobile adjustments */
+	.stats-item-1.check-card {
+		aspect-ratio: 1.5/1 !important;
+	}
+
+	.check-header {
+		flex-direction: column;
+		gap: 0.8em;
+		padding: 1.2em 1.2em 0.6em 1.2em;
+	}
+
+	.check-bank-info {
+		align-items: flex-start;
+	}
+
+	.check-number-date {
+		align-items: flex-start;
+		flex-direction: row;
+		gap: 1em;
+	}
+
+	.bank-name {
+		font-size: 1.3rem;
+	}
+
+	.bank-address,
+	.check-number,
+	.check-date {
+		font-size: 0.7rem;
+	}
+
+	.check-body {
+		padding: 1em 1.2em;
+		gap: 0.8em;
+	}
+
+	.check-payee-section {
+		flex-direction: column;
+		align-items: stretch;
+		gap: 0.8em;
+	}
+
+	.payee-name {
+		font-size: 1.4rem;
+	}
+
+	.amount-box {
+		min-width: auto;
+		width: 100%;
+		padding: 0.6em 1em;
+	}
+
+	.currency,
+	.amount-number {
+		font-size: 1.5rem;
+	}
+
+	.amount-words {
+		font-size: 0.9rem;
+	}
+
+	.check-memo-section {
+		flex-direction: column;
+		gap: 1em;
+	}
+
+	.memo-items {
+		gap: 0.2em;
+	}
+
+	.memo-items span {
+		font-size: 0.8rem;
+	}
+
+	.signature-line {
+		align-items: stretch;
+		min-width: auto;
+	}
+
+	.signature-placeholder {
+		min-width: auto;
+		padding: 1.2em 0.8em 0.3em 0.8em;
+	}
+
+	.signature-text {
+		font-size: 0.6rem;
+	}
+
+	.check-footer {
+		padding: 0.6em 1.2em;
+	}
+
+	.micr-line {
+		font-size: 0.75rem;
+		letter-spacing: 0.2em;
+	}
+
+	.stats-item-1.check-card::after {
+		font-size: 8rem;
 	}
 
 	.stats-cards-container {
