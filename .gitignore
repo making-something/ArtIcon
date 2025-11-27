@@ -65,3 +65,7 @@ dump.rdb
 # Miscellaneous
 .cache
 .parcel-cache
+
+# User CSV backups (exclude from git, too large)
+backend/user-backups/*.csv
+!backend/user-backups/.gitkeep
