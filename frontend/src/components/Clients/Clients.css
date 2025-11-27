@@ -125,7 +125,7 @@
 
 /* Make MULTIICON logo bigger */
 .clients .grid-item[data-client="multiicon"] .logo-wrapper {
-	width: clamp(200px, 42vw, 450px);
+	width: clamp(200px, 42vw, 370px);
 }
 
 /* Make RITA logo bigger */

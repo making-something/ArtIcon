@@ -77,12 +77,7 @@ const Register = () => {
 			id: 3,
 			field: "specialization",
 			type: "select",
-			options: [
-				"UI/UX Design",
-				"Video Editing",
-				"Graphic Design",
-				"All-rounder",
-			],
+			options: ["UI/UX Design", "Video Editing", "Graphic Design", "All"],
 			pre: " and specialize in and want to participate in ",
 			post: " .",
 			placeholder: "CHOOSE FIELD",
