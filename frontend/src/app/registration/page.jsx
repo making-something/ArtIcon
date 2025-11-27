@@ -803,7 +803,7 @@ const Register = () => {
 														</option>
 														{item.options.map((opt) => (
 															<option key={opt} value={opt}>
-																{opt}
+																{opt === "All" ? "All Rounder" : opt}
 															</option>
 														))}
 													</select>

@@ -415,7 +415,7 @@ const Dashboard = () => {
 										<option value="ui_ux">UI/UX Design</option>
 										<option value="graphics">Graphic Design</option>
 										<option value="video">Video Editing</option>
-										<option value="all">All</option>
+										<option value="all">All Rounder</option>
 									</select>
 								</div>
 								<div className="form-actions">
