@@ -115,16 +115,16 @@ export default function Timeline() {
 
 					// Use local timeline images
 					const timelineImages = [
-						"/timeline/img1.jpg",
-						"/timeline/img2.jpg",
-						"/timeline/img3.jpg",
-						"/timeline/img4.jpg",
-						"/timeline/img5.jpg",
-						"/timeline/img6.jpg",
-						"/timeline/img7.jpg",
-						"/timeline/img8.jpg",
-						"/timeline/img9.jpg",
-						"/timeline/img10.jpg",
+						"/timeline/img1.avif",
+						"/timeline/img2.avif",
+						"/timeline/img3.avif",
+						"/timeline/img4.avif",
+						"/timeline/img5.avif",
+						"/timeline/img6.avif",
+						"/timeline/img7.avif",
+						"/timeline/img8.avif",
+						"/timeline/img9.avif",
+						"/timeline/img10.avif",
 					];
 
 					// Create 8 image cards with better distribution (reduced from 10)

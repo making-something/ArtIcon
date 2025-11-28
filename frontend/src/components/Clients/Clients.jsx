@@ -142,7 +142,7 @@ const Clients = () => {
 				onMouseMove={handleMouseMove}
 			>
 				<div className="clients-header">
-					<p>[ &nbsp;The Dream Team&nbsp; ]</p>
+					<p style={{ color: "#8c7e77" }}>[ &nbsp;The Dream Team&nbsp; ]</p>
 					<h3>Powered By Passion, Backed By Excellence</h3>
 				</div>
 

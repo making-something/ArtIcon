@@ -1,0 +1,81 @@
+Image Optimization Log - 2025-11-28 15:43:06
+============================================================
+
+File: img1.jpg
+  Optimized as: img1.avif
+  Original size: 2,300,922 bytes
+  Result size: 438,179 bytes
+  Compression: 80.96%
+  Status: optimized
+
+File: img10.jpg
+  Optimized as: img10.avif
+  Original size: 708,042 bytes
+  Result size: 522,979 bytes
+  Compression: 26.14%
+  Status: optimized
+
+File: img2.jpg
+  Optimized as: img2.avif
+  Original size: 1,218,053 bytes
+  Result size: 222,719 bytes
+  Compression: 81.72%
+  Status: optimized
+
+File: img3.jpg
+  Optimized as: img3.avif
+  Original size: 426,886 bytes
+  Result size: 184,377 bytes
+  Compression: 56.81%
+  Status: optimized
+
+File: img4.jpg
+  Optimized as: img4.avif
+  Original size: 2,626,888 bytes
+  Result size: 209,232 bytes
+  Compression: 92.03%
+  Status: optimized
+
+File: img5.jpg
+  Optimized as: img5.avif
+  Original size: 1,277,315 bytes
+  Result size: 152,207 bytes
+  Compression: 88.08%
+  Status: optimized
+
+File: img6.jpg
+  Optimized as: img6.avif
+  Original size: 2,785,096 bytes
+  Result size: 549,507 bytes
+  Compression: 80.27%
+  Status: optimized
+
+File: img7.jpg
+  Optimized as: img7.avif
+  Original size: 517,442 bytes
+  Result size: 247,837 bytes
+  Compression: 52.10%
+  Status: optimized
+
+File: img8.jpg
+  Optimized as: img8.avif
+  Original size: 3,090,099 bytes
+  Result size: 652,836 bytes
+  Compression: 78.87%
+  Status: optimized
+
+File: img9.jpg
+  Optimized as: img9.avif
+  Original size: 1,263,928 bytes
+  Result size: 152,524 bytes
+  Compression: 87.93%
+  Status: optimized
+
+============================================================
+SUMMARY:
+Images processed: 10
+Converted: 10
+Skipped: 0
+Total original: 16,214,671 bytes
+Total optimized: 3,332,397 bytes
+Space saved: 12,882,274 bytes (79.45%)
