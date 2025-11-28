@@ -49,10 +49,21 @@ const Dashboard = () => {
 		const userData = getCurrentParticipant();
 		setParticipant(userData);
 
+		// Check if user is_present and redirect to event dashboard
+		if (userData?.is_present) {
+			router.push("/dashboard/event");
+			return;
+		}
+
 		// Refresh participant data from backend to get latest approval status
 		const refreshData = async () => {
 			const freshData = await refreshParticipantData();
 			if (freshData) {
+				// Check if is_present changed and redirect if needed
+				if (freshData.is_present) {
+					router.push("/dashboard/event");
+					return;
+				}
 				setParticipant(freshData);
 			}
 		};

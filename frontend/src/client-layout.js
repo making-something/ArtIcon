@@ -15,126 +15,87 @@ export default function ClientLayout({ children }) {
 	// Routes where Menu should be hidden
 	const hideMenuRoutes = ["/registration", "/dashboard", "/admin"];
 
-		const shouldHideMenu = hideMenuRoutes.includes(pathname) || pathname.startsWith("/admin");
+	const shouldHideMenu =
+		hideMenuRoutes.includes(pathname) ||
+		pathname.startsWith("/admin") ||
+		pathname.startsWith("/dashboard");
 
-	
+	return (
+		<ReactLenis
+			root
+			options={{
+				// Mobile: Native scroll (duration 0) for performance and feel
 
-		return (
+				// Desktop: Smooth scroll (duration 1.2) for effect
 
-			<ReactLenis 
+				duration: isMobile ? 0 : 1.2,
 
-				root 
+				smoothTouch: false, // CRITICAL: Native touch handling
 
-				options={{
+				touchMultiplier: 2,
 
-					// Mobile: Native scroll (duration 0) for performance and feel
+				infinite: false,
 
-					// Desktop: Smooth scroll (duration 1.2) for effect
+				lerp: 0.1,
 
-					duration: isMobile ? 0 : 1.2, 
+				wheelMultiplier: 1,
 
-					smoothTouch: false, // CRITICAL: Native touch handling
+				orientation: "vertical",
 
-					touchMultiplier: 2,
+				smoothWheel: true,
 
-					infinite: false,
+				syncTouch: false,
+			}}
+		>
+			<LenisGSAPSync />
 
-					lerp: 0.1,
+			{!shouldHideMenu && <Menu pageRef={pageRef} />}
 
-					wheelMultiplier: 1,
+			<div className="page" ref={pageRef}>
+				{children}
+			</div>
+		</ReactLenis>
+	);
+}
 
-					orientation: "vertical",
+// Separate component to use the useLenis hook within the context
 
-					smoothWheel: true,
+function LenisGSAPSync() {
+	const lenis = useLenis();
 
-					syncTouch: false,
+	useEffect(() => {
+		if (!lenis) return;
 
-				}}
+		// Register ScrollTrigger if not already
 
-			>
+		gsap.registerPlugin(ScrollTrigger);
 
-				<LenisGSAPSync />
+		// Update ScrollTrigger on Lenis scroll
 
-				{!shouldHideMenu && <Menu pageRef={pageRef} />}
+		lenis.on("scroll", ScrollTrigger.update);
 
-	
+		// Add Lenis RAF to GSAP ticker to sync animations
 
-				<div className="page" ref={pageRef}>
+		// Note: ReactLenis handles the RAF loop, we just need GSAP to be aware
 
-					{children}
+		const tickerFn = (time) => {
+			// This keeps GSAP in sync with Lenis's internal time
 
-				</div>
+			lenis.raf(time * 1000);
+		};
 
-			</ReactLenis>
+		gsap.ticker.add(tickerFn);
 
-		);
+		// Disable lag smoothing to prevent jumps during heavy processing
 
-	}
+		gsap.ticker.lagSmoothing(0);
 
-	
+		return () => {
+			gsap.ticker.remove(tickerFn);
 
-	// Separate component to use the useLenis hook within the context
+			lenis.off("scroll", ScrollTrigger.update);
+		};
+	}, [lenis]);
 
-	function LenisGSAPSync() {
-
-		const lenis = useLenis();
-
-	
-
-		useEffect(() => {
-
-			if (!lenis) return;
-
-	
-
-			// Register ScrollTrigger if not already
-
-			gsap.registerPlugin(ScrollTrigger);
-
-	
-
-			// Update ScrollTrigger on Lenis scroll
-
-			lenis.on('scroll', ScrollTrigger.update);
-
-	
-
-			// Add Lenis RAF to GSAP ticker to sync animations
-
-			// Note: ReactLenis handles the RAF loop, we just need GSAP to be aware
-
-			const tickerFn = (time) => {
-
-				// This keeps GSAP in sync with Lenis's internal time
-
-				lenis.raf(time * 1000);
-
-			};
-
-			
-
-			gsap.ticker.add(tickerFn);
-
-			
-
-			// Disable lag smoothing to prevent jumps during heavy processing
-
-			gsap.ticker.lagSmoothing(0);
-
-	
-
-			return () => {
-
-				gsap.ticker.remove(tickerFn);
-
-				lenis.off('scroll', ScrollTrigger.update);
-
-			};
-
-		}, [lenis]);
-
-	
-
-		return null;
-
-	}
+	return null;
+}
