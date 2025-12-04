@@ -474,6 +474,86 @@ const EventDashboard = () => {
 					<p className="event-subtitle">Innovation Meets Creativity</p>
 				</section>
 
+				{/* Tasks & Live Updates Grid */}
+				<section className="tasks-updates-grid">
+					{/* Tasks Panel */}
+					<div className="tasks-panel">
+						<div className="panel-header">
+							<h2 className="panel-title">Your Tasks</h2>
+							<span className="task-count">
+								{getParticipantTasks().length} Task
+								{getParticipantTasks().length !== 1 ? "s" : ""}
+							</span>
+						</div>
+						<div className="tasks-list">
+							{participant?.category === "all" ? (
+								<>
+									{["ui_ux", "graphics", "video"].map((cat) => {
+										const task = DUMMY_TASKS[cat];
+										return (
+											<div key={cat} className="category-group">
+												<h3 className="category-title">
+													{CATEGORY_LABELS[cat]}
+												</h3>
+												<div className="task-card active">
+													<div className="task-header">
+														<span className="task-status-badge active">
+															Live
+														</span>
+														<span className="task-duration">
+															{task.duration}
+														</span>
+													</div>
+													<h3 className="task-title">{task.title}</h3>
+													<p className="task-description">{task.description}</p>
+												</div>
+											</div>
+										);
+									})}
+								</>
+							) : (
+								(() => {
+									const task = DUMMY_TASKS[participant?.category];
+									if (!task)
+										return (
+											<div className="empty-state">
+												No task available for your category.
+											</div>
+										);
+									return (
+										<div className="task-card active">
+											<div className="task-header">
+												<span className="task-status-badge active">Live</span>
+												<span className="task-duration">{task.duration}</span>
+											</div>
+											<h3 className="task-title">{task.title}</h3>
+											<p className="task-description">{task.description}</p>
+										</div>
+									);
+								})()
+							)}
+						</div>
+					</div>
+
+					{/* Live Updates Panel */}
+					<div className="updates-panel">
+						<div className="panel-header">
+							<h2 className="panel-title">Live Updates</h2>
+						</div>
+						<div className="updates-list">
+							{LIVE_UPDATES.map((update) => (
+								<div key={update.id} className="update-item">
+									<span className="update-arrow">&gt;</span>
+									<div className="update-content">
+										<p className="update-text">{update.text}</p>
+										<span className="update-time">{update.time}</span>
+									</div>
+								</div>
+							))}
+						</div>
+					</div>
+				</section>
+
 				{/* Timer Section */}
 				<section className="timer-section">
 					<div className="timer-container">
@@ -505,106 +585,15 @@ const EventDashboard = () => {
 					</div>
 				</section>
 
-				{/* Tasks & Live Updates Grid */}
-				<section className="tasks-updates-grid">
-					{/* Tasks Panel */}
-					<div className="tasks-panel">
-						<div className="panel-header">
-							<h2 className="panel-title">
-								<span className="title-icon">📋</span>
-								Your Tasks
-							</h2>
-							<span className="task-count">
-								{getParticipantTasks().length} Task
-								{getParticipantTasks().length !== 1 ? "s" : ""}
-							</span>
-						</div>
-						<div className="tasks-list">
-							{participant?.category === "all" ? (
-								<>
-									{["ui_ux", "graphics", "video"].map((cat) => {
-										const task = DUMMY_TASKS[cat];
-										return (
-											<div key={cat} className="category-group">
-												<h3 className="category-title">
-													{CATEGORY_LABELS[cat]}
-												</h3>
-												<div className="task-card active">
-													<div className="task-header">
-														<span className="task-status-badge active">
-															🔴 Live
-														</span>
-														<span className="task-duration">
-															⏱ {task.duration}
-														</span>
-													</div>
-													<h3 className="task-title">{task.title}</h3>
-													<p className="task-description">{task.description}</p>
-												</div>
-											</div>
-										);
-									})}
-								</>
-							) : (
-								(() => {
-									const task = DUMMY_TASKS[participant?.category];
-									if (!task)
-										return (
-											<div className="empty-state">
-												No task available for your category.
-											</div>
-										);
-									return (
-										<div className="task-card active">
-											<div className="task-header">
-												<span className="task-status-badge active">
-													🔴 Live
-												</span>
-												<span className="task-duration">⏱ {task.duration}</span>
-											</div>
-											<h3 className="task-title">{task.title}</h3>
-											<p className="task-description">{task.description}</p>
-										</div>
-									);
-								})()
-							)}
-						</div>
-					</div>
-
-					{/* Live Updates Panel */}
-					<div className="updates-panel">
-						<div className="panel-header">
-							<h2 className="panel-title">
-								<span className="title-icon live-dot"></span>
-								Live Updates
-							</h2>
-						</div>
-						<div className="updates-list">
-							{LIVE_UPDATES.map((update) => (
-								<div key={update.id} className="update-item">
-									<span className="update-arrow">&gt;</span>
-									<div className="update-content">
-										<p className="update-text">{update.text}</p>
-										<span className="update-time">{update.time}</span>
-									</div>
-								</div>
-							))}
-						</div>
-					</div>
-				</section>
-
 				{/* Submission Section */}
 				<section className="submission-section">
 					<div className="submission-container">
 						<div className="panel-header">
-							<h2 className="panel-title">
-								<span className="title-icon">📤</span>
-								Submit Your Work
-							</h2>
+							<h2 className="panel-title">Submit Your Work</h2>
 						</div>
 						{hasSubmitted ? (
 							<div className="submission-success">
-								<span className="success-icon">✓</span>
+								<span className="success-icon"></span>
 								<h3>Submission Received!</h3>
 								<p>Your work has been successfully submitted.</p>
 							</div>
