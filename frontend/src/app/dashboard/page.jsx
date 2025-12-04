@@ -7,6 +7,7 @@ import {
 	logout,
 	updateProfile,
 	uploadPortfolioFile,
+	refreshParticipantData,
 } from "@/services/api";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
@@ -65,6 +66,14 @@ const Dashboard = () => {
 		if (userData?.is_present) {
 			router.push("/dashboard/event");
 			return;
+		} else {
+			// Refresh data to check if status has changed
+			refreshParticipantData().then((freshData) => {
+				if (freshData?.is_present) {
+					setParticipant(freshData);
+					router.push("/dashboard/event");
+				}
+			});
 		}
 
 		// Countdown timer

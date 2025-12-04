@@ -205,6 +205,7 @@ export class ParticipantController {
 					email: participant.email,
 					category: participant.category,
 					city: participant.city,
+					is_present: Boolean(participant.is_present),
 				},
 			});
 		} catch (error) {
@@ -235,7 +236,10 @@ export class ParticipantController {
 
 			res.status(200).json({
 				success: true,
-				data: participant,
+				data: {
+					...participant,
+					is_present: Boolean(participant.is_present),
+				},
 			});
 		} catch (error) {
 			console.error("Error in getById:", error);
@@ -265,7 +269,10 @@ export class ParticipantController {
 
 			res.status(200).json({
 				success: true,
-				data: participant,
+				data: {
+					...participant,
+					is_present: Boolean(participant.is_present),
+				},
 			});
 		} catch (error) {
 			console.error("Error in getByEmail:", error);
@@ -510,6 +517,7 @@ export class ParticipantController {
 					email: participant.email,
 					category: participant.category,
 					city: participant.city,
+					is_present: Boolean(participant.is_present),
 				},
 			});
 		} catch (error) {
