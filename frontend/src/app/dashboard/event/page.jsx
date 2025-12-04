@@ -62,7 +62,6 @@ const EventDashboard = () => {
 		seconds: 0,
 	});
 	const [isEventEnded, setIsEventEnded] = useState(false);
-	const [submissionUrl, setSubmissionUrl] = useState("");
 	const [submissionFile, setSubmissionFile] = useState(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [hasSubmitted, setHasSubmitted] = useState(false);
@@ -129,18 +128,42 @@ const EventDashboard = () => {
 
 	// Handle submission
 	const handleSubmit = async () => {
-		if (!submissionUrl && !submissionFile) {
-			alert("Please provide a submission URL or upload a file.");
+		if (!submissionFile) {
+			alert("Please upload a file.");
 			return;
 		}
 
 		setIsSubmitting(true);
-		// Simulate submission (replace with actual API call)
-		setTimeout(() => {
-			setIsSubmitting(false);
+
+		try {
+			const formData = new FormData();
+			formData.append("file", submissionFile);
+
+			// Use environment variable for FTP server URL
+			const ftpServerUrl =
+				process.env.NEXT_PUBLIC_FTP_SERVER_URL || "http://localhost:3000";
+			const username = encodeURIComponent(participant.name || "anonymous");
+
+			const response = await fetch(
+				`${ftpServerUrl}/upload?username=${username}`,
+				{
+					method: "POST",
+					body: formData,
+				}
+			);
+
+			if (!response.ok) {
+				throw new Error("Upload failed");
+			}
+
 			setHasSubmitted(true);
 			alert("Submission successful!");
-		}, 1500);
+		} catch (error) {
+			console.error("Submission error:", error);
+			alert("Submission failed. Please try again.");
+		} finally {
+			setIsSubmitting(false);
+		}
 	};
 
 	const handleFileChange = (e) => {
@@ -568,21 +591,6 @@ const EventDashboard = () => {
 							</div>
 						) : (
 							<div className="submission-form">
-								<div className="submission-input-group">
-									<label className="submission-label">
-										Submission URL (Google Drive, Figma, etc.)
-									</label>
-									<input
-										type="url"
-										className="submission-input"
-										placeholder="https://drive.google.com/..."
-										value={submissionUrl}
-										onChange={(e) => setSubmissionUrl(e.target.value)}
-									/>
-								</div>
-								<div className="submission-divider">
-									<span>OR</span>
-								</div>
 								<div className="submission-input-group">
 									<label className="submission-label">
 										Upload File (ZIP, PDF, etc.)
