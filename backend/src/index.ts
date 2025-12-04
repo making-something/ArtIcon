@@ -86,6 +86,12 @@ const io = new SocketServer(httpServer, {
 	},
 });
 
+// Middleware to attach io to req
+app.use((req: any, _res, next) => {
+	req.io = io;
+	next();
+});
+
 // Middleware
 app.use(cors(corsOptions));
 app.options(/.*/, cors(corsOptions));

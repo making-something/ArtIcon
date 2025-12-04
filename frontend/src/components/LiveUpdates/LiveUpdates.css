@@ -1,0 +1,104 @@
+/* Updates Panel */
+.updates-panel {
+	background: rgba(255, 255, 255, 0.03);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 1rem;
+	overflow: hidden;
+	backdrop-filter: blur(2px);
+	-webkit-backdrop-filter: blur(2px);
+	height: fit-content;
+}
+
+.panel-header {
+	padding: 1rem 1.5rem;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.panel-title {
+	font-family: "Big Shoulders Display", sans-serif;
+	font-size: 1.25rem;
+	font-weight: 600;
+	color: #f2eeda;
+	text-transform: uppercase;
+	letter-spacing: 0.1em;
+	margin: 0;
+}
+
+.updates-list {
+	padding: 1rem;
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+	max-height: 400px;
+	overflow-y: auto;
+}
+
+.updates-list::-webkit-scrollbar {
+	width: 6px;
+}
+
+.updates-list::-webkit-scrollbar-track {
+	background: rgba(255, 255, 255, 0.05);
+	border-radius: 3px;
+}
+
+.updates-list::-webkit-scrollbar-thumb {
+	background: rgba(238, 100, 54, 0.5);
+	border-radius: 3px;
+}
+
+.update-item {
+	display: flex;
+	align-items: flex-start;
+	gap: 0.75rem;
+	padding: 0.75rem;
+	background: rgba(255, 255, 255, 0.02);
+	border-radius: 0.5rem;
+	transition: all 0.3s ease;
+}
+
+.update-item:hover {
+	background: rgba(255, 255, 255, 0.05);
+}
+
+.update-arrow {
+	font-family: "Geist Mono", monospace;
+	font-size: 1rem;
+	font-weight: 700;
+	color: #ee6436;
+	flex-shrink: 0;
+}
+
+.update-content {
+	flex: 1;
+}
+
+.update-text {
+	font-family: "PP Neue Montreal", sans-serif;
+	font-size: 0.9rem;
+	color: #f2eeda;
+	margin: 0 0 0.25rem 0;
+	line-height: 1.4;
+}
+
+.update-time {
+	font-family: "Geist Mono", monospace;
+	font-size: 0.7rem;
+	color: #8c8a7f;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+}
+
+.empty-state {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 2rem;
+	font-family: "Geist Mono", monospace;
+	font-size: 0.85rem;
+	color: #8c8a7f;
+	text-align: center;
+}

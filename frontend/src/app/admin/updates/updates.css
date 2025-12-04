@@ -1,0 +1,103 @@
+.admin-updates-container {
+	padding: 2rem;
+	max-width: 800px;
+	margin: 0 auto;
+	color: #f2eeda;
+	font-family: "PP Neue Montreal", sans-serif;
+}
+
+.admin-updates-container h1 {
+	font-family: "Big Shoulders Display", sans-serif;
+	font-size: 2.5rem;
+	margin-bottom: 2rem;
+	color: #ee6436;
+	text-transform: uppercase;
+}
+
+.update-form {
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
+	background: rgba(255, 255, 255, 0.03);
+	padding: 2rem;
+	border-radius: 1rem;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.update-form textarea {
+	width: 100%;
+	background: rgba(0, 0, 0, 0.2);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 0.5rem;
+	padding: 1rem;
+	color: #f2eeda;
+	font-family: "Geist Mono", monospace;
+	font-size: 1rem;
+	resize: vertical;
+	min-height: 120px;
+}
+
+.update-form textarea:focus {
+	outline: none;
+	border-color: #ee6436;
+}
+
+.update-form button {
+	align-self: flex-end;
+	background: #ee6436;
+	color: #141414;
+	border: none;
+	padding: 0.75rem 2rem;
+	border-radius: 0.5rem;
+	font-family: "Geist Mono", monospace;
+	font-weight: 600;
+	text-transform: uppercase;
+	cursor: pointer;
+	transition: all 0.3s ease;
+}
+
+.update-form button:hover:not(:disabled) {
+	background: #ff7a4d;
+	transform: translateY(-2px);
+}
+
+.update-form button:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+.status-message {
+	margin-top: 1.5rem;
+	padding: 1rem;
+	border-radius: 0.5rem;
+	font-family: "Geist Mono", monospace;
+	font-size: 0.9rem;
+}
+
+.status-message.success {
+	background: rgba(34, 197, 94, 0.1);
+	color: #22c55e;
+	border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+.status-message.error {
+	background: rgba(239, 68, 68, 0.1);
+	color: #ef4444;
+	border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.admin-updates-container > button {
+    margin-top: 2rem;
+    background: transparent;
+    border: 1px solid #8c8a7f;
+    color: #8c8a7f;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-family: "Geist Mono", monospace;
+}
+
+.admin-updates-container > button:hover {
+    border-color: #f2eeda;
+    color: #f2eeda;
+}

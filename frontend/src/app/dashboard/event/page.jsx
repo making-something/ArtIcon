@@ -5,6 +5,7 @@ import Image from "next/image";
 import { gsap } from "gsap";
 import { SplitText } from "gsap/dist/SplitText";
 import { getCurrentParticipant, isAuthenticated, logout } from "@/services/api";
+import LiveUpdates from "@/components/LiveUpdates/LiveUpdates";
 import "./event.css";
 
 if (typeof window !== "undefined") {
@@ -40,23 +41,6 @@ const DUMMY_TASKS = {
 		duration: "3 hours",
 	},
 };
-
-// Live updates - hardcoded for now
-const LIVE_UPDATES = [
-	{
-		id: 1,
-		text: "Event has started! Good luck to all participants.",
-		time: "10:00 AM",
-	},
-	{ id: 2, text: "Remember to save your work frequently.", time: "10:15 AM" },
-	{
-		id: 3,
-		text: "Mentors are available for quick questions.",
-		time: "10:30 AM",
-	},
-	{ id: 4, text: "Refreshments available at the lobby.", time: "11:00 AM" },
-	{ id: 5, text: "2 hours remaining - keep pushing!", time: "11:30 AM" },
-];
 
 // Event end time (3 hours from now for demo, replace with actual event time)
 const getEventEndTime = () => {
@@ -536,22 +520,7 @@ const EventDashboard = () => {
 					</div>
 
 					{/* Live Updates Panel */}
-					<div className="updates-panel">
-						<div className="panel-header">
-							<h2 className="panel-title">Live Updates</h2>
-						</div>
-						<div className="updates-list">
-							{LIVE_UPDATES.map((update) => (
-								<div key={update.id} className="update-item">
-									<span className="update-arrow">&gt;</span>
-									<div className="update-content">
-										<p className="update-text">{update.text}</p>
-										<span className="update-time">{update.time}</span>
-									</div>
-								</div>
-							))}
-						</div>
-					</div>
+					<LiveUpdates />
 				</section>
 
 				{/* Timer Section */}

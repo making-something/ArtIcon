@@ -173,4 +173,15 @@ router.get(
   adminController.exportParticipantsCSV.bind(adminController),
 );
 
+/**
+ * @route   POST /api/admin/updates
+ * @desc    Send live update
+ * @access  Admin
+ */
+router.post(
+  "/updates",
+  authenticateAdmin,
+  adminController.sendUpdate.bind(adminController),
+);
+
 export default router;

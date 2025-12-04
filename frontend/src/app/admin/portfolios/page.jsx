@@ -194,6 +194,12 @@ export default function AdminPortfolios() {
 					>
 						QR Scanner
 					</button>
+					<button
+						className="scanner-btn"
+						onClick={() => router.push("/admin/updates")}
+					>
+						Send Updates
+					</button>
 					<button className="logout-btn" onClick={handleLogout}>
 						Logout
 					</button>
