@@ -20,10 +20,8 @@ export default function AdminPortfolios() {
 		category: "",
 		approval_status: "all",
 		search: "",
-		page: 1,
-		limit: 20,
 	});
-	const [pagination, setPagination] = useState(null);
+	const [selectedParticipant, setSelectedParticipant] = useState(null);
 
 	const API_URL =
 		process.env.NEXT_PUBLIC_API_URL || "https://api.articon.multiicon.in";
@@ -57,8 +55,6 @@ export default function AdminPortfolios() {
 			const queryParams = new URLSearchParams({
 				category: filters.category,
 				approval_status: filters.approval_status,
-				page: filters.page.toString(),
-				limit: filters.limit.toString(),
 				...(filters.search && { search: filters.search }),
 			});
 
@@ -83,7 +79,6 @@ export default function AdminPortfolios() {
 
 			const data = await response.json();
 			setParticipants(data.data);
-			setPagination(data.pagination);
 			setError(null);
 		} catch (err) {
 			setError(err.message);
@@ -93,20 +88,16 @@ export default function AdminPortfolios() {
 	};
 
 	const handleCategoryChange = (category) => {
-		setFilters({ ...filters, category, page: 1 });
+		setFilters({ ...filters, category });
 	};
 
 	const handleSearchChange = (e) => {
 		const search = e.target.value;
-		setFilters({ ...filters, search, page: 1 });
-	};
-
-	const handlePageChange = (newPage) => {
-		setFilters({ ...filters, page: newPage });
+		setFilters({ ...filters, search });
 	};
 
 	const handleApprovalStatusChange = (approval_status) => {
-		setFilters({ ...filters, approval_status, page: 1 });
+		setFilters({ ...filters, approval_status });
 	};
 
 	const handleApprove = async (participantId, adminNotes = "") => {
@@ -181,7 +172,7 @@ export default function AdminPortfolios() {
 			return `${API_URL}${participant.portfolio_file_path}`;
 		}
 		if (participant.portfolio_url) {
-			if (participant.portfolio_url.startsWith('http')) {
+			if (participant.portfolio_url.startsWith("http")) {
 				return participant.portfolio_url;
 			} else {
 				return `https://${participant.portfolio_url}`;
@@ -231,7 +222,9 @@ export default function AdminPortfolios() {
 				<div className="filters-row">
 					<div className="filter-group">
 						<button
-							className={`filter-btn ${filters.category === "" ? "active" : ""}`}
+							className={`filter-btn ${
+								filters.category === "" ? "active" : ""
+							}`}
 							onClick={() => handleCategoryChange("")}
 						>
 							View All
@@ -319,11 +312,9 @@ export default function AdminPortfolios() {
 						Export CSV
 					</button>
 				</div>
-				{pagination && (
-					<div className="results-count">
-						Showing {participants.length} of {pagination.total}
-					</div>
-				)}
+				<div className="results-count">
+					Showing {participants.length} participants
+				</div>
 			</div>
 
 			<div className="table-container">
@@ -347,7 +338,11 @@ export default function AdminPortfolios() {
 						</thead>
 						<tbody>
 							{participants.map((participant) => (
-								<tr key={participant.id}>
+								<tr
+									key={participant.id}
+									onClick={() => setSelectedParticipant(participant)}
+									className="clickable-row"
+								>
 									<td>
 										<div style={{ fontWeight: "bold" }}>{participant.name}</div>
 										<div
@@ -362,9 +357,7 @@ export default function AdminPortfolios() {
 									<td>{getCategoryLabel(participant.category)}</td>
 									<td>{participant.city}</td>
 									<td>
-										<span
-											className={`badge ${participant.approval_status}`}
-										>
+										<span className={`badge ${participant.approval_status}`}>
 											{participant.approval_status}
 										</span>
 									</td>
@@ -374,11 +367,12 @@ export default function AdminPortfolios() {
 											target="_blank"
 											rel="noopener noreferrer"
 											className="btn-view action-btn"
+											onClick={(e) => e.stopPropagation()}
 										>
 											View
 										</a>
 									</td>
-									<td>
+									<td onClick={(e) => e.stopPropagation()}>
 										{participant.approval_status === "pending" && (
 											<>
 												<button
@@ -413,25 +407,153 @@ export default function AdminPortfolios() {
 				)}
 			</div>
 
-			{pagination && pagination.totalPages > 1 && (
-				<div className="pagination">
-					<button
-						className="page-btn"
-						disabled={filters.page === 1}
-						onClick={() => handlePageChange(filters.page - 1)}
-					>
-						Prev
-					</button>
-					<span className="page-info">
-						Page {pagination.page} / {pagination.totalPages}
-					</span>
-					<button
-						className="page-btn"
-						disabled={filters.page >= pagination.totalPages}
-						onClick={() => handlePageChange(filters.page + 1)}
-					>
-						Next
-					</button>
+			{/* Participant Details Popup */}
+			{selectedParticipant && (
+				<div
+					className="popup-overlay"
+					onClick={() => setSelectedParticipant(null)}
+				>
+					<div className="popup-container" onClick={(e) => e.stopPropagation()}>
+						<button
+							className="popup-close"
+							onClick={() => setSelectedParticipant(null)}
+						>
+							×
+						</button>
+						<h2 className="popup-title">Participant Details</h2>
+						<div className="popup-content">
+							<div className="detail-row">
+								<span className="detail-label">Name</span>
+								<span className="detail-value">{selectedParticipant.name}</span>
+							</div>
+							<div className="detail-row">
+								<span className="detail-label">Email</span>
+								<span className="detail-value">
+									{selectedParticipant.email}
+								</span>
+							</div>
+							<div className="detail-row">
+								<span className="detail-label">WhatsApp</span>
+								<span className="detail-value">
+									{selectedParticipant.whatsapp_no || "—"}
+								</span>
+							</div>
+							<div className="detail-row">
+								<span className="detail-label">City</span>
+								<span className="detail-value">{selectedParticipant.city}</span>
+							</div>
+							<div className="detail-row">
+								<span className="detail-label">Category</span>
+								<span className="detail-value">
+									{getCategoryLabel(selectedParticipant.category)}
+								</span>
+							</div>
+							<div className="detail-row">
+								<span className="detail-label">Role</span>
+								<span className="detail-value">
+									{selectedParticipant.role || "—"}
+								</span>
+							</div>
+							<div className="detail-row">
+								<span className="detail-label">Experience</span>
+								<span className="detail-value">
+									{selectedParticipant.experience || "—"}
+								</span>
+							</div>
+							<div className="detail-row">
+								<span className="detail-label">Organization</span>
+								<span className="detail-value">
+									{selectedParticipant.organization || "—"}
+								</span>
+							</div>
+							<div className="detail-row">
+								<span className="detail-label">Specialization</span>
+								<span className="detail-value">
+									{selectedParticipant.specialization || "—"}
+								</span>
+							</div>
+							<div className="detail-row">
+								<span className="detail-label">Source</span>
+								<span className="detail-value">
+									{selectedParticipant.source || "—"}
+								</span>
+							</div>
+							<div className="detail-row">
+								<span className="detail-label">Portfolio URL</span>
+								<span className="detail-value">
+									{selectedParticipant.portfolio_url ? (
+										<a
+											href={selectedParticipant.portfolio_url}
+											target="_blank"
+											rel="noopener noreferrer"
+										>
+											{selectedParticipant.portfolio_url}
+										</a>
+									) : (
+										"—"
+									)}
+								</span>
+							</div>
+							<div className="detail-row">
+								<span className="detail-label">Portfolio Edits</span>
+								<span className="detail-value">
+									{selectedParticipant.portfolio_edit_count || 0} / 2
+								</span>
+							</div>
+							<div className="detail-row">
+								<span className="detail-label">Status</span>
+								<span
+									className={`detail-value badge ${selectedParticipant.approval_status}`}
+								>
+									{selectedParticipant.approval_status}
+								</span>
+							</div>
+							<div className="detail-row">
+								<span className="detail-label">Present</span>
+								<span className="detail-value">
+									{selectedParticipant.is_present ? "Yes" : "No"}
+								</span>
+							</div>
+							<div className="detail-row">
+								<span className="detail-label">Registered At</span>
+								<span className="detail-value">
+									{new Date(selectedParticipant.created_at).toLocaleString()}
+								</span>
+							</div>
+							{selectedParticipant.admin_notes && (
+								<div className="detail-row">
+									<span className="detail-label">Admin Notes</span>
+									<span className="detail-value">
+										{selectedParticipant.admin_notes}
+									</span>
+								</div>
+							)}
+						</div>
+						<div className="popup-actions">
+							{selectedParticipant.approval_status === "pending" && (
+								<>
+									<button
+										className="action-btn btn-approve"
+										onClick={() => {
+											handleApprove(selectedParticipant.id);
+											setSelectedParticipant(null);
+										}}
+									>
+										Approve
+									</button>
+									<button
+										className="action-btn btn-reject"
+										onClick={() => {
+											handleReject(selectedParticipant.id);
+											setSelectedParticipant(null);
+										}}
+									>
+										Reject
+									</button>
+								</>
+							)}
+						</div>
+					</div>
 				</div>
 			)}
 		</div>

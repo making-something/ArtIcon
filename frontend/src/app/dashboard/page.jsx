@@ -5,7 +5,8 @@ import {
 	getCurrentParticipant,
 	isAuthenticated,
 	logout,
-	refreshParticipantData,
+	updateProfile,
+	uploadPortfolioFile,
 } from "@/services/api";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
@@ -16,6 +17,7 @@ const Dashboard = () => {
 	const router = useRouter();
 	const [participant, setParticipant] = useState(null);
 	const containerRef = useRef(null);
+	const fileInputRef = useRef(null);
 	const [timeRemaining, setTimeRemaining] = useState({
 		days: 0,
 		hours: 0,
@@ -27,6 +29,16 @@ const Dashboard = () => {
 	// Target date: December 7, 2025, 9:00 AM
 	const targetDate = new Date("2025-12-07T09:00:00").getTime();
 	const [showEditForm, setShowEditForm] = useState(false);
+	const [editFormData, setEditFormData] = useState({
+		name: "",
+		city: "",
+		category: "",
+		portfolio_url: "",
+		portfolioFile: null,
+	});
+	const [isUpdating, setIsUpdating] = useState(false);
+	const [updateError, setUpdateError] = useState("");
+	const [portfolioEditsRemaining, setPortfolioEditsRemaining] = useState(2);
 
 	const getCategoryLabel = (cat) => {
 		const map = {
@@ -54,23 +66,6 @@ const Dashboard = () => {
 			router.push("/dashboard/event");
 			return;
 		}
-
-		// Refresh participant data from backend to get latest approval status
-		const refreshData = async () => {
-			const freshData = await refreshParticipantData();
-			if (freshData) {
-				// Check if is_present changed and redirect if needed
-				if (freshData.is_present) {
-					router.push("/dashboard/event");
-					return;
-				}
-				setParticipant(freshData);
-			}
-		};
-		refreshData();
-
-		// Set up interval to refresh data every 30 seconds
-		const refreshInterval = setInterval(refreshData, 30000);
 
 		// Countdown timer
 		const calculateTimeRemaining = () => {
@@ -113,7 +108,6 @@ const Dashboard = () => {
 
 		return () => {
 			clearInterval(interval);
-			clearInterval(refreshInterval);
 		};
 	}, [router, targetDate]);
 
@@ -233,6 +227,109 @@ const Dashboard = () => {
 		router.push("/registration");
 	};
 
+	// Initialize edit form data when opening the form
+	const handleOpenEditForm = () => {
+		const editCount = participant?.portfolio_edit_count || 0;
+		setPortfolioEditsRemaining(2 - editCount);
+		setEditFormData({
+			name: participant?.name || "",
+			city: participant?.city || "",
+			category: participant?.category || "",
+			portfolio_url: participant?.portfolio_url || "",
+			portfolioFile: null,
+		});
+		setUpdateError("");
+		setShowEditForm(true);
+	};
+
+	// Handle edit form input changes
+	const handleEditFormChange = (e) => {
+		const { name, value } = e.target;
+		// If typing in portfolio URL, clear the file
+		if (name === "portfolio_url") {
+			setEditFormData((prev) => ({
+				...prev,
+				portfolio_url: value,
+				portfolioFile: null,
+			}));
+		} else {
+			setEditFormData((prev) => ({
+				...prev,
+				[name]: value,
+			}));
+		}
+	};
+
+	// Handle portfolio file selection
+	const handlePortfolioFileChange = (e) => {
+		const file = e.target.files[0];
+		if (file) {
+			const validTypes = [
+				"application/pdf",
+				"image/jpeg",
+				"image/png",
+				"image/webp",
+			];
+			if (!validTypes.includes(file.type)) {
+				setUpdateError(
+					"Invalid file type. Please upload a PDF or Image (JPG/PNG/WebP)."
+				);
+				return;
+			}
+			setEditFormData((prev) => ({
+				...prev,
+				portfolio_url: file.name,
+				portfolioFile: file,
+			}));
+		}
+	};
+
+	// Handle profile update submission
+	const handleUpdateProfile = async (e) => {
+		e.preventDefault();
+		setUpdateError("");
+		setIsUpdating(true);
+
+		try {
+			let portfolioData = { ...editFormData };
+
+			// If there's a file, upload it first
+			if (editFormData.portfolioFile) {
+				const uploadResponse = await uploadPortfolioFile(
+					editFormData.portfolioFile
+				);
+				if (uploadResponse.success) {
+					portfolioData.portfolio_file_path = uploadResponse.data.filePath;
+					portfolioData.portfolio_url = null;
+				} else {
+					throw new Error("Failed to upload portfolio file");
+				}
+			}
+
+			// Remove the File object before sending to API
+			delete portfolioData.portfolioFile;
+
+			const response = await updateProfile(participant.id, portfolioData);
+			if (response.success) {
+				// Update local participant state with new data
+				setParticipant((prev) => ({
+					...prev,
+					...response.data,
+				}));
+				// Update remaining edits
+				if (response.remainingEdits !== undefined) {
+					setPortfolioEditsRemaining(response.remainingEdits);
+				}
+				setShowEditForm(false);
+			}
+		} catch (error) {
+			console.error("Error updating profile:", error);
+			setUpdateError(error.message || "Failed to update profile");
+		} finally {
+			setIsUpdating(false);
+		}
+	};
+
 	if (!participant) {
 		return (
 			<div className="dashboard-loading">
@@ -257,7 +354,9 @@ const Dashboard = () => {
 						</div>
 						<button
 							className="edit-profile-btn"
-							onClick={() => setShowEditForm(!showEditForm)}
+							onClick={() =>
+								showEditForm ? setShowEditForm(false) : handleOpenEditForm()
+							}
 						>
 							{showEditForm ? "Cancel" : "Edit Profile"}
 						</button>
@@ -310,55 +409,57 @@ const Dashboard = () => {
 					)}
 				</div>
 
-				<div className="countdown-container">
-					<div className="text-reveal-mask">
-						<h2 className="countdown-label">Event Starts In</h2>
-					</div>
-					<div className="countdown-date">December 7, 2025 • 9:00 AM</div>
+				{participant.approval_status !== "rejected" && (
+					<div className="countdown-container">
+						<div className="text-reveal-mask">
+							<h2 className="countdown-label">Event Starts In</h2>
+						</div>
+						<div className="countdown-date">December 7, 2025 • 9:00 AM</div>
 
-					{timeRemaining.total > 0 ? (
-						<div className="countdown-timer">
-							<div className="time-block">
-								<div className="time-value-mask">
-									<div className="time-value">{timeRemaining.days}</div>
-								</div>
-								<div className="time-label">Days</div>
-							</div>
-							<div className="time-separator">:</div>
-							<div className="time-block">
-								<div className="time-value-mask">
-									<div className="time-value">
-										{String(timeRemaining.hours).padStart(2, "0")}
+						{timeRemaining.total > 0 ? (
+							<div className="countdown-timer">
+								<div className="time-block">
+									<div className="time-value-mask">
+										<div className="time-value">{timeRemaining.days}</div>
 									</div>
+									<div className="time-label">Days</div>
 								</div>
-								<div className="time-label">Hours</div>
-							</div>
-							<div className="time-separator">:</div>
-							<div className="time-block">
-								<div className="time-value-mask">
-									<div className="time-value">
-										{String(timeRemaining.minutes).padStart(2, "0")}
+								<div className="time-separator">:</div>
+								<div className="time-block">
+									<div className="time-value-mask">
+										<div className="time-value">
+											{String(timeRemaining.hours).padStart(2, "0")}
+										</div>
 									</div>
+									<div className="time-label">Hours</div>
 								</div>
-								<div className="time-label">Minutes</div>
-							</div>
-							<div className="time-separator">:</div>
-							<div className="time-block">
-								<div className="time-value-mask">
-									<div className="time-value">
-										{String(timeRemaining.seconds).padStart(2, "0")}
+								<div className="time-separator">:</div>
+								<div className="time-block">
+									<div className="time-value-mask">
+										<div className="time-value">
+											{String(timeRemaining.minutes).padStart(2, "0")}
+										</div>
 									</div>
+									<div className="time-label">Minutes</div>
 								</div>
-								<div className="time-label">Seconds</div>
+								<div className="time-separator">:</div>
+								<div className="time-block">
+									<div className="time-value-mask">
+										<div className="time-value">
+											{String(timeRemaining.seconds).padStart(2, "0")}
+										</div>
+									</div>
+									<div className="time-label">Seconds</div>
+								</div>
 							</div>
-						</div>
-					) : (
-						<div className="event-live">
-							<h3>🎉 Event is Live!</h3>
-							<p>The competition has started. Good luck!</p>
-						</div>
-					)}
-				</div>
+						) : (
+							<div className="event-live">
+								<h3>🎉 Event is Live!</h3>
+								<p>The competition has started. Good luck!</p>
+							</div>
+						)}
+					</div>
+				)}
 
 				<div className="participant-details">
 					<div className="venue-section">
@@ -392,14 +493,18 @@ const Dashboard = () => {
 					<div className="edit-form-overlay">
 						<div className="edit-form-container">
 							<h3 className="form-title">Edit Profile</h3>
-							<form className="edit-form">
+							{updateError && <div className="form-error">{updateError}</div>}
+							<form className="edit-form" onSubmit={handleUpdateProfile}>
 								<div className="form-group">
 									<label htmlFor="name">Name</label>
 									<input
 										type="text"
 										id="name"
-										defaultValue={participant.name}
+										name="name"
+										value={editFormData.name}
+										onChange={handleEditFormChange}
 										placeholder="Your Name"
+										required
 									/>
 								</div>
 								<div className="form-group">
@@ -407,38 +512,115 @@ const Dashboard = () => {
 									<input
 										type="email"
 										id="email"
-										defaultValue={participant.email}
+										value={participant.email}
 										placeholder="your@email.com"
+										disabled
+										className="disabled-input"
 									/>
+									<small className="field-hint">Email cannot be changed</small>
+								</div>
+								<div className="form-group">
+									<label htmlFor="phone">Phone Number</label>
+									<input
+										type="tel"
+										id="phone"
+										value={participant.whatsapp_no || ""}
+										placeholder="Your Phone"
+										disabled
+										className="disabled-input"
+									/>
+									<small className="field-hint">
+										Phone number cannot be changed
+									</small>
 								</div>
 								<div className="form-group">
 									<label htmlFor="city">City</label>
 									<input
 										type="text"
 										id="city"
-										defaultValue={participant.city}
+										name="city"
+										value={editFormData.city}
+										onChange={handleEditFormChange}
 										placeholder="Your City"
+										required
 									/>
 								</div>
 								<div className="form-group">
 									<label htmlFor="category">Category</label>
-									<select id="category" defaultValue={participant.category}>
+									<select
+										id="category"
+										name="category"
+										value={editFormData.category}
+										onChange={handleEditFormChange}
+									>
 										<option value="ui_ux">UI/UX Design</option>
 										<option value="graphics">Graphic Design</option>
 										<option value="video">Video Editing</option>
 										<option value="all">All Rounder</option>
 									</select>
 								</div>
+								<div className="form-group">
+									<label htmlFor="portfolio_url">Portfolio</label>
+									<div className="portfolio-input-wrapper">
+										<input
+											type="text"
+											id="portfolio_url"
+											name="portfolio_url"
+											value={editFormData.portfolio_url}
+											onChange={handleEditFormChange}
+											placeholder="Paste URL or upload file"
+											disabled={portfolioEditsRemaining <= 0}
+											className={`portfolio-input ${
+												portfolioEditsRemaining <= 0 ? "disabled-input" : ""
+											} ${editFormData.portfolioFile ? "has-file" : ""}`}
+										/>
+										<label
+											htmlFor="portfolio-file-upload"
+											className={`file-upload-btn ${
+												portfolioEditsRemaining <= 0 ? "disabled" : ""
+											}`}
+											title="Upload PDF or Image"
+										>
+											<svg viewBox="0 0 24 24" width="20" height="20">
+												<path
+													fill="currentColor"
+													d="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5a2.5 2.5 0 0 1 5 0v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5a2.5 2.5 0 0 0 5 0V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6h-1.5z"
+												/>
+											</svg>
+										</label>
+										<input
+											id="portfolio-file-upload"
+											type="file"
+											className="hidden-file-input"
+											accept="application/pdf, image/png, image/jpeg, image/webp"
+											onChange={handlePortfolioFileChange}
+											ref={fileInputRef}
+											disabled={portfolioEditsRemaining <= 0}
+										/>
+									</div>
+									<small className="field-hint">
+										{portfolioEditsRemaining > 0
+											? `You can edit your portfolio ${portfolioEditsRemaining} more time${
+													portfolioEditsRemaining !== 1 ? "s" : ""
+											  }. Changing it will reset your status to pending.`
+											: "You have reached the maximum portfolio edit limit."}
+									</small>
+								</div>
 								<div className="form-actions">
 									<button
 										type="button"
 										className="btn-cancel"
 										onClick={() => setShowEditForm(false)}
+										disabled={isUpdating}
 									>
 										Cancel
 									</button>
-									<button type="submit" className="btn-save">
-										Save Changes
+									<button
+										type="submit"
+										className="btn-save"
+										disabled={isUpdating}
+									>
+										{isUpdating ? "Saving..." : "Save Changes"}
 									</button>
 								</div>
 							</form>

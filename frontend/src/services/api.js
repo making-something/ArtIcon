@@ -455,6 +455,32 @@ export async function scanParticipantQRCode(participantId) {
 	});
 }
 
+/**
+ * Update participant profile (name, city, category - not email/phone)
+ */
+export async function updateProfile(participantId, profileData) {
+	const response = await apiRequest(
+		`/api/participants/${participantId}/profile`,
+		{
+			method: "PATCH",
+			body: JSON.stringify(profileData),
+		}
+	);
+
+	// Update localStorage with new data if successful
+	if (response.success && response.data) {
+		if (typeof window !== "undefined") {
+			const currentParticipant = getCurrentParticipant();
+			if (currentParticipant) {
+				const updatedParticipant = { ...currentParticipant, ...response.data };
+				localStorage.setItem("participant", JSON.stringify(updatedParticipant));
+			}
+		}
+	}
+
+	return response;
+}
+
 const api = {
 	registerParticipant,
 	uploadPortfolioFile,
@@ -477,6 +503,7 @@ const api = {
 	exportParticipantsCSV,
 	scanParticipantQRCode,
 	forgotPassword,
+	updateProfile,
 };
 
 export default api;

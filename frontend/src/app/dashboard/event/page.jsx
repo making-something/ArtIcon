@@ -4,17 +4,42 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { gsap } from "gsap";
 import { SplitText } from "gsap/dist/SplitText";
-import {
-	getCurrentParticipant,
-	isAuthenticated,
-	logout,
-	refreshParticipantData,
-} from "@/services/api";
+import { getCurrentParticipant, isAuthenticated, logout } from "@/services/api";
 import "./event.css";
 
 if (typeof window !== "undefined") {
 	gsap.registerPlugin(SplitText);
 }
+
+// Category display names
+const CATEGORY_LABELS = {
+	ui_ux: "UI/UX Design",
+	graphics: "Graphics Design",
+	video: "Video Editing",
+	all: "All Categories",
+};
+
+// Dummy tasks for each category
+const DUMMY_TASKS = {
+	ui_ux: {
+		title: "UI/UX Design Task",
+		description:
+			"Create a modern and intuitive mobile app interface for a food delivery application. Focus on user experience, visual hierarchy, and accessibility. Include at least 5 screens: Home, Menu, Cart, Checkout, and Order Tracking.",
+		duration: "3 hours",
+	},
+	graphics: {
+		title: "Graphics Design Task",
+		description:
+			"Design a complete brand identity for an eco-friendly startup. Include logo variations (primary, secondary, icon), color palette, typography guide, and 3 social media post templates. The design should convey sustainability and innovation.",
+		duration: "3 hours",
+	},
+	video: {
+		title: "Video Editing Task",
+		description:
+			"Create a 60-second promotional video for a tech product launch. Include motion graphics, smooth transitions, background music, and text overlays. The video should be engaging and suitable for social media platforms.",
+		duration: "3 hours",
+	},
+};
 
 const GRID_BLOCK_SIZE = 60;
 const GRID_HIGHLIGHT_DURATION = 300;
@@ -39,6 +64,23 @@ const EventDashboard = () => {
 	const nameElementsRef = useRef([]);
 	const nameHeadingsRef = useRef([]);
 
+	// Get tasks for participant based on their category
+	const getParticipantTasks = () => {
+		if (!participant) return [];
+
+		if (participant.category === "all") {
+			// Return all tasks grouped by category
+			return Object.entries(DUMMY_TASKS).map(([cat, task]) => ({
+				...task,
+				category: cat,
+			}));
+		}
+
+		// Return single category task
+		const task = DUMMY_TASKS[participant.category];
+		return task ? [{ ...task, category: participant.category }] : [];
+	};
+
 	useEffect(() => {
 		if (!isAuthenticated()) {
 			router.push("/registration");
@@ -62,7 +104,12 @@ const EventDashboard = () => {
 			}
 		};
 		refreshData();
-		const refreshInterval = setInterval(refreshData, 30000);
+
+		// Refresh data periodically
+		const refreshInterval = setInterval(() => {
+			refreshData();
+		}, 30000);
+
 		return () => clearInterval(refreshInterval);
 	}, [router]);
 
@@ -359,6 +406,74 @@ const EventDashboard = () => {
 						Welcome to <span className="accent">ArtIcon</span>
 					</h1>
 					<p className="event-subtitle">Innovation Meets Creativity</p>
+				</section>
+
+				{/* Tasks Section */}
+				<section className="tasks-section">
+					<div className="tasks-panel">
+						<div className="panel-header">
+							<h2 className="panel-title">
+								<span className="title-icon">📋</span>
+								Your Tasks
+							</h2>
+							<span className="task-count">
+								{getParticipantTasks().length} Task
+								{getParticipantTasks().length !== 1 ? "s" : ""}
+							</span>
+						</div>
+						<div className="tasks-list">
+							{participant?.category === "all" ? (
+								// Show all tasks grouped by category for "all" participants
+								<>
+									{["ui_ux", "graphics", "video"].map((cat) => {
+										const task = DUMMY_TASKS[cat];
+										return (
+											<div key={cat} className="category-group">
+												<h3 className="category-title">
+													{CATEGORY_LABELS[cat]}
+												</h3>
+												<div className="task-card active">
+													<div className="task-header">
+														<span className="task-status-badge active">
+															🔴 Live
+														</span>
+														<span className="task-duration">
+															⏱ {task.duration}
+														</span>
+													</div>
+													<h3 className="task-title">{task.title}</h3>
+													<p className="task-description">{task.description}</p>
+												</div>
+											</div>
+										);
+									})}
+								</>
+							) : (
+								// Single category task
+								(() => {
+									const task = DUMMY_TASKS[participant?.category];
+									if (!task)
+										return (
+											<div className="empty-state">
+												No task available for your category.
+											</div>
+										);
+									return (
+										<div className="task-card active">
+											<div className="task-header">
+												<span className="task-status-badge active">
+													🔴 Live
+												</span>
+												<span className="task-duration">⏱ {task.duration}</span>
+											</div>
+											<h3 className="task-title">{task.title}</h3>
+											<p className="task-description">{task.description}</p>
+										</div>
+									);
+								})()
+							)}
+						</div>
+					</div>
 				</section>
 
 				{/* Winners Section - Sticky Box */}

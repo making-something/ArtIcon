@@ -512,20 +512,12 @@ export class AdminController {
 		res: Response
 	): Promise<void> {
 		try {
-			const {
-				category,
-				page = 1,
-				limit = 50,
-				search,
-				approval_status,
-			} = req.query;
+			const { category, search, approval_status } = req.query;
 
 			const filters: {
 				category?: Category;
 				search?: string;
 				approval_status?: ApprovalStatus;
-				page?: number;
-				limit?: number;
 			} = {};
 			if (category && category !== "all") {
 				filters.category = category as Category;
@@ -536,27 +528,15 @@ export class AdminController {
 			if (approval_status && typeof approval_status === "string") {
 				filters.approval_status = approval_status as ApprovalStatus;
 			}
-			if (page && limit) {
-				filters.page = parseInt(page as string);
-				filters.limit = parseInt(limit as string);
-			}
 
 			const { participants, total } = await databaseService.getParticipants(
 				filters
 			);
 
-			const pageNum = parseInt(page as string);
-			const limitNum = parseInt(limit as string);
-
 			res.status(200).json({
 				success: true,
 				data: participants,
-				pagination: {
-					total,
-					page: pageNum,
-					limit: limitNum,
-					totalPages: Math.ceil(total / limitNum),
-				},
+				total,
 			});
 		} catch (error) {
 			console.error("Error in getAllParticipantsWithPortfolios:", error);

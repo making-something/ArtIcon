@@ -56,7 +56,7 @@ export class ParticipantController {
 					"Video Editing": "video",
 					"UI/UX Design": "ui_ux",
 					"Graphic Design": "graphics",
-					"All": "all",
+					All: "all",
 				};
 				category = specializationToCategoryMap[specialization];
 			} else if (req.body.category) {
@@ -66,10 +66,10 @@ export class ParticipantController {
 				const categoryToSpecializationMap: {
 					[key: string]: string;
 				} = {
-					"video": "Video Editing",
-					"ui_ux": "UI/UX Design",
-					"graphics": "Graphic Design",
-					"all": "All",
+					video: "Video Editing",
+					ui_ux: "UI/UX Design",
+					graphics: "Graphic Design",
+					all: "All",
 				};
 				specialization = categoryToSpecializationMap[category] || category;
 			} else {
@@ -85,7 +85,9 @@ export class ParticipantController {
 			}
 
 			// Check if email already exists
-			const existingParticipant = await databaseService.getParticipantByEmail(email);
+			const existingParticipant = await databaseService.getParticipantByEmail(
+				email
+			);
 
 			if (existingParticipant) {
 				res.status(409).json({
@@ -128,7 +130,9 @@ export class ParticipantController {
 				is_present: false,
 			};
 
-			const participant = await databaseService.createParticipant(participantData);
+			const participant = await databaseService.createParticipant(
+				participantData
+			);
 
 			if (!participant) {
 				console.error("Error creating participant");
@@ -139,37 +143,51 @@ export class ParticipantController {
 				return;
 			}
 
-		// Send registration email asynchronously
-		console.log(`📧 Attempting to send registration email to: ${participant.email}`);
-		emailService.sendRegistrationEmail(participant)
-			.then((result) => {
-				if (result.success) {
-					console.log(`✅ Registration email sent successfully to ${participant.email}`);
-					console.log(`   Message ID: ${result.messageId}`);
-				} else {
-					console.error(`❌ Failed to send registration email to ${participant.email}`);
-					console.error(`   Error: ${result.error}`);
-				}
-			})
-			.catch((error) => {
-				console.error("❌ Error sending registration email:", error);
-			});
+			// Send registration email asynchronously
+			console.log(
+				`📧 Attempting to send registration email to: ${participant.email}`
+			);
+			emailService
+				.sendRegistrationEmail(participant)
+				.then((result) => {
+					if (result.success) {
+						console.log(
+							`✅ Registration email sent successfully to ${participant.email}`
+						);
+						console.log(`   Message ID: ${result.messageId}`);
+					} else {
+						console.error(
+							`❌ Failed to send registration email to ${participant.email}`
+						);
+						console.error(`   Error: ${result.error}`);
+					}
+				})
+				.catch((error) => {
+					console.error("❌ Error sending registration email:", error);
+				});
 
-		// Send registration WhatsApp message asynchronously
-		console.log(`📱 Attempting to send registration WhatsApp to: ${participant.whatsapp_no}`);
-		whatsappService.sendRegistrationMessage(participant.whatsapp_no, participant.name)
-			.then((result) => {
-				if (result.success) {
-					console.log(`✅ Registration WhatsApp sent successfully to ${participant.whatsapp_no}`);
-					console.log(`   Message ID: ${result.messageId}`);
-				} else {
-					console.error(`❌ Failed to send registration WhatsApp to ${participant.whatsapp_no}`);
-					console.error(`   Error: ${result.error}`);
-				}
-			})
-			.catch((error) => {
-				console.error("❌ Error sending registration WhatsApp:", error);
-			});			// Generate token for auto-login
+			// Send registration WhatsApp message asynchronously
+			console.log(
+				`📱 Attempting to send registration WhatsApp to: ${participant.whatsapp_no}`
+			);
+			whatsappService
+				.sendRegistrationMessage(participant.whatsapp_no, participant.name)
+				.then((result) => {
+					if (result.success) {
+						console.log(
+							`✅ Registration WhatsApp sent successfully to ${participant.whatsapp_no}`
+						);
+						console.log(`   Message ID: ${result.messageId}`);
+					} else {
+						console.error(
+							`❌ Failed to send registration WhatsApp to ${participant.whatsapp_no}`
+						);
+						console.error(`   Error: ${result.error}`);
+					}
+				})
+				.catch((error) => {
+					console.error("❌ Error sending registration WhatsApp:", error);
+				}); // Generate token for auto-login
 			const { signToken } = await import("@/utils/jwt");
 			const token = signToken({
 				id: participant.id,
@@ -308,7 +326,9 @@ export class ParticipantController {
 			}
 
 			// Update is_present to true
-			const updatedParticipant = await databaseService.updateParticipant(id, { is_present: true });
+			const updatedParticipant = await databaseService.updateParticipant(id, {
+				is_present: true,
+			});
 
 			if (!updatedParticipant) {
 				res.status(500).json({
@@ -352,7 +372,9 @@ export class ParticipantController {
 				return;
 			}
 
-			const participant = await databaseService.updateParticipant(id, { is_present });
+			const participant = await databaseService.updateParticipant(id, {
+				is_present,
+			});
 
 			if (!participant) {
 				res.status(404).json({
@@ -601,6 +623,161 @@ export class ParticipantController {
 	}
 
 	/**
+	 * Update participant profile (name, city, category, portfolio - not email/phone)
+	 * Portfolio can only be edited 2 times and resets status to pending
+	 */
+	async updateProfile(req: Request, res: Response): Promise<void> {
+		try {
+			const { id } = req.params;
+			const userId = req.user?.id;
+
+			// Verify the user is updating their own profile
+			if (userId !== id) {
+				res.status(403).json({
+					success: false,
+					message: "You can only update your own profile",
+				});
+				return;
+			}
+
+			const { name, city, category, portfolio_url, portfolio_file_path } =
+				req.body;
+
+			// Validate that at least one field is being updated
+			if (
+				!name &&
+				!city &&
+				!category &&
+				portfolio_url === undefined &&
+				!portfolio_file_path
+			) {
+				res.status(400).json({
+					success: false,
+					message:
+						"At least one field (name, city, category, or portfolio) must be provided",
+				});
+				return;
+			}
+
+			// Validate category if provided
+			const validCategories = ["video", "ui_ux", "graphics", "all"];
+			if (category && !validCategories.includes(category)) {
+				res.status(400).json({
+					success: false,
+					message: "Invalid category",
+				});
+				return;
+			}
+
+			// Get current participant
+			const participant = await databaseService.getParticipantById(id);
+
+			if (!participant) {
+				res.status(404).json({
+					success: false,
+					message: "Participant not found",
+				});
+				return;
+			}
+
+			// Check if portfolio is being updated (either URL or file)
+			const isPortfolioChanging =
+				(portfolio_url !== undefined &&
+					portfolio_url !== participant.portfolio_url) ||
+				(portfolio_file_path &&
+					portfolio_file_path !== participant.portfolio_file_path);
+
+			// Check portfolio edit limit (max 2 times)
+			const currentEditCount = (participant as any).portfolio_edit_count || 0;
+			if (isPortfolioChanging && currentEditCount >= 2) {
+				res.status(400).json({
+					success: false,
+					message:
+						"You have reached the maximum portfolio edit limit (2 times)",
+					remainingEdits: 0,
+				});
+				return;
+			}
+
+			// Build update data (only allowed fields)
+			const updateData: {
+				name?: string;
+				city?: string;
+				category?: "video" | "ui_ux" | "graphics" | "all";
+				portfolio_url?: string | null;
+				portfolio_file_path?: string | null;
+				portfolio_edit_count?: number;
+				approval_status?: "pending" | "approved" | "rejected";
+			} = {};
+
+			if (name) updateData.name = name;
+			if (city) updateData.city = city;
+			if (category)
+				updateData.category = category as
+					| "video"
+					| "ui_ux"
+					| "graphics"
+					| "all";
+
+			// If portfolio is changing, update it and reset status
+			if (isPortfolioChanging) {
+				if (portfolio_file_path) {
+					updateData.portfolio_file_path = portfolio_file_path;
+					updateData.portfolio_url = null;
+				} else if (portfolio_url !== undefined) {
+					updateData.portfolio_url = portfolio_url;
+					updateData.portfolio_file_path = null;
+				}
+				updateData.portfolio_edit_count = currentEditCount + 1;
+				updateData.approval_status = "pending"; // Reset to pending for re-review
+			}
+
+			// Update participant
+			const updatedParticipant = await databaseService.updateParticipant(
+				id,
+				updateData
+			);
+
+			if (!updatedParticipant) {
+				res.status(500).json({
+					success: false,
+					message: "Failed to update profile",
+				});
+				return;
+			}
+
+			const remainingEdits = isPortfolioChanging
+				? 2 - (currentEditCount + 1)
+				: 2 - currentEditCount;
+
+			res.status(200).json({
+				success: true,
+				message: isPortfolioChanging
+					? "Profile updated. Your portfolio is now under review."
+					: "Profile updated successfully",
+				data: {
+					id: updatedParticipant.id,
+					name: updatedParticipant.name,
+					email: updatedParticipant.email,
+					category: updatedParticipant.category,
+					city: updatedParticipant.city,
+					portfolio_url: updatedParticipant.portfolio_url,
+					portfolio_edit_count:
+						(updatedParticipant as any).portfolio_edit_count || 0,
+					approval_status: updatedParticipant.approval_status,
+				},
+				remainingEdits,
+			});
+		} catch (error) {
+			console.error("Error in updateProfile:", error);
+			res.status(500).json({
+				success: false,
+				message: "Internal server error",
+			});
+		}
+	}
+
+	/**
 	 * Forgot Password - Generate new password and email it
 	 */
 	async forgotPassword(req: Request, res: Response): Promise<void> {
@@ -636,7 +813,9 @@ export class ParticipantController {
 			const password_hash = await bcrypt.hash(newPassword, 10);
 
 			// Update database
-			await databaseService.updateParticipant(participant.id, { password_hash });
+			await databaseService.updateParticipant(participant.id, {
+				password_hash,
+			});
 
 			// Send email
 			await emailService.sendPasswordResetEmail(participant, newPassword);

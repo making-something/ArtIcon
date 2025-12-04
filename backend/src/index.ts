@@ -10,15 +10,16 @@ import submissionRoutes from "@/routes/submission.routes";
 import adminRoutes from "@/routes/admin.routes";
 import notificationRoutes from "@/routes/notification.routes";
 import portfolioRoutes from "@/routes/portfolio.routes";
-// import migrationRunner from "@/config/migration-runner";
+
+import migrationRunner from "@/config/migration-runner";
 
 // Validate required environment variables
 
 // Initialize database migrations
-// migrationRunner.runMigrations().catch((error) => {
-// 	console.error("❌ Database migration failed:", error);
-// 	process.exit(1);
-// });
+migrationRunner.runMigrations().catch((error) => {
+	console.error("❌ Database migration failed:", error);
+	process.exit(1);
+});
 
 // Initialize Express app
 const app: Application = express();
