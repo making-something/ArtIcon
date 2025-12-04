@@ -179,10 +179,77 @@
 	letter-spacing: 0.1em;
 }
 
-/* Tasks Section */
-.tasks-section {
+/* Timer Section */
+.timer-section {
 	padding: 0 3vw 4rem;
 	max-width: 1200px;
+	margin: 0 auto;
+}
+
+.timer-container {
+	background: rgba(255, 255, 255, 0.03);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 1rem;
+	padding: 2.5rem;
+	text-align: center;
+	backdrop-filter: blur(2px);
+	-webkit-backdrop-filter: blur(2px);
+}
+
+.timer-label {
+	font-family: "Geist Mono", monospace;
+	font-size: clamp(0.85rem, 1vw, 1rem);
+	color: #8c8a7f;
+	text-transform: uppercase;
+	letter-spacing: 0.2em;
+	margin-bottom: 1.5rem;
+}
+
+.timer-display {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 1rem;
+}
+
+.timer-block {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.timer-value {
+	font-family: "Big Shoulders Display", sans-serif;
+	font-size: clamp(3rem, 8vw, 6rem);
+	font-weight: 900;
+	color: #ee6436;
+	line-height: 1;
+}
+
+.timer-unit {
+	font-family: "Geist Mono", monospace;
+	font-size: 0.75rem;
+	color: #8c8a7f;
+	text-transform: uppercase;
+	letter-spacing: 0.1em;
+}
+
+.timer-separator {
+	font-family: "Big Shoulders Display", sans-serif;
+	font-size: clamp(2.5rem, 6vw, 5rem);
+	font-weight: 900;
+	color: #f2eeda;
+	opacity: 0.5;
+}
+
+/* Tasks & Updates Grid */
+.tasks-updates-grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 1.5rem;
+	padding: 0 3vw 4rem;
+	max-width: 1400px;
 	margin: 0 auto;
 }
 
@@ -420,6 +487,252 @@
 	color: #22c55e;
 }
 
+/* Updates Panel */
+.updates-panel {
+	background: rgba(255, 255, 255, 0.03);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 1rem;
+	overflow: hidden;
+	backdrop-filter: blur(2px);
+	-webkit-backdrop-filter: blur(2px);
+	height: fit-content;
+}
+
+.updates-list {
+	padding: 1rem;
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+	max-height: 400px;
+	overflow-y: auto;
+}
+
+.updates-list::-webkit-scrollbar {
+	width: 6px;
+}
+
+.updates-list::-webkit-scrollbar-track {
+	background: rgba(255, 255, 255, 0.05);
+	border-radius: 3px;
+}
+
+.updates-list::-webkit-scrollbar-thumb {
+	background: rgba(238, 100, 54, 0.5);
+	border-radius: 3px;
+}
+
+.update-item {
+	display: flex;
+	align-items: flex-start;
+	gap: 0.75rem;
+	padding: 0.75rem;
+	background: rgba(255, 255, 255, 0.02);
+	border-radius: 0.5rem;
+	transition: all 0.3s ease;
+}
+
+.update-item:hover {
+	background: rgba(255, 255, 255, 0.05);
+}
+
+.update-arrow {
+	font-family: "Geist Mono", monospace;
+	font-size: 1rem;
+	font-weight: 700;
+	color: #ee6436;
+	flex-shrink: 0;
+}
+
+.update-content {
+	flex: 1;
+}
+
+.update-text {
+	font-family: "PP Neue Montreal", sans-serif;
+	font-size: 0.9rem;
+	color: #f2eeda;
+	margin: 0 0 0.25rem 0;
+	line-height: 1.4;
+}
+
+.update-time {
+	font-family: "Geist Mono", monospace;
+	font-size: 0.7rem;
+	color: #8c8a7f;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+}
+
+/* Submission Section */
+.submission-section {
+	padding: 0 3vw 4rem;
+	max-width: 800px;
+	margin: 0 auto;
+}
+
+.submission-container {
+	background: rgba(255, 255, 255, 0.03);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 1rem;
+	overflow: hidden;
+	backdrop-filter: blur(2px);
+	-webkit-backdrop-filter: blur(2px);
+}
+
+.submission-form {
+	padding: 1.5rem;
+}
+
+.submission-input-group {
+	margin-bottom: 1rem;
+}
+
+.submission-label {
+	display: block;
+	font-family: "Geist Mono", monospace;
+	font-size: 0.75rem;
+	color: #8c8a7f;
+	text-transform: uppercase;
+	letter-spacing: 0.1em;
+	margin-bottom: 0.5rem;
+}
+
+.submission-input {
+	width: 100%;
+	padding: 1rem;
+	background: rgba(255, 255, 255, 0.05);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 0.5rem;
+	color: #f2eeda;
+	font-family: "PP Neue Montreal", sans-serif;
+	font-size: 0.95rem;
+	transition: all 0.3s ease;
+}
+
+.submission-input:focus {
+	outline: none;
+	border-color: #ee6436;
+	background: rgba(238, 100, 54, 0.05);
+}
+
+.submission-input::placeholder {
+	color: #8c8a7f;
+}
+
+.submission-divider {
+	display: flex;
+	align-items: center;
+	margin: 1.5rem 0;
+}
+
+.submission-divider::before,
+.submission-divider::after {
+	content: "";
+	flex: 1;
+	height: 1px;
+	background: rgba(255, 255, 255, 0.1);
+}
+
+.submission-divider span {
+	padding: 0 1rem;
+	font-family: "Geist Mono", monospace;
+	font-size: 0.75rem;
+	color: #8c8a7f;
+	text-transform: uppercase;
+}
+
+.file-upload-area {
+	padding: 2rem;
+	background: rgba(255, 255, 255, 0.03);
+	border: 2px dashed rgba(255, 255, 255, 0.15);
+	border-radius: 0.75rem;
+	text-align: center;
+	cursor: pointer;
+	transition: all 0.3s ease;
+}
+
+.file-upload-area:hover {
+	border-color: #ee6436;
+	background: rgba(238, 100, 54, 0.05);
+}
+
+.hidden-file-input {
+	display: none;
+}
+
+.upload-placeholder {
+	font-family: "PP Neue Montreal", sans-serif;
+	font-size: 0.9rem;
+	color: #8c8a7f;
+}
+
+.file-name {
+	font-family: "PP Neue Montreal", sans-serif;
+	font-size: 0.9rem;
+	color: #ee6436;
+	font-weight: 500;
+}
+
+.submit-btn {
+	width: 100%;
+	padding: 1rem 2rem;
+	background: #ee6436;
+	border: none;
+	border-radius: 0.5rem;
+	color: #f2eeda;
+	font-family: "Geist Mono", monospace;
+	font-size: 0.9rem;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.1em;
+	cursor: pointer;
+	transition: all 0.3s ease;
+	margin-top: 1.5rem;
+}
+
+.submit-btn:hover:not(:disabled) {
+	background: #f2eeda;
+	color: #141414;
+}
+
+.submit-btn:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+.submission-success {
+	padding: 3rem;
+	text-align: center;
+}
+
+.success-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 60px;
+	height: 60px;
+	background: rgba(34, 197, 94, 0.2);
+	border-radius: 50%;
+	font-size: 2rem;
+	color: #22c55e;
+	margin-bottom: 1rem;
+}
+
+.submission-success h3 {
+	font-family: "Big Shoulders Display", sans-serif;
+	font-size: 1.5rem;
+	font-weight: 700;
+	color: #f2eeda;
+	margin: 0 0 0.5rem 0;
+}
+
+.submission-success p {
+	font-family: "PP Neue Montreal", sans-serif;
+	font-size: 0.95rem;
+	color: #8c8a7f;
+	margin: 0;
+}
+
 /* Winners Section */
 .winners-section {
 	position: relative;
@@ -575,12 +888,21 @@
 
 /* Mobile Responsiveness */
 @media (max-width: 1024px) {
-	.tasks-section {
+	.tasks-updates-grid {
+		grid-template-columns: 1fr;
 		padding: 0 1.5rem 3rem;
 	}
 
 	.tasks-list {
 		max-height: none;
+	}
+
+	.timer-section {
+		padding: 0 1.5rem 3rem;
+	}
+
+	.submission-section {
+		padding: 0 1.5rem 3rem;
 	}
 }
 
@@ -606,9 +928,31 @@
 		padding: 0.4rem 1rem;
 	}
 
-	/* Tasks mobile */
-	.tasks-section {
+	/* Timer mobile */
+	.timer-section {
 		padding: 0 1rem 2rem;
+	}
+
+	.timer-container {
+		padding: 1.5rem;
+	}
+
+	.timer-display {
+		gap: 0.5rem;
+	}
+
+	.timer-value {
+		font-size: clamp(2rem, 12vw, 4rem);
+	}
+
+	.timer-separator {
+		font-size: clamp(1.5rem, 8vw, 3rem);
+	}
+
+	/* Tasks & Updates mobile */
+	.tasks-updates-grid {
+		padding: 0 1rem 2rem;
+		gap: 1rem;
 	}
 
 	.panel-header {
@@ -644,6 +988,19 @@
 
 	.update-item {
 		padding: 0.6rem 0.75rem;
+	}
+
+	/* Submission mobile */
+	.submission-section {
+		padding: 0 1rem 2rem;
+	}
+
+	.submission-form {
+		padding: 1rem;
+	}
+
+	.file-upload-area {
+		padding: 1.5rem 1rem;
 	}
 
 	/* Winners section mobile */

@@ -289,6 +289,16 @@
 	color: #dc3545;
 	border: 1px solid #dc3545;
 }
+.badge.present {
+	background-color: rgba(40, 167, 69, 0.2);
+	color: #28a745;
+	border: 1px solid #28a745;
+}
+.badge.absent {
+	background-color: rgba(140, 138, 127, 0.2);
+	color: #8c8a7f;
+	border: 1px solid #8c8a7f;
+}
 
 /* Action Buttons in Table */
 .action-btn {
