@@ -41,6 +41,30 @@ const DUMMY_TASKS = {
 	},
 };
 
+// Live updates - hardcoded for now
+const LIVE_UPDATES = [
+	{
+		id: 1,
+		text: "Event has started! Good luck to all participants.",
+		time: "10:00 AM",
+	},
+	{ id: 2, text: "Remember to save your work frequently.", time: "10:15 AM" },
+	{
+		id: 3,
+		text: "Mentors are available for quick questions.",
+		time: "10:30 AM",
+	},
+	{ id: 4, text: "Refreshments available at the lobby.", time: "11:00 AM" },
+	{ id: 5, text: "2 hours remaining - keep pushing!", time: "11:30 AM" },
+];
+
+// Event end time (3 hours from now for demo, replace with actual event time)
+const getEventEndTime = () => {
+	const endTime = new Date();
+	endTime.setHours(endTime.getHours() + 3);
+	return endTime;
+};
+
 const GRID_BLOCK_SIZE = 60;
 const GRID_HIGHLIGHT_DURATION = 300;
 
@@ -48,6 +72,17 @@ const EventDashboard = () => {
 	const router = useRouter();
 	const [participant, setParticipant] = useState(null);
 	const [winnersReady, setWinnersReady] = useState(false);
+	const [timeRemaining, setTimeRemaining] = useState({
+		hours: 0,
+		minutes: 0,
+		seconds: 0,
+	});
+	const [isEventEnded, setIsEventEnded] = useState(false);
+	const [submissionUrl, setSubmissionUrl] = useState("");
+	const [submissionFile, setSubmissionFile] = useState(null);
+	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [hasSubmitted, setHasSubmitted] = useState(false);
+	const fileInputRef = useRef(null);
 	const gridRef = useRef(null);
 	const gridBlocksRef = useRef([]);
 	const mouseRef = useRef({
@@ -81,6 +116,56 @@ const EventDashboard = () => {
 		return task ? [{ ...task, category: participant.category }] : [];
 	};
 
+	// Timer countdown effect
+	useEffect(() => {
+		const eventEndTime = getEventEndTime();
+
+		const updateTimer = () => {
+			const now = new Date();
+			const diff = eventEndTime - now;
+
+			if (diff <= 0) {
+				setIsEventEnded(true);
+				setTimeRemaining({ hours: 0, minutes: 0, seconds: 0 });
+				return;
+			}
+
+			const hours = Math.floor(diff / (1000 * 60 * 60));
+			const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+			const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+			setTimeRemaining({ hours, minutes, seconds });
+		};
+
+		updateTimer();
+		const timerInterval = setInterval(updateTimer, 1000);
+
+		return () => clearInterval(timerInterval);
+	}, []);
+
+	// Handle submission
+	const handleSubmit = async () => {
+		if (!submissionUrl && !submissionFile) {
+			alert("Please provide a submission URL or upload a file.");
+			return;
+		}
+
+		setIsSubmitting(true);
+		// Simulate submission (replace with actual API call)
+		setTimeout(() => {
+			setIsSubmitting(false);
+			setHasSubmitted(true);
+			alert("Submission successful!");
+		}, 1500);
+	};
+
+	const handleFileChange = (e) => {
+		const file = e.target.files[0];
+		if (file) {
+			setSubmissionFile(file);
+		}
+	};
+
 	useEffect(() => {
 		if (!isAuthenticated()) {
 			router.push("/registration");
@@ -92,25 +177,6 @@ const EventDashboard = () => {
 			return;
 		}
 		setParticipant(userData);
-
-		const refreshData = async () => {
-			const freshData = await refreshParticipantData();
-			if (freshData) {
-				if (!freshData.is_present) {
-					router.push("/dashboard");
-					return;
-				}
-				setParticipant(freshData);
-			}
-		};
-		refreshData();
-
-		// Refresh data periodically
-		const refreshInterval = setInterval(() => {
-			refreshData();
-		}, 30000);
-
-		return () => clearInterval(refreshInterval);
 	}, [router]);
 
 	const resetInteractiveGrid = useCallback(() => {
@@ -408,8 +474,40 @@ const EventDashboard = () => {
 					<p className="event-subtitle">Innovation Meets Creativity</p>
 				</section>
 
-				{/* Tasks Section */}
-				<section className="tasks-section">
+				{/* Timer Section */}
+				<section className="timer-section">
+					<div className="timer-container">
+						<h2 className="timer-label">
+							{isEventEnded ? "Event Ended" : "Time Remaining"}
+						</h2>
+						<div className="timer-display">
+							<div className="timer-block">
+								<span className="timer-value">
+									{String(timeRemaining.hours).padStart(2, "0")}
+								</span>
+								<span className="timer-unit">Hours</span>
+							</div>
+							<span className="timer-separator">:</span>
+							<div className="timer-block">
+								<span className="timer-value">
+									{String(timeRemaining.minutes).padStart(2, "0")}
+								</span>
+								<span className="timer-unit">Minutes</span>
+							</div>
+							<span className="timer-separator">:</span>
+							<div className="timer-block">
+								<span className="timer-value">
+									{String(timeRemaining.seconds).padStart(2, "0")}
+								</span>
+								<span className="timer-unit">Seconds</span>
+							</div>
+						</div>
+					</div>
+				</section>
+
+				{/* Tasks & Live Updates Grid */}
+				<section className="tasks-updates-grid">
+					{/* Tasks Panel */}
 					<div className="tasks-panel">
 						<div className="panel-header">
 							<h2 className="panel-title">
@@ -423,7 +521,6 @@ const EventDashboard = () => {
 						</div>
 						<div className="tasks-list">
 							{participant?.category === "all" ? (
-								// Show all tasks grouped by category for "all" participants
 								<>
 									{["ui_ux", "graphics", "video"].map((cat) => {
 										const task = DUMMY_TASKS[cat];
@@ -449,7 +546,6 @@ const EventDashboard = () => {
 									})}
 								</>
 							) : (
-								// Single category task
 								(() => {
 									const task = DUMMY_TASKS[participant?.category];
 									if (!task)
@@ -473,6 +569,99 @@ const EventDashboard = () => {
 								})()
 							)}
 						</div>
+					</div>
+
+					{/* Live Updates Panel */}
+					<div className="updates-panel">
+						<div className="panel-header">
+							<h2 className="panel-title">
+								<span className="title-icon live-dot"></span>
+								Live Updates
+							</h2>
+						</div>
+						<div className="updates-list">
+							{LIVE_UPDATES.map((update) => (
+								<div key={update.id} className="update-item">
+									<span className="update-arrow">&gt;</span>
+									<div className="update-content">
+										<p className="update-text">{update.text}</p>
+										<span className="update-time">{update.time}</span>
+									</div>
+								</div>
+							))}
+						</div>
+					</div>
+				</section>
+
+				{/* Submission Section */}
+				<section className="submission-section">
+					<div className="submission-container">
+						<div className="panel-header">
+							<h2 className="panel-title">
+								<span className="title-icon">📤</span>
+								Submit Your Work
+							</h2>
+						</div>
+						{hasSubmitted ? (
+							<div className="submission-success">
+								<span className="success-icon">✓</span>
+								<h3>Submission Received!</h3>
+								<p>Your work has been successfully submitted.</p>
+							</div>
+						) : (
+							<div className="submission-form">
+								<div className="submission-input-group">
+									<label className="submission-label">
+										Submission URL (Google Drive, Figma, etc.)
+									</label>
+									<input
+										type="url"
+										className="submission-input"
+										placeholder="https://drive.google.com/..."
+										value={submissionUrl}
+										onChange={(e) => setSubmissionUrl(e.target.value)}
+									/>
+								</div>
+								<div className="submission-divider">
+									<span>OR</span>
+								</div>
+								<div className="submission-input-group">
+									<label className="submission-label">
+										Upload File (ZIP, PDF, etc.)
+									</label>
+									<div
+										className="file-upload-area"
+										onClick={() => fileInputRef.current?.click()}
+									>
+										<input
+											type="file"
+											ref={fileInputRef}
+											className="hidden-file-input"
+											accept=".zip,.rar,.pdf,.psd,.ai,.fig,.xd"
+											onChange={handleFileChange}
+										/>
+										{submissionFile ? (
+											<span className="file-name">{submissionFile.name}</span>
+										) : (
+											<span className="upload-placeholder">
+												Click to upload or drag & drop
+											</span>
+										)}
+									</div>
+								</div>
+								<button
+									className="submit-btn"
+									onClick={handleSubmit}
+									disabled={isSubmitting || isEventEnded}
+								>
+									{isSubmitting
+										? "Submitting..."
+										: isEventEnded
+										? "Event Ended"
+										: "Submit Work"}
+								</button>
+							</div>
+						)}
 					</div>
 				</section>
 

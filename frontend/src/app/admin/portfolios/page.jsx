@@ -331,6 +331,7 @@ export default function AdminPortfolios() {
 								<th>Name</th>
 								<th>Category</th>
 								<th>City</th>
+								<th>Present</th>
 								<th>Status</th>
 								<th>Portfolio</th>
 								<th>Actions</th>
@@ -356,6 +357,15 @@ export default function AdminPortfolios() {
 									</td>
 									<td>{getCategoryLabel(participant.category)}</td>
 									<td>{participant.city}</td>
+									<td>
+										<span
+											className={`badge ${
+												participant.is_present ? "present" : "absent"
+											}`}
+										>
+											{participant.is_present ? "Yes" : "No"}
+										</span>
+									</td>
 									<td>
 										<span className={`badge ${participant.approval_status}`}>
 											{participant.approval_status}
