@@ -2,15 +2,9 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { gsap } from "gsap";
-import { SplitText } from "gsap/dist/SplitText";
 import { getCurrentParticipant, isAuthenticated, logout } from "@/services/api";
 import LiveUpdates from "@/components/LiveUpdates/LiveUpdates";
 import "./event.css";
-
-if (typeof window !== "undefined") {
-	gsap.registerPlugin(SplitText);
-}
 
 // Category display names
 const CATEGORY_LABELS = {
@@ -26,27 +20,30 @@ const DUMMY_TASKS = {
 		title: "UI/UX Design Task",
 		description:
 			"Create a modern and intuitive mobile app interface for a food delivery application. Focus on user experience, visual hierarchy, and accessibility. Include at least 5 screens: Home, Menu, Cart, Checkout, and Order Tracking.",
-		duration: "3 hours",
+		duration: "7 hours",
 	},
 	graphics: {
 		title: "Graphics Design Task",
 		description:
 			"Design a complete brand identity for an eco-friendly startup. Include logo variations (primary, secondary, icon), color palette, typography guide, and 3 social media post templates. The design should convey sustainability and innovation.",
-		duration: "3 hours",
+		duration: "7 hours",
 	},
 	video: {
 		title: "Video Editing Task",
 		description:
 			"Create a 60-second promotional video for a tech product launch. Include motion graphics, smooth transitions, background music, and text overlays. The video should be engaging and suitable for social media platforms.",
-		duration: "3 hours",
+		duration: "7 hours",
 	},
 };
 
-// Event end time (3 hours from now for demo, replace with actual event time)
+// Event end time (5pm 7-dec-2025)
 const getEventEndTime = () => {
-	const endTime = new Date();
-	endTime.setHours(endTime.getHours() + 3);
-	return endTime;
+	return new Date("2025-12-07T17:00:00");
+};
+
+// Task start time (10am 7-dec-2025)
+const getTaskStartTime = () => {
+	return new Date("2025-12-07T10:00:00");
 };
 
 const GRID_BLOCK_SIZE = 60;
@@ -55,13 +52,13 @@ const GRID_HIGHLIGHT_DURATION = 300;
 const EventDashboard = () => {
 	const router = useRouter();
 	const [participant, setParticipant] = useState(null);
-	const [winnersReady, setWinnersReady] = useState(false);
 	const [timeRemaining, setTimeRemaining] = useState({
 		hours: 0,
 		minutes: 0,
 		seconds: 0,
 	});
 	const [isEventEnded, setIsEventEnded] = useState(false);
+	const [areTasksVisible, setAreTasksVisible] = useState(false);
 	const [submissionFile, setSubmissionFile] = useState(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [hasSubmitted, setHasSubmitted] = useState(false);
@@ -74,13 +71,6 @@ const EventDashboard = () => {
 		radius: GRID_BLOCK_SIZE * 2,
 	});
 	const animationFrameRef = useRef(null);
-
-	// Winners section refs
-	const winnersContainerRef = useRef(null);
-	const profileImagesContainerRef = useRef(null);
-	const profileImagesRef = useRef([]);
-	const nameElementsRef = useRef([]);
-	const nameHeadingsRef = useRef([]);
 
 	// Get tasks for participant based on their category
 	const getParticipantTasks = () => {
@@ -102,9 +92,18 @@ const EventDashboard = () => {
 	// Timer countdown effect
 	useEffect(() => {
 		const eventEndTime = getEventEndTime();
+		const taskStartTime = getTaskStartTime();
 
 		const updateTimer = () => {
 			const now = new Date();
+			
+			// Check if tasks should be visible
+			if (now >= taskStartTime) {
+				setAreTasksVisible(true);
+			} else {
+				setAreTasksVisible(false);
+			}
+
 			const diff = eventEndTime - now;
 
 			if (diff <= 0) {
@@ -296,152 +295,6 @@ const EventDashboard = () => {
 		};
 	}, [resetInteractiveGrid, addGridHighlights, updateGridHighlights]);
 
-	// Set winnersReady after component mounts
-	useEffect(() => {
-		if (participant) {
-			const timer = setTimeout(() => {
-				setWinnersReady(true);
-			}, 100);
-			return () => clearTimeout(timer);
-		}
-	}, [participant]);
-
-	// Winners section animation
-	useEffect(() => {
-		if (!winnersReady) return;
-
-		const profileImagesContainer = profileImagesContainerRef.current;
-		const profileImages = profileImagesRef.current.filter(Boolean);
-		const nameElements = nameElementsRef.current.filter(Boolean);
-		const nameHeadings = nameHeadingsRef.current.filter(Boolean);
-
-		if (nameHeadings.length === 0) return;
-
-		// Split text into characters
-		const splits = nameHeadings.map((heading) => {
-			const split = new SplitText(heading, { type: "chars" });
-			split.chars.forEach((char) => {
-				char.classList.add("letter");
-			});
-			return split;
-		});
-
-		if (nameElements[0]) {
-			const defaultLetters = nameElements[0].querySelectorAll(".letter");
-			gsap.set(defaultLetters, { y: "100%" });
-
-			if (window.innerWidth >= 900) {
-				const handlers = [];
-
-				profileImages.forEach((img, index) => {
-					if (!img) return;
-
-					const correspondingName = nameElements[index + 1];
-					if (!correspondingName) return;
-
-					const letters = correspondingName.querySelectorAll(".letter");
-
-					const isLarge = img.classList.contains("img-large");
-					const defaultSize = isLarge ? 120 : 70;
-					const hoverSize = isLarge ? 180 : 140;
-
-					const handleMouseEnter = () => {
-						gsap.to(img, {
-							width: hoverSize,
-							height: hoverSize,
-							duration: 0.5,
-							ease: "power4.out",
-						});
-
-						gsap.to(letters, {
-							y: "-100%",
-							ease: "power4.out",
-							duration: 0.75,
-							stagger: {
-								each: 0.025,
-								from: "center",
-							},
-						});
-					};
-
-					const handleMouseLeave = () => {
-						gsap.to(img, {
-							width: defaultSize,
-							height: defaultSize,
-							duration: 0.5,
-							ease: "power4.out",
-						});
-
-						gsap.to(letters, {
-							y: "0%",
-							ease: "power4.out",
-							duration: 0.75,
-							stagger: {
-								each: 0.025,
-								from: "center",
-							},
-						});
-					};
-
-					img.addEventListener("mouseenter", handleMouseEnter);
-					img.addEventListener("mouseleave", handleMouseLeave);
-					handlers.push({
-						el: img,
-						enter: handleMouseEnter,
-						leave: handleMouseLeave,
-					});
-				});
-
-				if (profileImagesContainer) {
-					const containerEnter = () => {
-						const defaultLetters = nameElements[0].querySelectorAll(".letter");
-						gsap.to(defaultLetters, {
-							y: "0%",
-							ease: "power4.out",
-							duration: 0.75,
-							stagger: {
-								each: 0.025,
-								from: "center",
-							},
-						});
-					};
-
-					const containerLeave = () => {
-						const defaultLetters = nameElements[0].querySelectorAll(".letter");
-						gsap.to(defaultLetters, {
-							y: "100%",
-							ease: "power4.out",
-							duration: 0.75,
-							stagger: {
-								each: 0.025,
-								from: "center",
-							},
-						});
-					};
-
-					profileImagesContainer.addEventListener("mouseenter", containerEnter);
-					profileImagesContainer.addEventListener("mouseleave", containerLeave);
-
-					return () => {
-						handlers.forEach(({ el, enter, leave }) => {
-							el.removeEventListener("mouseenter", enter);
-							el.removeEventListener("mouseleave", leave);
-						});
-						profileImagesContainer.removeEventListener(
-							"mouseenter",
-							containerEnter
-						);
-						profileImagesContainer.removeEventListener(
-							"mouseleave",
-							containerLeave
-						);
-						splits.forEach((split) => split.revert());
-					};
-				}
-			}
-		}
-	}, [winnersReady]);
-
 	const handleLogout = () => {
 		logout();
 		router.push("/registration");
@@ -493,7 +346,11 @@ const EventDashboard = () => {
 							</span>
 						</div>
 						<div className="tasks-list">
-							{participant?.category === "all" ? (
+							{!areTasksVisible ? (
+								<div className="empty-state">
+									Tasks will be revealed at 10:00 AM on 7th December 2025.
+								</div>
+							) : participant?.category === "all" ? (
 								<>
 									{["ui_ux", "graphics", "video"].map((cat) => {
 										const task = DUMMY_TASKS[cat];
@@ -593,7 +450,7 @@ const EventDashboard = () => {
 							<div className="submission-form">
 								<div className="submission-input-group">
 									<label className="submission-label">
-										Upload File (ZIP, PDF, etc.)
+										Upload File (ZIP, PDF, Images, Video, etc.)
 									</label>
 									<div
 										className="file-upload-area"
@@ -603,7 +460,7 @@ const EventDashboard = () => {
 											type="file"
 											ref={fileInputRef}
 											className="hidden-file-input"
-											accept=".zip,.rar,.pdf,.psd,.ai,.fig,.xd"
+											accept=".zip,.rar,.7z,.pdf,.psd,.ai,.fig,.xd,.sketch,.indd,image/*,video/*,.avif"
 											onChange={handleFileChange}
 										/>
 										{submissionFile ? (
@@ -631,77 +488,6 @@ const EventDashboard = () => {
 					</div>
 				</section>
 
-				{/* Winners Section - Sticky Box */}
-				<section className="winners-section">
-					<div className="winners-box" ref={winnersContainerRef}>
-						<div className="winners-content">
-							<div className="profile-images" ref={profileImagesContainerRef}>
-								{/* First Row - 1 larger element */}
-								<div className="image-row row-first">
-									<div
-										key="img1"
-										className="img img-large"
-										ref={(el) => (profileImagesRef.current[0] = el)}
-									>
-										<Image
-											src="/winners/img1.jpeg"
-											alt="Winner 1"
-											width={180}
-											height={180}
-											priority={true}
-										/>
-									</div>
-								</div>
-
-								{/* Second Row - 3 smaller elements */}
-								<div className="image-row row-second">
-									{[2, 3, 4].map((num, index) => (
-										<div
-											key={`img${num}`}
-											className="img img-small"
-											ref={(el) => (profileImagesRef.current[index + 1] = el)}
-										>
-											<Image
-												src={`/winners/img${num}.jpeg`}
-												alt={`Winner ${num}`}
-												width={140}
-												height={140}
-												priority={false}
-											/>
-										</div>
-									))}
-								</div>
-							</div>
-
-							<div className="profile-names">
-								<div
-									className="name default"
-									ref={(el) => (nameElementsRef.current[0] = el)}
-								>
-									<h1 ref={(el) => (nameHeadingsRef.current[0] = el)}>
-										Artists
-									</h1>
-								</div>
-								{[
-									"NILAY and DHAIRYA",
-									"MULTIICON",
-									"BONTON",
-									"MARKET MAYA",
-								].map((name, index) => (
-									<div
-										key={name}
-										className="name"
-										ref={(el) => (nameElementsRef.current[index + 1] = el)}
-									>
-										<h1 ref={(el) => (nameHeadingsRef.current[index + 1] = el)}>
-											{name}
-										</h1>
-									</div>
-								))}
-							</div>
-						</div>
-					</div>
-				</section>
 			</main>
 		</div>
 	);
