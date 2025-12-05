@@ -69,7 +69,7 @@ const infoBox = (title: string, items: string[]) => `
 </table>
 `;
 
-export const registrationTemplate = (participant: Participant) => {
+export const registrationTemplate = (_participant: Participant) => {
 	const content = `
     ${emailHeader("Registration Received", "Portfolio Under Review")}
 
@@ -100,14 +100,20 @@ export const registrationTemplate = (participant: Participant) => {
 	return emailWrapper(content);
 };
 
-export const approvalTemplate = (participant: Participant, eventDate: Date) => {
-	const eventDateStr = eventDate.toLocaleDateString("en-US", {
+
+export const approvalTemplate = (
+  participant: Participant,
+  eventDate?: Date,
+  qrCid = "participant-qrcode"
+) => {
+  const eventDateObj = eventDate || new Date();
+  const eventDateStr = eventDateObj.toLocaleDateString("en-US", {
 		weekday: "long",
 		year: "numeric",
 		month: "long",
 		day: "numeric",
 	});
-	const eventTimeStr = eventDate.toLocaleTimeString("en-US", {
+  const eventTimeStr = eventDateObj.toLocaleTimeString("en-US", {
 		hour: "2-digit",
 		minute: "2-digit",
 	});
@@ -131,6 +137,16 @@ export const approvalTemplate = (participant: Participant, eventDate: Date) => {
 					"Near Race Course Road, Maruti Nagar",
 					"Rajkot, Gujarat 360001",
 				])}
+
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: 24px 0; background-color: #1a1614;">
+      <tr>
+        <td style="padding: 24px; text-align: center;">
+          <p style="margin: 0 0 12px; font-size: 15px; font-weight: 700; color: #e3e3db; letter-spacing: 0.5px;">Your Entry QR Code</p>
+          <img src="cid:${qrCid}" alt="Entry QR" style="width: 200px; height: 200px; border: 6px solid #e3e3db; background: #ffffff; border-radius: 8px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);" />
+          <p style="margin: 12px 0 0; font-size: 13px; color: #8c7e77;">Present this QR at check-in for seamless entry.</p>
+        </td>
+      </tr>
+    </table>
 
         <p style="margin: 32px 0 0; font-size: 14px; color: #8c7e77;">
           We look forward to seeing you there.
@@ -181,7 +197,8 @@ export const rejectionTemplate = (participant: Participant) => {
 
 export const eventReminderTemplate = (
 	participant: Participant,
-	eventDate: Date
+  eventDate: Date,
+  qrCid = "participant-qrcode"
 ) => {
 	const eventDateStr = eventDate.toLocaleDateString("en-US", {
 		weekday: "long",
@@ -212,6 +229,16 @@ export const eventReminderTemplate = (
 					"Venue: Floor 3, Rumi Plaza, Airport Main Rd",
 					"Rajkot, Gujarat 360001",
 				])}
+
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: 24px 0; background-color: #1a1614;">
+      <tr>
+        <td style="padding: 24px; text-align: center;">
+          <p style="margin: 0 0 12px; font-size: 15px; font-weight: 700; color: #e3e3db; letter-spacing: 0.5px;">Your Entry QR Code</p>
+          <img src="cid:${qrCid}" alt="Entry QR" style="width: 200px; height: 200px; border: 6px solid #e3e3db; background: #ffffff; border-radius: 8px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);" />
+          <p style="margin: 12px 0 0; font-size: 13px; color: #8c7e77;">Show this QR at the registration desk.</p>
+        </td>
+      </tr>
+    </table>
 
         ${infoBox("What to Bring", [
 					"Your QR code (attached to this email)",
