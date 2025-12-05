@@ -1,4 +1,5 @@
 import db from "@/config/database";
+import backupService from "@/services/backup.service";
 import {
 	Participant,
 	ParticipantInsert,
@@ -29,6 +30,15 @@ class DatabaseService {
 			const v = c === "x" ? r : (r & 0x3) | 0x8;
 			return v.toString(16);
 		});
+	}
+
+	// Fire-and-forget backup to CSV for durability
+	private async safeBackup(reason: string): Promise<void> {
+		try {
+			await backupService.backupAll(reason);
+		} catch (error) {
+			console.error(`Backup failed after ${reason}:`, error);
+		}
 	}
 
 	// ===== PARTICIPANTS =====
@@ -138,6 +148,7 @@ class DatabaseService {
 
 		const participant = await this.getParticipantById(id);
 		if (!participant) throw new Error("Failed to create participant");
+		void this.safeBackup("createParticipant");
 		return participant;
 	}
 
@@ -161,7 +172,9 @@ class DatabaseService {
     `);
 
 		stmt.run(...values);
-		return await this.getParticipantById(id);
+		const updated = await this.getParticipantById(id);
+		if (updated) void this.safeBackup("updateParticipant");
+		return updated;
 	}
 
 	// ===== TASKS =====
@@ -197,6 +210,7 @@ class DatabaseService {
 		stmt.run(id, data.category, data.title, data.description, now, now);
 		const task = await this.getTaskById(id);
 		if (!task) throw new Error("Failed to create task");
+		void this.safeBackup("createTask");
 		return task;
 	}
 
@@ -217,13 +231,17 @@ class DatabaseService {
     `);
 
 		stmt.run(...values);
-		return await this.getTaskById(id);
+		const updated = await this.getTaskById(id);
+		if (updated) void this.safeBackup("updateTask");
+		return updated;
 	}
 
 	async deleteTask(id: string): Promise<boolean> {
 		const stmt = db.prepare("DELETE FROM tasks WHERE id = ?");
 		const result = stmt.run(id);
-		return result.changes > 0;
+		const success = result.changes > 0;
+		if (success) void this.safeBackup("deleteTask");
+		return success;
 	}
 
 	// ===== ADMINS =====
@@ -250,6 +268,7 @@ class DatabaseService {
 		stmt.run(id, data.email, data.password_hash, now, now);
 		const admin = await this.getAdminById(id);
 		if (!admin) throw new Error("Failed to create admin");
+		void this.safeBackup("createAdmin");
 		return admin;
 	}
 
@@ -352,6 +371,7 @@ class DatabaseService {
 
 		const submission = await this.getSubmissionById(id);
 		if (!submission) throw new Error("Failed to create submission");
+		void this.safeBackup("createSubmission");
 		return submission;
 	}
 
@@ -375,13 +395,17 @@ class DatabaseService {
     `);
 
 		stmt.run(...values);
-		return await this.getSubmissionById(id);
+		const updated = await this.getSubmissionById(id);
+		if (updated) void this.safeBackup("updateSubmission");
+		return updated;
 	}
 
 	async deleteSubmission(id: string): Promise<boolean> {
 		const stmt = db.prepare("DELETE FROM submissions WHERE id = ?");
 		const result = stmt.run(id);
-		return result.changes > 0;
+		const success = result.changes > 0;
+		if (success) void this.safeBackup("deleteSubmission");
+		return success;
 	}
 
 	async getSubmissionByParticipantAndTask(
@@ -458,6 +482,7 @@ class DatabaseService {
 
 		const notification = await this.getNotificationById(id);
 		if (!notification) throw new Error("Failed to create notification");
+		void this.safeBackup("createNotification");
 		return notification;
 	}
 
@@ -532,7 +557,9 @@ class DatabaseService {
 		}
 
 		const stmt = db.prepare("SELECT * FROM event_settings WHERE key = ?");
-		return stmt.get(key) as EventSetting;
+		const setting = stmt.get(key) as EventSetting;
+		if (setting) void this.safeBackup("updateEventSetting");
+		return setting;
 	}
 
 	// ===== WINNERS =====
@@ -619,13 +646,16 @@ class DatabaseService {
 
 		const winner = await this.getWinnerById(id);
 		if (!winner) throw new Error("Failed to create winner");
+		void this.safeBackup("createWinner");
 		return winner;
 	}
 
 	async deleteWinner(id: string): Promise<boolean> {
 		const stmt = db.prepare("DELETE FROM winners WHERE id = ?");
 		const result = stmt.run(id);
-		return result.changes > 0;
+		const success = result.changes > 0;
+		if (success) void this.safeBackup("deleteWinner");
+		return success;
 	}
 
 	async getAllWinners(
