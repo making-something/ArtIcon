@@ -10,6 +10,7 @@
 		"start:prod": "NODE_ENV=production node dist/index.js",
 		"type-check": "tsc --noEmit",
 		"lint": "eslint src/**/*.ts",
+		"send:manual-mail": "tsx manual-mailer/send-manual-email.ts",
 		"clean": "rm -rf dist",
 		"migrate": "tsx src/scripts/run-migrations.ts",		
 		"create-admin": "tsx create-admin.ts"
