@@ -361,14 +361,6 @@ const Dashboard = () => {
 								{getCategoryLabel(participant.category)}
 							</span>
 						</div>
-						<button
-							className="edit-profile-btn"
-							onClick={() =>
-								showEditForm ? setShowEditForm(false) : handleOpenEditForm()
-							}
-						>
-							{showEditForm ? "Cancel" : "Edit Profile"}
-						</button>
 						<button className="logout-btn" onClick={handleLogout}>
 							Logout
 						</button>
