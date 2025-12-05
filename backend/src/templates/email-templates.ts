@@ -12,12 +12,14 @@ const emailWrapper = (content: string) => `
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light">
+  <meta name="supported-color-schemes" content="light">
 </head>
-<body style="margin: 0; padding: 0; background-color: #000000; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;">
-  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #000000;">
+<body style="margin: 0; padding: 0; background-color: #e3e3db; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; color: #1a1614;">
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #e3e3db;" bgcolor="#e3e3db">
     <tr>
-      <td style="padding: 40px 20px;">
-        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="max-width: 600px; margin: 0 auto; background-color: #e3e3db;">
+      <td style="padding: 24px 16px; background-color: #e3e3db;" bgcolor="#e3e3db">
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="max-width: 600px; margin: 0 auto; background-color: #e3e3db;" bgcolor="#e3e3db">
           ${content}
         </table>
       </td>
@@ -30,10 +32,10 @@ const emailWrapper = (content: string) => `
 // Header component
 const emailHeader = (title: string, subtitle?: string) => `
 <tr>
-  <td style="padding: 60px 40px 40px; text-align: center; background-color: #1a1614;">
+  <td style="padding: 36px 24px 24px; text-align: center; background-color: #1a1614;" bgcolor="#1a1614">
     <h1 style="margin: 0 0 ${
-			subtitle ? "12px" : "0"
-		}; font-size: 28px; font-weight: 700; color: #e3e3db; text-transform: uppercase; letter-spacing: 1px;">${title}</h1>
+			subtitle ? "10px" : "0"
+		}; font-size: 24px; font-weight: 700; color: #e3e3db; text-transform: uppercase; letter-spacing: 1px;">${title}</h1>
     ${
 			subtitle
 				? `<div style="width: 60px; height: 3px; background-color: #ff6e14; margin: 0 auto;"></div>`
@@ -46,24 +48,27 @@ const emailHeader = (title: string, subtitle?: string) => `
 // Footer component
 const emailFooter = () => `
 <tr>
-  <td style="padding: 30px 40px; background-color: #1a1614; text-align: center;">
-    <p style="margin: 0; font-size: 13px; font-weight: 600; color: #e3e3db; text-transform: uppercase; letter-spacing: 1px;">Team ArtIcon</p>
+  <td style="padding: 20px 24px; background-color: #1a1614; text-align: center;" bgcolor="#1a1614">
+    <p style="margin: 0 0 12px; font-size: 13px; font-weight: 600; color: #e3e3db; text-transform: uppercase; letter-spacing: 1px;">Team ArtIcon</p>
+    <p style="margin: 0; font-size: 12px; color: #8c7e77;">
+      Need help? Contact us at <a href="tel:+919377769938" style="color: #ff6e14; text-decoration: none;">+91 9377769938</a>
+    </p>
   </td>
 </tr>
 `;
 
 // Info box component
 const infoBox = (title: string, items: string[]) => `
-<table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #ccccc4; border-left: 4px solid #ff6e14;">
+<table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f7f5ef; border-radius: 6px;" bgcolor="#f7f5ef">
   <tr>
-    <td style="padding: 24px;">
-      <p style="margin: 0 0 16px; font-size: 15px; font-weight: 600; color: #1a1614; text-transform: uppercase; letter-spacing: 0.5px;">${title}</p>
+    <td style="padding: 14px 14px 12px; background-color: #f7f5ef;" bgcolor="#f7f5ef">
+      <p style="margin: 0 0 10px; font-size: 14px; font-weight: 700; color: #1a1614; text-transform: uppercase; letter-spacing: 0.4px;">${title}</p>
       ${items
-				.map(
-					(item) =>
-						`<p style="margin: 0 0 8px; font-size: 14px; line-height: 1.8; color: #1a1614;">${item}</p>`
-				)
-				.join("")}
+        .map(
+          (item) =>
+            `<p style="margin: 0 0 6px; font-size: 13px; line-height: 1.55; color: #1a1614; word-break: break-word;">${item}</p>`
+        )
+        .join("")}
     </td>
   </tr>
 </table>
@@ -100,20 +105,19 @@ export const registrationTemplate = (_participant: Participant) => {
 	return emailWrapper(content);
 };
 
-
 export const approvalTemplate = (
-  participant: Participant,
-  eventDate?: Date,
-  qrCid = "participant-qrcode"
+	participant: Participant,
+	eventDate?: Date,
+	qrCid = "participant-qrcode"
 ) => {
-  const eventDateObj = eventDate || new Date();
-  const eventDateStr = eventDateObj.toLocaleDateString("en-US", {
+	const eventDateObj = eventDate || new Date();
+	const eventDateStr = eventDateObj.toLocaleDateString("en-US", {
 		weekday: "long",
 		year: "numeric",
 		month: "long",
 		day: "numeric",
 	});
-  const eventTimeStr = eventDateObj.toLocaleTimeString("en-US", {
+	const eventTimeStr = eventDateObj.toLocaleTimeString("en-US", {
 		hour: "2-digit",
 		minute: "2-digit",
 	});
@@ -173,7 +177,7 @@ export const rejectionTemplate = (participant: Participant) => {
           Thank you for your interest in ArtIcon 2025. After reviewing your portfolio, we regret to inform you that you were not selected this time.
         </p>
 
-        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #ccccc4; border-left: 4px solid #8c7e77;">
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #ccccc4; border-left: 4px solid #9bc1bc !important;"">
           <tr>
             <td style="padding: 24px;">
               <p style="margin: 0; font-size: 14px; line-height: 1.8; color: #1a1614;">
@@ -195,10 +199,67 @@ export const rejectionTemplate = (participant: Participant) => {
 	return emailWrapper(content);
 };
 
+export const twoDaysReminderTemplate = (participant: Participant) => {
+	const eventDateStr = "Sunday, 7 Dec 2025";
+	const eventTimeStr = "09:00 AM";
+
+	const content = `
+    ${emailHeader("Two Days to Go", "ArtIcon 2025 is Almost Here")}
+
+    <tr>
+      <td style="padding: 50px 40px; background-color: #e3e3db;" bgcolor="#e3e3db">
+        <p style="margin: 0 0 24px; font-size: 16px; line-height: 1.6; color: #1a1614;">
+          Hi ${participant.name},
+        </p>
+        <p style="margin: 0 0 32px; font-size: 16px; line-height: 1.6; color: #1a1614;">
+          Just a friendly reminder that ArtIcon 2025 is happening in two days. Time to get your creative engines warmed up.
+        </p>
+
+        ${infoBox("Event Details", [
+					`Date: ${eventDateStr}`,
+					`Time: ${eventTimeStr}`,
+					"Venue: Floor 3, Rumi Plaza, Airport Main Rd",
+					"Near Race Course Road, Maruti Nagar",
+					"Rajkot, Gujarat 360001",
+				])}
+
+        <div style="height: 24px;"></div>
+
+        ${infoBox("Pre-Event Checklist", [
+					"Update your software and tools",
+					"Charge your laptop and bring your charger",
+					"Review your portfolio one last time",
+					"Get familiar with the venue location",
+					"Prepare any questions you might have",
+				])}
+
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-top: 24px; background-color: #f7f5ef; border-left: 4px solid #ff6e14; border-radius: 6px;" bgcolor="#f7f5ef">
+          <tr>
+            <td style="padding: 16px;">
+              <p style="margin: 0 0 8px; font-size: 14px; font-weight: 700; color: #1a1614; text-transform: uppercase; letter-spacing: 0.4px;">Missed the previous email?</p>
+              <p style="margin: 0; font-size: 13px; line-height: 1.6; color: #1a1614;">
+                If you can't find your approval email, don't panic. Your entry QR code will be included in tomorrow's final reminder.
+              </p>
+            </td>
+          </tr>
+        </table>
+
+        <p style="margin: 32px 0 0; font-size: 14px; color: #8c7e77;">
+          See you in two days. Bring your A-game.
+        </p>
+      </td>
+    </tr>
+
+    ${emailFooter()}
+  `;
+
+	return emailWrapper(content);
+};
+
 export const eventReminderTemplate = (
 	participant: Participant,
-  eventDate: Date,
-  qrCid = "participant-qrcode"
+	eventDate: Date,
+	qrCid = "participant-qrcode"
 ) => {
 	const eventDateStr = eventDate.toLocaleDateString("en-US", {
 		weekday: "long",
@@ -230,15 +291,15 @@ export const eventReminderTemplate = (
 					"Rajkot, Gujarat 360001",
 				])}
 
-    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: 24px 0; background-color: #1a1614;">
-      <tr>
-        <td style="padding: 24px; text-align: center;">
-          <p style="margin: 0 0 12px; font-size: 15px; font-weight: 700; color: #e3e3db; letter-spacing: 0.5px;">Your Entry QR Code</p>
-          <img src="cid:${qrCid}" alt="Entry QR" style="width: 200px; height: 200px; border: 6px solid #e3e3db; background: #ffffff; border-radius: 8px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);" />
-          <p style="margin: 12px 0 0; font-size: 13px; color: #8c7e77;">Show this QR at the registration desk.</p>
-        </td>
-      </tr>
-    </table>
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: 24px 0; background-color: #1a1614;">
+          <tr>
+            <td style="padding: 24px; text-align: center;">
+              <p style="margin: 0 0 12px; font-size: 15px; font-weight: 700; color: #e3e3db; letter-spacing: 0.5px;">Your Entry QR Code</p>
+              <img src="cid:${qrCid}" alt="Entry QR" style="width: 200px; height: 200px; border: 6px solid #e3e3db; background: #ffffff; border-radius: 8px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);" />
+              <p style="margin: 12px 0 0; font-size: 13px; color: #8c7e77;">Show this QR at the registration desk.</p>
+            </td>
+          </tr>
+        </table>
 
         ${infoBox("What to Bring", [
 					"Your QR code (attached to this email)",

@@ -1,0 +1,198 @@
+/* Winners Section */
+.winners-section {
+	position: relative;
+	height: 100vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 2rem;
+}
+
+.winners-box {
+	position: sticky;
+	top: 2rem;
+	width: 100%;
+	max-width: calc(100vw - 4rem);
+	height: calc(100vh - 4rem);
+	background: transparent;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 1rem;
+	z-index: 10;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	overflow: hidden;
+	box-shadow: 0 0 80px rgba(0, 0, 0, 0.5);
+}
+
+.winners-box::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(255, 255, 255, 0.03);
+	backdrop-filter: blur(2px);
+	-webkit-backdrop-filter: blur(2px);
+	z-index: -1;
+	border-radius: inherit;
+}
+
+/* Snow noise overlay */
+.winners-box::after {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='snow'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='3' seed='5' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23snow)'/%3E%3C/svg%3E");
+	opacity: 0.04;
+	mix-blend-mode: overlay;
+	pointer-events: none;
+	z-index: 0;
+	border-radius: inherit;
+}
+
+.winners-content {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	gap: 2.5em;
+	z-index: 1;
+}
+
+/* Profile Images */
+.profile-images {
+	width: max-content;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	gap: 1rem;
+}
+
+.image-row {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.img {
+	position: relative;
+	padding: 5px;
+	cursor: pointer;
+	will-change: width, height;
+}
+
+.img-large {
+	width: 120px;
+	height: 120px;
+}
+
+.img-small {
+	width: 70px;
+	height: 70px;
+}
+
+.img img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	border-radius: 0.5rem;
+}
+
+/* Profile Names */
+.profile-names {
+	position: relative;
+	width: 100%;
+	height: 15rem;
+	clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
+	overflow: hidden;
+}
+
+.name {
+	position: absolute;
+	width: 100%;
+	left: 0;
+	top: 0;
+}
+
+.name h1 {
+	position: relative;
+	width: 100%;
+	text-align: center;
+	text-transform: uppercase;
+	font-family: "Barlow Condensed", sans-serif;
+	font-size: 15rem;
+	font-weight: 900;
+	letter-spacing: -0.2rem;
+	line-height: 1;
+	color: #ee6436;
+	user-select: none;
+	margin: 0;
+	transform: translateY(100%);
+}
+
+.name.default h1 {
+	color: #f2eeda;
+	transform: translateY(-100%);
+}
+
+.name h1 .letter {
+	display: inline-block;
+	transform: translateY(0%);
+	will-change: transform;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+	.winners-section {
+		padding: 1rem;
+	}
+
+	.winners-box {
+		top: 1rem;
+		max-width: calc(100vw - 2rem);
+		height: calc(100vh - 2rem);
+	}
+
+	.winners-content {
+		flex-direction: column-reverse;
+	}
+
+	.profile-images {
+		max-width: 90%;
+	}
+
+	.image-row {
+		gap: 0.3rem;
+	}
+
+	.img-large {
+		width: 90px;
+		height: 90px;
+		padding: 2.5px;
+	}
+
+	.img-small {
+		width: 60px;
+		height: 60px;
+		padding: 2.5px;
+	}
+
+	.profile-names {
+		height: 4rem;
+	}
+
+	.name h1 {
+		font-size: 4rem;
+		letter-spacing: 0;
+	}
+}
