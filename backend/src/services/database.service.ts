@@ -177,6 +177,14 @@ class DatabaseService {
 		return updated;
 	}
 
+	async deleteParticipant(id: string): Promise<boolean> {
+		const stmt = db.prepare("DELETE FROM participants WHERE id = ?");
+		const result = stmt.run(id);
+		const success = result.changes > 0;
+		if (success) void this.safeBackup("deleteParticipant");
+		return success;
+	}
+
 	// ===== TASKS =====
 
 	async getAllTasks(category?: Category): Promise<Task[]> {

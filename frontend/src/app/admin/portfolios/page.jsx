@@ -7,6 +7,8 @@ import {
 	exportParticipantsCSV,
 	logout,
 	getAdminDashboardStats,
+	updateParticipantStatus,
+	deleteParticipant,
 } from "@/services/api";
 import "./portfolios.css";
 
@@ -138,6 +140,51 @@ export default function AdminPortfolios() {
 		} catch (error) {
 			console.error("Error rejecting participant:", error);
 			alert("Error rejecting participant");
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	const handleStatusChange = async (participantId, status) => {
+		if (!status) return;
+		try {
+			setLoading(true);
+			const result = await updateParticipantStatus(participantId, status);
+
+			if (result.success) {
+				await fetchParticipants();
+				fetchStats();
+			} else {
+				alert("Failed to update status");
+			}
+		} catch (error) {
+			console.error("Error updating status:", error);
+			alert("Error updating status");
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	const handleDelete = async (participantId) => {
+		const confirmed = confirm(
+			"This will remove the participant and related submissions. Continue?"
+		);
+		if (!confirmed) return;
+		try {
+			setLoading(true);
+			const result = await deleteParticipant(participantId);
+			if (result.success) {
+				await fetchParticipants();
+				fetchStats();
+				if (selectedParticipant?.id === participantId) {
+					setSelectedParticipant(null);
+				}
+			} else {
+				alert("Failed to delete participant");
+			}
+		} catch (error) {
+			console.error("Error deleting participant:", error);
+			alert("Error deleting participant");
 		} finally {
 			setLoading(false);
 		}
@@ -391,29 +438,39 @@ export default function AdminPortfolios() {
 									<td onClick={(e) => e.stopPropagation()}>
 										{participant.approval_status === "pending" && (
 											<>
-												<button
-													className="action-btn btn-approve"
-													onClick={() => handleApprove(participant.id)}
+												<select
+													className="status-select"
+													value={participant.approval_status}
+													onChange={(e) =>
+														handleStatusChange(participant.id, e.target.value)
+													}
+													onClick={(e) => e.stopPropagation()}
 												>
-													✓
-												</button>
-												<button
-													className="action-btn btn-reject"
-													onClick={() => handleReject(participant.id)}
-												>
-													✗
-												</button>
+													<option value="pending">Pending</option>
+													<option value="approved">Approved</option>
+													<option value="rejected">Rejected</option>
+												</select>
+												<div className="action-buttons">
+													<button
+														className="action-btn btn-approve"
+														onClick={() => handleApprove(participant.id)}
+													>
+														Approve
+													</button>
+													<button
+														className="action-btn btn-reject"
+														onClick={() => handleReject(participant.id)}
+													>
+														Reject
+													</button>
+													<button
+														className="action-btn btn-delete"
+														onClick={() => handleDelete(participant.id)}
+													>
+														Delete
+													</button>
+												</div>
 											</>
-										)}
-										{participant.approval_status !== "pending" && (
-											<span
-												style={{
-													color: "var(--base-300)",
-													fontSize: "0.9rem",
-												}}
-											>
-												—
-											</span>
 										)}
 									</td>
 								</tr>
@@ -546,28 +603,39 @@ export default function AdminPortfolios() {
 							)}
 						</div>
 						<div className="popup-actions">
-							{selectedParticipant.approval_status === "pending" && (
-								<>
-									<button
-										className="action-btn btn-approve"
-										onClick={() => {
-											handleApprove(selectedParticipant.id);
-											setSelectedParticipant(null);
-										}}
-									>
-										Approve
-									</button>
-									<button
-										className="action-btn btn-reject"
-										onClick={() => {
-											handleReject(selectedParticipant.id);
-											setSelectedParticipant(null);
-										}}
-									>
-										Reject
-									</button>
-								</>
-							)}
+							<button
+								className="action-btn btn-approve"
+								onClick={() => {
+									handleStatusChange(selectedParticipant.id, "approved");
+								}}
+							>
+								Mark Approved
+							</button>
+							<button
+								className="action-btn btn-reject"
+								onClick={() => {
+									handleStatusChange(selectedParticipant.id, "rejected");
+								}}
+							>
+								Mark Rejected
+							</button>
+							<button
+								className="action-btn btn-view"
+								onClick={() => {
+									handleStatusChange(selectedParticipant.id, "pending");
+								}}
+							>
+								Set Pending
+							</button>
+							<button
+								className="action-btn btn-delete"
+								onClick={() => {
+									handleDelete(selectedParticipant.id);
+									setSelectedParticipant(null);
+								}}
+							>
+								Delete
+							</button>
 						</div>
 					</div>
 				</div>

@@ -400,6 +400,25 @@ export async function rejectParticipant(participantId, adminNotes) {
 }
 
 /**
+ * Update participant approval status (admin only)
+ */
+export async function updateParticipantStatus(participantId, status, adminNotes) {
+	return apiRequest(`/api/admin/participants/${participantId}/status`, {
+		method: "PUT",
+		body: JSON.stringify({ approval_status: status, admin_notes: adminNotes }),
+	});
+}
+
+/**
+ * Delete participant (admin only)
+ */
+export async function deleteParticipant(participantId) {
+	return apiRequest(`/api/admin/participants/${participantId}`, {
+		method: "DELETE",
+	});
+}
+
+/**
  * Export participants as CSV (admin only)
  */
 export async function exportParticipantsCSV(
@@ -500,6 +519,8 @@ const api = {
 	getAllParticipants,
 	approveParticipant,
 	rejectParticipant,
+	updateParticipantStatus,
+	deleteParticipant,
 	exportParticipantsCSV,
 	scanParticipantQRCode,
 	forgotPassword,

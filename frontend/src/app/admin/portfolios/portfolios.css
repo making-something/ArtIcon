@@ -328,6 +328,30 @@
 	color: white;
 }
 
+.btn-delete {
+	background-color: transparent;
+	border: 1px solid #dc3545;
+	color: #dc3545;
+}
+
+.status-select {
+	background: var(--base-400);
+	color: var(--base-100);
+	border: 1px solid var(--base-300);
+	padding: 0.35rem 0.6rem;
+	margin-right: 0.5rem;
+	border-radius: 4px;
+	text-transform: uppercase;
+	font-family: "Barlow Condensed", sans-serif;
+}
+
+.action-buttons {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.4rem;
+	align-items: center;
+}
+
 .btn-view {
 	background: transparent;
 	border: 1px solid var(--base-100);

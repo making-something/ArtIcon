@@ -163,6 +163,28 @@ router.put(
 );
 
 /**
+ * @route   PUT /api/admin/participants/:id/status
+ * @desc    Update participant approval status (approved/rejected/pending)
+ * @access  Admin
+ */
+router.put(
+  "/participants/:id/status",
+  authenticateAdmin,
+  adminController.updateParticipantStatus.bind(adminController),
+);
+
+/**
+ * @route   DELETE /api/admin/participants/:id
+ * @desc    Delete participant
+ * @access  Admin
+ */
+router.delete(
+  "/participants/:id",
+  authenticateAdmin,
+  adminController.deleteParticipant.bind(adminController),
+);
+
+/**
  * @route   GET /api/admin/participants/export/csv
  * @desc    Export participants data as CSV
  * @access  Admin

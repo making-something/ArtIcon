@@ -10,6 +10,11 @@ import {
 	Category,
 } from "@/types/database";
 
+type ApprovalUpdatePayload = {
+	approval_status: ApprovalStatus;
+	admin_notes?: string | null;
+};
+
 export class AdminController {
 	/**
 	 * Admin login
@@ -544,6 +549,81 @@ export class AdminController {
 				success: false,
 				message: "Internal server error",
 			});
+		}
+	}
+
+	/**
+	 * Update participant approval status (approved/rejected/pending)
+	 */
+	async updateParticipantStatus(req: Request, res: Response): Promise<void> {
+		try {
+			const { id } = req.params;
+			const { approval_status, admin_notes }: ApprovalUpdatePayload = req.body;
+
+			if (!approval_status || !["approved", "rejected", "pending"].includes(approval_status)) {
+				res.status(400).json({
+					success: false,
+					message: "approval_status must be approved, rejected, or pending",
+				});
+				return;
+			}
+
+			const participant = await databaseService.getParticipantById(id);
+			if (!participant) {
+				res.status(404).json({ success: false, message: "Participant not found" });
+				return;
+			}
+
+			const updateData: Record<string, unknown> = {
+				approval_status,
+				admin_notes: admin_notes ?? null,
+			};
+
+			if (approval_status === "approved") {
+				updateData.approved_at = new Date().toISOString();
+				updateData.rejected_at = null;
+			} else if (approval_status === "rejected") {
+				updateData.rejected_at = new Date().toISOString();
+				updateData.approved_at = null;
+			} else {
+				updateData.approved_at = null;
+				updateData.rejected_at = null;
+			}
+
+			const updated = await databaseService.updateParticipant(id, updateData);
+			if (!updated) {
+				res.status(500).json({ success: false, message: "Failed to update participant" });
+				return;
+			}
+
+			res.status(200).json({
+				success: true,
+				message: "Participant status updated",
+				data: updated,
+			});
+		} catch (error) {
+			console.error("Error in updateParticipantStatus:", error);
+			res.status(500).json({ success: false, message: "Internal server error" });
+		}
+	}
+
+	/**
+	 * Delete participant (and cascading submissions)
+	 */
+	async deleteParticipant(req: Request, res: Response): Promise<void> {
+		try {
+			const { id } = req.params;
+			const success = await databaseService.deleteParticipant(id);
+
+			if (!success) {
+				res.status(404).json({ success: false, message: "Participant not found" });
+				return;
+			}
+
+			res.status(200).json({ success: true, message: "Participant deleted" });
+		} catch (error) {
+			console.error("Error in deleteParticipant:", error);
+			res.status(500).json({ success: false, message: "Internal server error" });
 		}
 	}
 
