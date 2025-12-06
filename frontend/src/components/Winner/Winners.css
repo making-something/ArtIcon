@@ -2,18 +2,18 @@
 .winners-section {
 	position: relative;
 	height: 100vh;
+	width: 100vw;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	padding: 2rem;
+	padding: 0;
 }
 
 .winners-box {
-	position: sticky;
-	top: 2rem;
-	width: 100%;
-	max-width: calc(100vw - 4rem);
-	height: calc(100vh - 4rem);
+	position: relative;
+	width: 95vw;
+	height: 90vh;
+	max-width: 1920px;
 	background: transparent;
 	border: 1px solid rgba(255, 255, 255, 0.1);
 	border-radius: 1rem;
@@ -63,7 +63,7 @@
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	gap: 2.5em;
+	gap: 4vh;
 	z-index: 1;
 }
 
@@ -112,7 +112,7 @@
 .profile-names {
 	position: relative;
 	width: 100%;
-	height: 15rem;
+	height: 15vw;
 	clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
 	overflow: hidden;
 }
@@ -122,6 +122,10 @@
 	width: 100%;
 	left: 0;
 	top: 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100%;
 }
 
 .name h1 {
@@ -130,9 +134,9 @@
 	text-align: center;
 	text-transform: uppercase;
 	font-family: "Barlow Condensed", sans-serif;
-	font-size: 15rem;
+	font-size: 12vw;
 	font-weight: 900;
-	letter-spacing: -0.2rem;
+	letter-spacing: -0.02em;
 	line-height: 1;
 	color: #ee6436;
 	user-select: none;

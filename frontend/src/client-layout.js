@@ -13,12 +13,13 @@ export default function ClientLayout({ children }) {
 	const [isMobile, setIsMobile] = useState(false);
 
 	// Routes where Menu should be hidden
-	const hideMenuRoutes = ["/registration", "/dashboard", "/admin"];
+	const hideMenuRoutes = ["/registration", "/dashboard", "/admin", "/winner"];
 
 	const shouldHideMenu =
 		hideMenuRoutes.includes(pathname) ||
 		pathname.startsWith("/admin") ||
-		pathname.startsWith("/dashboard");
+		pathname.startsWith("/dashboard") ||
+		pathname.startsWith("/winner");
 
 	return (
 		<ReactLenis

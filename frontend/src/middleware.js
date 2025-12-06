@@ -7,6 +7,7 @@ const allowedExactPaths = new Set([
 	"/dashboard/event",
 	"/admin",
 	"/admin/portfolios",
+	// "/winner",
 ]);
 
 const isInternalPath = (pathname) =>
