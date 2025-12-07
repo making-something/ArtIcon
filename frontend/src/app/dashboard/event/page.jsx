@@ -49,19 +49,12 @@ const DUMMY_TASKS = {
 	},
 };
 
-
-
 const GRID_BLOCK_SIZE = 60;
 const GRID_HIGHLIGHT_DURATION = 300;
 
 const EventDashboard = () => {
 	const router = useRouter();
 	const [participant, setParticipant] = useState(null);
-	const [areTasksVisible, setAreTasksVisible] = useState(true);
-	const [submissionFile, setSubmissionFile] = useState(null);
-	const [isSubmitting, setIsSubmitting] = useState(false);
-	const [hasSubmitted, setHasSubmitted] = useState(false);
-	const fileInputRef = useRef(null);
 
 	// Use event status hook (handles winner redirect and submission status via Socket.IO)
 	const { submissionsClosed } = useEventStatus(true);
@@ -91,49 +84,9 @@ const EventDashboard = () => {
 		return task ? [{ ...task, category: participant.category }] : [];
 	};
 
-	// Handle submission
-	const handleSubmit = async () => {
-		if (!submissionFile) {
-			alert("Please upload a file.");
-			return;
-		}
-
-		setIsSubmitting(true);
-
-		try {
-			const formData = new FormData();
-			formData.append("file", submissionFile);
-
-			// Use local proxy to avoid CORS
-			const username = encodeURIComponent(participant.name || "anonymous");
-
-			const response = await fetch(
-				`/api/proxy-upload?username=${username}`,
-				{
-					method: "POST",
-					body: formData,
-				}
-			);
-
-			if (!response.ok) {
-				throw new Error("Upload failed");
-			}
-
-			setHasSubmitted(true);
-			alert("Submission successful!");
-		} catch (error) {
-			console.error("Submission error:", error);
-			alert("Submission failed. Please try again.");
-		} finally {
-			setIsSubmitting(false);
-		}
-	};
-
-	const handleFileChange = (e) => {
-		const file = e.target.files[0];
-		if (file) {
-			setSubmissionFile(file);
-		}
+	// Handle submission - redirect to external URL
+	const handleSubmit = () => {
+		window.open("http://192.168.1.24:3000", "_blank");
 	};
 
 	useEffect(() => {
@@ -383,13 +336,13 @@ const EventDashboard = () => {
 						</div>
 					</div>
 
-				{/* Live Updates Panel */}
-				<LiveUpdates />
-			</section>
+					{/* Live Updates Panel */}
+					<LiveUpdates />
+				</section>
 
-			{/* Submission Section */}
-			<section className="submission-section">
-				<div className="submission-container">
+				{/* Submission Section */}
+				<section className="submission-section">
+					<div className="submission-container">
 						<div className="panel-header">
 							<h2 className="panel-title">Submit Your Work</h2>
 						</div>
@@ -399,46 +352,10 @@ const EventDashboard = () => {
 								<h3>Submissions Closed</h3>
 								<p>The submission window has been closed by the organizers.</p>
 							</div>
-						) : hasSubmitted ? (
-							<div className="submission-success">
-								<span className="success-icon"></span>
-								<h3>Submission Received!</h3>
-								<p>Your work has been successfully submitted.</p>
-							</div>
 						) : (
 							<div className="submission-form">
-								<div className="submission-input-group">
-									<label className="submission-label">
-										Upload File (ZIP, PDF, Images, Video, etc.)
-									</label>
-									<div
-										className="file-upload-area"
-										onClick={() => fileInputRef.current?.click()}
-									>
-										<input
-											type="file"
-											ref={fileInputRef}
-											className="hidden-file-input"
-											accept=".zip,.rar,.7z,.pdf,.psd,.ai,.fig,.xd,.sketch,.indd,image/*,video/*,.avif"
-											onChange={handleFileChange}
-										/>
-										{submissionFile ? (
-											<span className="file-name">{submissionFile.name}</span>
-										) : (
-											<span className="upload-placeholder">
-												Click to upload or drag & drop
-											</span>
-										)}
-									</div>
-								</div>
-								<button
-									className="submit-btn"
-									onClick={handleSubmit}
-									disabled={isSubmitting}
-								>
-									{isSubmitting
-										? "Submitting..."
-										: "Submit Work"}
+								<button className="submit-btn" onClick={handleSubmit}>
+									Submit
 								</button>
 							</div>
 						)}
