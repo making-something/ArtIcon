@@ -51,10 +51,12 @@ const DUMMY_TASKS = {
 
 const GRID_BLOCK_SIZE = 60;
 const GRID_HIGHLIGHT_DURATION = 300;
+const TASK_UNLOCK_TIME = { hour: 10, minute: 0 };
 
 const EventDashboard = () => {
 	const router = useRouter();
 	const [participant, setParticipant] = useState(null);
+	const [areTasksVisible, setAreTasksVisible] = useState(false);
 
 	// Use event status hook (handles winner redirect and submission status via Socket.IO)
 	const { submissionsClosed } = useEventStatus(true);
@@ -86,7 +88,7 @@ const EventDashboard = () => {
 
 	// Handle submission - redirect to external URL
 	const handleSubmit = () => {
-		window.open("http://192.168.1.24:3000", "_blank");
+		window.open("http://192.168.1.112:3001", "_blank");
 	};
 
 	useEffect(() => {
@@ -101,6 +103,21 @@ const EventDashboard = () => {
 		}
 		setParticipant(userData);
 	}, [router]);
+
+	useEffect(() => {
+		const updateVisibility = () => {
+			const now = new Date();
+			const isAfterUnlock =
+				now.getHours() > TASK_UNLOCK_TIME.hour ||
+				(now.getHours() === TASK_UNLOCK_TIME.hour &&
+					now.getMinutes() >= TASK_UNLOCK_TIME.minute);
+			setAreTasksVisible(isAfterUnlock);
+		};
+
+		updateVisibility();
+		const intervalId = setInterval(updateVisibility, 30000);
+		return () => clearInterval(intervalId);
+	}, []);
 
 	const resetInteractiveGrid = useCallback(() => {
 		if (!gridRef.current) return;
