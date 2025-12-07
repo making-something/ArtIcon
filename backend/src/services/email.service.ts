@@ -100,8 +100,14 @@ export class EmailService {
 		return new Date();
 	}
 
-	private async buildQrAttachment(participantId: string) {
-		const qrBuffer = await QRCode.toBuffer(participantId, {
+	private async buildQrAttachment(participant: Participant) {
+		const qrData = JSON.stringify({
+			id: participant.id,
+			name: participant.name,
+			email: participant.email,
+		});
+
+		const qrBuffer = await QRCode.toBuffer(qrData, {
 			errorCorrectionLevel: "H",
 			margin: 1,
 			width: 300,
@@ -141,7 +147,7 @@ export class EmailService {
 		eventDate: Date
 	): Promise<EmailResult> {
 		const resolvedDate = eventDate || (await this.resolveEventDate());
-		const qrAttachment = await this.buildQrAttachment(participant.id);
+		const qrAttachment = await this.buildQrAttachment(participant);
 		const html = approvalTemplate(
 			participant,
 			resolvedDate,
@@ -180,7 +186,7 @@ export class EmailService {
 	 */
 	async sendApprovalEmail(participant: Participant): Promise<EmailResult> {
 		const eventDate = await this.resolveEventDate();
-		const qrAttachment = await this.buildQrAttachment(participant.id);
+		const qrAttachment = await this.buildQrAttachment(participant);
 		const html = approvalTemplate(participant, eventDate, qrAttachment.cid);
 		const text = this.toPlainText(html);
 
@@ -216,7 +222,7 @@ export class EmailService {
 		eventDate: Date
 	): Promise<EmailResult> {
 		const resolvedDate = eventDate || (await this.resolveEventDate());
-		const qrAttachment = await this.buildQrAttachment(participant.id);
+		const qrAttachment = await this.buildQrAttachment(participant);
 		const html = eventReminderTemplate(
 			participant,
 			resolvedDate,

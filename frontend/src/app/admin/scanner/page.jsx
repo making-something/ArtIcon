@@ -187,6 +187,46 @@ const AdminScanner = () => {
 		}
 	};
 
+    const startCamera = async () => {
+        if (!html5QrCodeRef.current) return;
+        try {
+            await html5QrCodeRef.current.start(
+                { facingMode: "environment" },
+                {
+                    fps: 10,
+                    qrbox: { width: 250, height: 250 },
+                },
+                onScanSuccess,
+                onScanFailure
+            );
+        } catch (err) {
+            console.error("Error starting camera", err);
+            setLastResult({ type: 'error', message: 'Failed to start camera. Please ensure camera permissions are granted.' });
+        }
+    };
+
+    const stopCamera = async () => {
+        if (!html5QrCodeRef.current) return;
+        try {
+             try {
+                await html5QrCodeRef.current.stop();
+             } catch (e) {
+                // ignore
+             }
+        } catch (err) {
+            console.error("Error stopping camera", err);
+        }
+    };
+
+    useEffect(() => {
+        if (scanMode === 'camera') {
+            startCamera();
+        } else {
+            stopCamera();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [scanMode]);
+
 	return (
 		<div className="scanner-page-layout">
 			<div className="scanner-main-column">
@@ -200,41 +240,75 @@ const AdminScanner = () => {
 					</button>
 				</div>
 
+                <div className="scan-mode-toggles" style={{ marginBottom: '1rem', display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+                    <button 
+                        onClick={() => setScanMode('camera')}
+                        style={{
+                            padding: '0.5rem 1rem',
+                            borderRadius: '6px',
+                            border: 'none',
+                            background: scanMode === 'camera' ? '#0070f3' : '#e1e4e8',
+                            color: scanMode === 'camera' ? 'white' : '#333',
+                            cursor: 'pointer',
+                            fontWeight: '500'
+                        }}
+                    >
+                        Camera
+                    </button>
+                    <button 
+                        onClick={() => setScanMode('file')}
+                        style={{
+                            padding: '0.5rem 1rem',
+                            borderRadius: '6px',
+                            border: 'none',
+                            background: scanMode === 'file' ? '#0070f3' : '#e1e4e8',
+                            color: scanMode === 'file' ? 'white' : '#333',
+                            cursor: 'pointer',
+                            fontWeight: '500'
+                        }}
+                    >
+                        Upload Image
+                    </button>
+                </div>
+
 				<div className="scanner-viewport-wrapper">
-					<div id="reader" className="scanner-viewport">
-						{/* File Upload UI */}
-						<div className="file-upload-container">
-							<input
-								type="file"
-								ref={fileInputRef}
-								onChange={handleFileUpload}
-								accept="image/*"
-								style={{ display: "none" }}
-							/>
-							<button
-								onClick={() => fileInputRef.current?.click()}
-								className="upload-button"
-								disabled={isProcessingRef.current}
-							>
-								<svg
-									width="48"
-									height="48"
-									viewBox="0 0 24 24"
-									fill="none"
-									stroke="currentColor"
-									strokeWidth="2"
-								>
-									<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-									<polyline points="17 8 12 3 7 8" />
-									<line x1="12" y1="3" x2="12" y2="15" />
-								</svg>
-								<span>Upload QR Code Image</span>
-							</button>
-							<p className="upload-hint">
-								Click to select a QR code image from your device
-							</p>
-						</div>
-					</div>
+					<div id="reader" className="scanner-viewport"></div>
+                    
+                    {scanMode === 'file' && (
+                        <div className="file-upload-overlay" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: 'black', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 5 }}>
+                            <div className="file-upload-container">
+                                <input
+                                    type="file"
+                                    ref={fileInputRef}
+                                    onChange={handleFileUpload}
+                                    accept="image/*"
+                                    style={{ display: "none" }}
+                                />
+                                <button
+                                    onClick={() => fileInputRef.current?.click()}
+                                    className="upload-button"
+                                    disabled={isProcessingRef.current}
+                                >
+                                    <svg
+                                        width="48"
+                                        height="48"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        strokeWidth="2"
+                                    >
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                        <polyline points="17 8 12 3 7 8" />
+                                        <line x1="12" y1="3" x2="12" y2="15" />
+                                    </svg>
+                                    <span>Upload QR Code Image</span>
+                                </button>
+                                <p className="upload-hint">
+                                    Click to select a QR code image from your device
+                                </p>
+                            </div>
+                        </div>
+                    )}
 
 					{/* Status Overlay */}
 					{lastResult && (
@@ -256,7 +330,7 @@ const AdminScanner = () => {
 				</div>
 
 				<div className="scanner-instructions">
-					<p>Upload a QR code image to mark participant attendance.</p>
+					<p>{scanMode === 'camera' ? 'Point your camera at a QR code' : 'Upload a QR code image to mark participant attendance.'}</p>
 				</div>
 			</div>
 

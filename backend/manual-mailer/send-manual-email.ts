@@ -1,6 +1,7 @@
 import "dotenv/config";
 import fs from "fs";
 import path from "path";
+import QRCode from "qrcode";
 import emailService from "../src/services/email.service";
 
 interface CliOptions {
@@ -24,9 +25,9 @@ interface SentRecord {
 	sentAt: string;
 }
 
-const DEFAULT_CSV = path.resolve(__dirname, "../participants-2025-12-05.csv");
-const SENT_LOG_PATH = path.resolve(__dirname, "sent-log.json");
-const TWO_DAY_SUBJECT = "Just a reminder — ArtIcon is in 2 days!";
+const DEFAULT_CSV = path.resolve(__dirname, "../../participants.csv");
+const SENT_LOG_PATH = path.resolve(__dirname, "sent-qr-log.json");
+const SUBJECT = "Your ArtIcon Entry Ticket";
 
 function parseArgs(): CliOptions {
 	const args = process.argv.slice(2);
@@ -167,7 +168,31 @@ function persistSentLog(logPath: string, records: SentRecord[]) {
 	fs.writeFileSync(logPath, JSON.stringify(records, null, 2), "utf8");
 }
 
-function buildHtml(participant: ParticipantRow) {
+async function buildQrAttachment(participant: ParticipantRow) {
+	const qrData = JSON.stringify({
+		id: participant.id,
+		name: participant.name,
+		email: participant.email,
+	});
+
+	const qrBuffer = await QRCode.toBuffer(qrData, {
+		errorCorrectionLevel: "H",
+		margin: 1,
+		width: 300,
+		color: {
+			dark: "#000000",
+			light: "#ffffff",
+		},
+	});
+
+	return {
+		filename: "qrcode.png",
+		content: qrBuffer,
+		cid: "participant-qrcode",
+	};
+}
+
+function buildHtml(participant: ParticipantRow, qrCid: string) {
 	return `
 <!DOCTYPE html>
 <html>
@@ -202,7 +227,7 @@ function buildHtml(participant: ParticipantRow) {
           <!-- Header -->
           <tr>
             <td style="padding: 60px 40px 40px; text-align: center; background-color: #1a1614 !important;">
-              <h1 style="margin: 0 0 12px; font-size: 28px; font-weight: 700; color: #e3e3db !important; text-transform: uppercase; letter-spacing: 1px;">Two Days to Go</h1>
+              <h1 style="margin: 0 0 12px; font-size: 28px; font-weight: 700; color: #e3e3db !important; text-transform: uppercase; letter-spacing: 1px;">Your Entry Ticket</h1>
               <div style="width: 60px; height: 3px; background-color: #ff6e14 !important; margin: 0 auto;"></div>
             </td>
           </tr>
@@ -214,11 +239,21 @@ function buildHtml(participant: ParticipantRow) {
                 Hi ${participant.name},
               </p>
               <p style="margin: 0 0 32px; font-size: 16px; line-height: 1.6; color: #1a1614 !important;">
-                Just a friendly reminder that ArtIcon 2025 is happening in two days. Time to get your creative engines warmed up.
+                Here is your QR code for ArtIcon 2025. Please present this at the registration desk for entry.
               </p>
 
-              <!-- Event Details Box -->
+              <!-- QR Code Box -->
               <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f7f5ef !important; border-left: 4px solid #ff6e14 !important;">
+                <tr>
+                  <td style="padding: 24px; text-align: center;">
+                    <img src="cid:${qrCid}" alt="Your QR Code" style="width: 200px; height: 200px; display: block; margin: 0 auto;" />
+                    <p style="margin: 16px 0 0; font-size: 14px; color: #8c7e77 !important;">ID: ${participant.id}</p>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Event Details Box -->
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-top: 24px; background-color: #f7f5ef !important; border-left: 4px solid #ff6e14 !important;">
                 <tr>
                   <td style="padding: 24px;">
                     <p style="margin: 0 0 16px; font-size: 15px; font-weight: 600; color: #1a1614 !important; text-transform: uppercase; letter-spacing: 0.5px;">Event Details</p>
@@ -231,37 +266,8 @@ function buildHtml(participant: ParticipantRow) {
                 </tr>
               </table>
 
-              <!-- Pre-Event Checklist Box -->
-              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-top: 24px; background-color: #f7f5ef !important; border-left: 4px solid #ff6e14 !important;">
-                <tr>
-                  <td style="padding: 24px;">
-                    <p style="margin: 0 0 16px; font-size: 15px; font-weight: 600; color: #1a1614 !important; text-transform: uppercase; letter-spacing: 0.5px;">Pre-Event Checklist</p>
-                    <p style="margin: 0 0 8px; font-size: 14px; line-height: 1.8; color: #1a1614 !important;">Update your software and tools</p>
-                    <p style="margin: 0 0 8px; font-size: 14px; line-height: 1.8; color: #1a1614 !important;">Charge your laptop and bring your charger</p>
-                    <p style="margin: 0 0 8px; font-size: 14px; line-height: 1.8; color: #1a1614 !important;">Review your portfolio one last time</p>
-                    <p style="margin: 0 0 8px; font-size: 14px; line-height: 1.8; color: #1a1614 !important;">Get familiar with the venue location</p>
-                    <p style="margin: 0 0 8px; font-size: 14px; line-height: 1.8; color: #1a1614 !important;">Prepare any questions you might have</p>
-                  </td>
-                </tr>
-              </table>
-
-              <!-- Humor Section -->
-              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-top: 32px; background-color: #f7f5ef !important; border-left: 4px solid #9bc1bc !important;">
-                <tr>
-                  <td style="padding: 24px;">
-                    <p style="margin: 0 0 12px; font-size: 15px; font-weight: 600; color: #1a1614 !important; text-transform: uppercase; letter-spacing: 0.5px;">Wait, Did You Miss Our Last Email?</p>
-                    <p style="margin: 0; font-size: 14px; line-height: 1.8; color: #1a1614 !important;">
-                      If you're reading this and thinking "What last email?" — don't panic. We're not judging. Your spam folder might be. 
-                      Check there, or just know that we sent you an approval email with all the important details. 
-                      If you still can't find it, your QR code will be waiting for you in tomorrow's reminder. 
-                      We've got your back.
-                    </p>
-                  </td>
-                </tr>
-              </table>
-
               <p style="margin: 32px 0 0; font-size: 14px; color: #8c7e77 !important;">
-                See you in two days. Bring your A-game.
+                See you there!
               </p>
             </td>
           </tr>
@@ -284,6 +290,7 @@ function buildHtml(participant: ParticipantRow) {
 </html>
 `;
 }
+
 
 async function sendEmails(options: CliOptions) {
 	const participants = readParticipants(options.csvPath);
@@ -319,13 +326,15 @@ async function sendEmails(options: CliOptions) {
 			continue;
 		}
 
-		const html = buildHtml(participant);
+		const qrAttachment = await buildQrAttachment(participant);
+		const html = buildHtml(participant, qrAttachment.cid);
 
 		const result = await emailService.sendEmail({
 			to: participant.email,
-			subject: TWO_DAY_SUBJECT,
+			subject: SUBJECT,
 			html,
-			text: "ArtIcon is in 2 days. See you soon!",
+			text: "Here is your ArtIcon entry ticket.",
+			attachments: [qrAttachment],
 		});
 
 		if (result.success) {
@@ -333,7 +342,7 @@ async function sendEmails(options: CliOptions) {
 				id: participant.id,
 				email: participant.email,
 				name: participant.name,
-				subject: TWO_DAY_SUBJECT,
+				subject: SUBJECT,
 				sentAt: new Date().toISOString(),
 			};
 			log.sent.push(record);

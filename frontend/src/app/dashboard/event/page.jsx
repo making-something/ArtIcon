@@ -157,13 +157,11 @@ const EventDashboard = () => {
 			const formData = new FormData();
 			formData.append("file", submissionFile);
 
-			// Use environment variable for FTP server URL
-			const ftpServerUrl =
-				process.env.NEXT_PUBLIC_FTP_SERVER_URL || "http://localhost:3000";
+			// Use local proxy to avoid CORS
 			const username = encodeURIComponent(participant.name || "anonymous");
 
 			const response = await fetch(
-				`${ftpServerUrl}/upload?username=${username}`,
+				`/api/proxy-upload?username=${username}`,
 				{
 					method: "POST",
 					body: formData,
