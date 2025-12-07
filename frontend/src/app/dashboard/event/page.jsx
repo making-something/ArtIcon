@@ -1,7 +1,6 @@
 "use client";
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import { getCurrentParticipant, isAuthenticated, logout } from "@/services/api";
 import LiveUpdates from "@/components/LiveUpdates/LiveUpdates";
 import useEventStatus from "@/hooks/useEventStatus";
@@ -50,15 +49,7 @@ const DUMMY_TASKS = {
 	},
 };
 
-// Event end time (5pm 7-dec-2025)
-const getEventEndTime = () => {
-	return new Date("2025-12-07T17:00:00");
-};
 
-// Task start time (10am 7-dec-2025)
-const getTaskStartTime = () => {
-	return new Date("2025-12-07T10:00:00");
-};
 
 const GRID_BLOCK_SIZE = 60;
 const GRID_HIGHLIGHT_DURATION = 300;
@@ -66,13 +57,7 @@ const GRID_HIGHLIGHT_DURATION = 300;
 const EventDashboard = () => {
 	const router = useRouter();
 	const [participant, setParticipant] = useState(null);
-	const [timeRemaining, setTimeRemaining] = useState({
-		hours: 0,
-		minutes: 0,
-		seconds: 0,
-	});
-	const [isEventEnded, setIsEventEnded] = useState(false);
-	const [areTasksVisible, setAreTasksVisible] = useState(false);
+	const [areTasksVisible, setAreTasksVisible] = useState(true);
 	const [submissionFile, setSubmissionFile] = useState(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [hasSubmitted, setHasSubmitted] = useState(false);
@@ -105,44 +90,6 @@ const EventDashboard = () => {
 		const task = DUMMY_TASKS[participant.category];
 		return task ? [{ ...task, category: participant.category }] : [];
 	};
-
-	// Timer countdown effect
-	useEffect(() => {
-		const eventEndTime = getEventEndTime();
-		// const taskStartTime = getTaskStartTime();
-
-		const updateTimer = () => {
-			const now = new Date();
-
-			// Check if tasks should be visible
-			// TESTING: Tasks always visible
-			setAreTasksVisible(true);
-			// if (now >= taskStartTime) {
-			// 	setAreTasksVisible(true);
-			// } else {
-			// 	setAreTasksVisible(false);
-			// }
-
-			const diff = eventEndTime - now;
-
-			if (diff <= 0) {
-				setIsEventEnded(true);
-				setTimeRemaining({ hours: 0, minutes: 0, seconds: 0 });
-				return;
-			}
-
-			const hours = Math.floor(diff / (1000 * 60 * 60));
-			const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-			const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-			setTimeRemaining({ hours, minutes, seconds });
-		};
-
-		updateTimer();
-		const timerInterval = setInterval(updateTimer, 1000);
-
-		return () => clearInterval(timerInterval);
-	}, []);
 
 	// Handle submission
 	const handleSubmit = async () => {
@@ -436,44 +383,13 @@ const EventDashboard = () => {
 						</div>
 					</div>
 
-					{/* Live Updates Panel */}
-					<LiveUpdates />
-				</section>
+				{/* Live Updates Panel */}
+				<LiveUpdates />
+			</section>
 
-				{/* Timer Section */}
-				<section className="timer-section">
-					<div className="timer-container">
-						<h2 className="timer-label">
-							{isEventEnded ? "Event Ended" : "Time Remaining"}
-						</h2>
-						<div className="timer-display">
-							<div className="timer-block">
-								<span className="timer-value">
-									{String(timeRemaining.hours).padStart(2, "0")}
-								</span>
-								<span className="timer-unit">Hours</span>
-							</div>
-							<span className="timer-separator">:</span>
-							<div className="timer-block">
-								<span className="timer-value">
-									{String(timeRemaining.minutes).padStart(2, "0")}
-								</span>
-								<span className="timer-unit">Minutes</span>
-							</div>
-							<span className="timer-separator">:</span>
-							<div className="timer-block">
-								<span className="timer-value">
-									{String(timeRemaining.seconds).padStart(2, "0")}
-								</span>
-								<span className="timer-unit">Seconds</span>
-							</div>
-						</div>
-					</div>
-				</section>
-
-				{/* Submission Section */}
-				<section className="submission-section">
-					<div className="submission-container">
+			{/* Submission Section */}
+			<section className="submission-section">
+				<div className="submission-container">
 						<div className="panel-header">
 							<h2 className="panel-title">Submit Your Work</h2>
 						</div>
@@ -518,12 +434,10 @@ const EventDashboard = () => {
 								<button
 									className="submit-btn"
 									onClick={handleSubmit}
-									disabled={isSubmitting || isEventEnded}
+									disabled={isSubmitting}
 								>
 									{isSubmitting
 										? "Submitting..."
-										: isEventEnded
-										? "Event Ended"
 										: "Submit Work"}
 								</button>
 							</div>
