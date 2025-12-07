@@ -88,7 +88,7 @@ const EventDashboard = () => {
 
 	// Handle submission - redirect to external URL
 	const handleSubmit = () => {
-		window.open("http://192.168.1.112:3001", "_blank");
+		window.open("http://192.168.1.65:3001", "_blank");
 	};
 
 	useEffect(() => {

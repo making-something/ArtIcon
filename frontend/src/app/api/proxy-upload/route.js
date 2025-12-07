@@ -13,7 +13,7 @@ export async function POST(request) {
     }
 
     // Forward the request to the FTP server
-    const ftpServerUrl = 'http://192.168.1.112:3001';
+    const ftpServerUrl = 'http://192.168.1.65:3001';
     
     // Get the Content-Type header from the incoming request
     const contentType = request.headers.get('content-type');
