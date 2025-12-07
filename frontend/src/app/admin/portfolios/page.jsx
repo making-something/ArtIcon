@@ -237,6 +237,12 @@ export default function AdminPortfolios() {
 				<div className="header-actions">
 					<button
 						className="scanner-btn"
+						onClick={() => router.push("/admin/controls")}
+					>
+						⚙️ Event Controls
+					</button>
+					<button
+						className="scanner-btn"
 						onClick={() => router.push("/admin/scanner")}
 					>
 						QR Scanner
