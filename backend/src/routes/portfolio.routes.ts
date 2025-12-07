@@ -25,7 +25,7 @@ const storage = multer.diskStorage({
 const portfolioUpload = multer({
   storage,
   limits: {
-    fileSize: 50 * 1024 * 1024, // 50MB limit for portfolios
+    fileSize: Infinity, // No limit
   },
   fileFilter: (_req, file, cb) => {
     // Allow PDFs and common document/image formats

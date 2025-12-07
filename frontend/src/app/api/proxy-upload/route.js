@@ -12,17 +12,20 @@ export async function POST(request) {
       );
     }
 
-    const formData = await request.formData();
-    
     // Forward the request to the FTP server
     // The user specified: http://192.168.1.24:3000/upload
     const ftpServerUrl = 'http://192.168.1.24:3000';
     
+    // Get the Content-Type header from the incoming request
+    const contentType = request.headers.get('content-type');
+
     const response = await fetch(`${ftpServerUrl}/upload?username=${encodeURIComponent(username)}`, {
       method: 'POST',
-      body: formData,
-      // Note: When using fetch with FormData, do NOT set Content-Type header manually.
-      // The browser/runtime will set it with the correct boundary.
+      body: request.body,
+      headers: {
+        'Content-Type': contentType,
+      },
+      duplex: 'half',
     });
 
     if (!response.ok) {

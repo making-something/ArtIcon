@@ -97,8 +97,8 @@ app.use((req: any, _res, next) => {
 app.use(cors(corsOptions));
 app.options(/.*/, cors(corsOptions));
 
-app.use(express.json({ limit: "10mb" }));
-app.use(express.urlencoded({ extended: true, limit: "10mb" }));
+app.use(express.json({ limit: "50gb" }));
+app.use(express.urlencoded({ extended: true, limit: "50gb" }));
 
 // Serve static files from public directory
 app.use(express.static(path.join(__dirname, "../public")));
