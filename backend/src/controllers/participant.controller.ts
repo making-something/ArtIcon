@@ -542,6 +542,12 @@ export class ParticipantController {
 			const now = new Date();
 			const hasStarted = now >= eventStartDate;
 
+			// Check if winners have been announced
+			const winnersAnnounced = settings.winners_announced === "true";
+
+			// Check if submissions are closed
+			const submissionsClosed = settings.submissions_closed === "true";
+
 			res.status(200).json({
 				success: true,
 				data: {
@@ -551,6 +557,8 @@ export class ParticipantController {
 					timeUntilStart: hasStarted
 						? 0
 						: eventStartDate.getTime() - now.getTime(),
+					winnersAnnounced,
+					submissionsClosed,
 				},
 			});
 		} catch (error) {

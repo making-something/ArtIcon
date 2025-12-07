@@ -12,6 +12,7 @@ import {
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import SplitType from "split-type";
+import useEventStatus from "@/hooks/useEventStatus";
 import "./dashboard.css";
 
 const Dashboard = () => {
@@ -26,6 +27,9 @@ const Dashboard = () => {
 		seconds: 0,
 		total: 0,
 	});
+
+	// Use event status hook (handles winner redirect via Socket.IO)
+	useEventStatus(true);
 
 	// Target date: December 7, 2025, 9:00 AM
 	const targetDate = new Date("2025-12-07T09:00:00").getTime();
@@ -456,7 +460,29 @@ const Dashboard = () => {
 						) : (
 							<div className="event-live">
 								<h3>🎉 Event is Live!</h3>
-								<p>The competition has started. Good luck!</p>
+								<p className="event-live-message">
+									The competition has started!
+								</p>
+								<p className="qr-instruction">
+									Please show this QR code at the registration desk to mark your
+									attendance:
+								</p>
+								<div className="qr-code-container">
+									<img
+										src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(
+											JSON.stringify({
+												id: participant?.id,
+												email: participant?.email,
+												name: participant?.name,
+											})
+										)}`}
+										alt="Attendance QR Code"
+										className="qr-code"
+									/>
+								</div>
+								<p className="qr-note">
+									Scan this code to access the event dashboard
+								</p>
 							</div>
 						)}
 					</div>

@@ -16,8 +16,11 @@ router.post("/login", adminController.login.bind(adminController));
  * @desc    Create admin account
  * @access  Public (should be restricted in production)
  */
-router.post("/create", authenticateAdmin, adminController.createAdmin.bind(adminController));
-
+router.post(
+	"/create",
+	authenticateAdmin,
+	adminController.createAdmin.bind(adminController)
+);
 
 /**
  * @route   POST /api/admin/tasks
@@ -25,9 +28,9 @@ router.post("/create", authenticateAdmin, adminController.createAdmin.bind(admin
  * @access  Admin
  */
 router.post(
-  "/tasks",
-  authenticateAdmin,
-  adminController.createTask.bind(adminController),
+	"/tasks",
+	authenticateAdmin,
+	adminController.createTask.bind(adminController)
 );
 
 /**
@@ -36,9 +39,9 @@ router.post(
  * @access  Admin
  */
 router.put(
-  "/tasks/:id",
-  authenticateAdmin,
-  adminController.updateTask.bind(adminController),
+	"/tasks/:id",
+	authenticateAdmin,
+	adminController.updateTask.bind(adminController)
 );
 
 /**
@@ -47,9 +50,9 @@ router.put(
  * @access  Admin
  */
 router.delete(
-  "/tasks/:id",
-  authenticateAdmin,
-  adminController.deleteTask.bind(adminController),
+	"/tasks/:id",
+	authenticateAdmin,
+	adminController.deleteTask.bind(adminController)
 );
 
 /**
@@ -58,9 +61,9 @@ router.delete(
  * @access  Admin
  */
 router.get(
-  "/tasks",
-  authenticateAdmin,
-  adminController.getAllTasks.bind(adminController),
+	"/tasks",
+	authenticateAdmin,
+	adminController.getAllTasks.bind(adminController)
 );
 
 /**
@@ -69,9 +72,9 @@ router.get(
  * @access  Admin
  */
 router.post(
-  "/winners",
-  authenticateAdmin,
-  adminController.announceWinner.bind(adminController),
+	"/winners",
+	authenticateAdmin,
+	adminController.announceWinner.bind(adminController)
 );
 
 /**
@@ -80,9 +83,9 @@ router.post(
  * @access  Admin
  */
 router.get(
-  "/winners",
-  authenticateAdmin,
-  adminController.getAllWinners.bind(adminController),
+	"/winners",
+	authenticateAdmin,
+	adminController.getAllWinners.bind(adminController)
 );
 
 /**
@@ -91,9 +94,9 @@ router.get(
  * @access  Admin
  */
 router.delete(
-  "/winners/:id",
-  authenticateAdmin,
-  adminController.deleteWinner.bind(adminController),
+	"/winners/:id",
+	authenticateAdmin,
+	adminController.deleteWinner.bind(adminController)
 );
 
 /**
@@ -102,9 +105,9 @@ router.delete(
  * @access  Admin
  */
 router.put(
-  "/settings",
-  authenticateAdmin,
-  adminController.updateEventSettings.bind(adminController),
+	"/settings",
+	authenticateAdmin,
+	adminController.updateEventSettings.bind(adminController)
 );
 
 /**
@@ -113,9 +116,9 @@ router.put(
  * @access  Admin
  */
 router.get(
-  "/settings",
-  authenticateAdmin,
-  adminController.getEventSettings.bind(adminController),
+	"/settings",
+	authenticateAdmin,
+	adminController.getEventSettings.bind(adminController)
 );
 
 /**
@@ -124,9 +127,9 @@ router.get(
  * @access  Admin
  */
 router.get(
-  "/dashboard/stats",
-  authenticateAdmin,
-  adminController.getDashboardStats.bind(adminController),
+	"/dashboard/stats",
+	authenticateAdmin,
+	adminController.getDashboardStats.bind(adminController)
 );
 
 /**
@@ -135,9 +138,9 @@ router.get(
  * @access  Admin
  */
 router.get(
-  "/participants/portfolios",
-  authenticateAdmin,
-  adminController.getAllParticipantsWithPortfolios.bind(adminController),
+	"/participants/portfolios",
+	authenticateAdmin,
+	adminController.getAllParticipantsWithPortfolios.bind(adminController)
 );
 
 /**
@@ -146,9 +149,9 @@ router.get(
  * @access  Admin
  */
 router.put(
-  "/participants/:id/approve",
-  authenticateAdmin,
-  adminController.approveParticipant.bind(adminController),
+	"/participants/:id/approve",
+	authenticateAdmin,
+	adminController.approveParticipant.bind(adminController)
 );
 
 /**
@@ -157,9 +160,9 @@ router.put(
  * @access  Admin
  */
 router.put(
-  "/participants/:id/reject",
-  authenticateAdmin,
-  adminController.rejectParticipant.bind(adminController),
+	"/participants/:id/reject",
+	authenticateAdmin,
+	adminController.rejectParticipant.bind(adminController)
 );
 
 /**
@@ -168,9 +171,9 @@ router.put(
  * @access  Admin
  */
 router.put(
-  "/participants/:id/status",
-  authenticateAdmin,
-  adminController.updateParticipantStatus.bind(adminController),
+	"/participants/:id/status",
+	authenticateAdmin,
+	adminController.updateParticipantStatus.bind(adminController)
 );
 
 /**
@@ -179,9 +182,9 @@ router.put(
  * @access  Admin
  */
 router.delete(
-  "/participants/:id",
-  authenticateAdmin,
-  adminController.deleteParticipant.bind(adminController),
+	"/participants/:id",
+	authenticateAdmin,
+	adminController.deleteParticipant.bind(adminController)
 );
 
 /**
@@ -190,9 +193,9 @@ router.delete(
  * @access  Admin
  */
 router.get(
-  "/participants/export/csv",
-  authenticateAdmin,
-  adminController.exportParticipantsCSV.bind(adminController),
+	"/participants/export/csv",
+	authenticateAdmin,
+	adminController.exportParticipantsCSV.bind(adminController)
 );
 
 /**
@@ -201,9 +204,42 @@ router.get(
  * @access  Admin
  */
 router.post(
-  "/updates",
-  authenticateAdmin,
-  adminController.sendUpdate.bind(adminController),
+	"/updates",
+	authenticateAdmin,
+	adminController.sendUpdate.bind(adminController)
+);
+
+/**
+ * @route   PUT /api/admin/event-controls
+ * @desc    Update event controls (task times, submission status, etc.)
+ * @access  Admin
+ */
+router.put(
+	"/event-controls",
+	authenticateAdmin,
+	adminController.updateEventControls.bind(adminController)
+);
+
+/**
+ * @route   GET /api/admin/event-controls
+ * @desc    Get event controls
+ * @access  Admin
+ */
+router.get(
+	"/event-controls",
+	authenticateAdmin,
+	adminController.getEventControls.bind(adminController)
+);
+
+/**
+ * @route   POST /api/admin/winners/announce
+ * @desc    Announce winners and redirect all users
+ * @access  Admin
+ */
+router.post(
+	"/winners/announce",
+	authenticateAdmin,
+	adminController.announceWinners.bind(adminController)
 );
 
 export default router;

@@ -1,19 +1,20 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Html5QrcodeScanner } from "html5-qrcode";
+import { Html5Qrcode } from "html5-qrcode";
 import { scanParticipantQRCode } from "@/services/api";
 import "./scanner.css";
 
 const AdminScanner = () => {
 	const [scanHistory, setScanHistory] = useState([]);
 	const [lastResult, setLastResult] = useState(null); // { type: 'success'|'error', message: '', participant: ... }
-	const [isScannerReady, setIsScannerReady] = useState(false);
+	const [scanMode, setScanMode] = useState("file"); // 'camera' or 'file'
 
 	// Refs for state that shouldn't trigger re-renders or needs immediate access in callbacks
 	const isProcessingRef = useRef(false);
 	const lastScannedCodeRef = useRef(null);
-	const scannerRef = useRef(null);
+	const html5QrCodeRef = useRef(null);
+	const fileInputRef = useRef(null);
 
 	const router = useRouter();
 
@@ -25,65 +26,126 @@ const AdminScanner = () => {
 			return;
 		}
 
-		// Initialize scanner
-		if (!scannerRef.current) {
-			const timer = setTimeout(() => {
-				const element = document.getElementById("reader");
-				if (element) {
-					// Check if scanner instance already exists in DOM (html5-qrcode quirk)
-					try {
-						const scanner = new Html5QrcodeScanner(
-							"reader",
-							{
-								fps: 10,
-								qrbox: { width: 250, height: 250 },
-								aspectRatio: 1.0,
-								showTorchButtonIfSupported: true,
-								rememberLastUsedCamera: true,
-							},
-							false
-						);
-
-						scanner.render(onScanSuccess, onScanFailure);
-						scannerRef.current = scanner;
-						setIsScannerReady(true);
-					} catch (e) {
-						console.error("Scanner initialization error:", e);
-					}
-				}
-			}, 500);
-			return () => clearTimeout(timer);
+		// Initialize Html5Qrcode instance for file scanning
+		if (!html5QrCodeRef.current) {
+			try {
+				html5QrCodeRef.current = new Html5Qrcode("reader");
+			} catch (e) {
+				console.error("QR Code initialization error:", e);
+			}
 		}
 
 		// Cleanup function
 		return () => {
-			if (scannerRef.current) {
+			if (html5QrCodeRef.current) {
 				try {
-					scannerRef.current.clear().catch((err) => {
-						console.warn("Failed to clear scanner", err);
+					html5QrCodeRef.current.clear().catch((err) => {
+						console.warn("Failed to clear QR scanner", err);
 					});
 				} catch (e) {
 					// ignore
 				}
-				scannerRef.current = null;
 			}
 		};
-	}, []);
+	}, [router]);
 
 	const onScanSuccess = async (decodedText, decodedResult) => {
-		// 1. Check locks
+		// Check locks
 		if (isProcessingRef.current) return;
 		if (lastScannedCodeRef.current === decodedText) return;
 
-		// 2. Set locks
+		// Set lock
 		isProcessingRef.current = true;
-		lastScannedCodeRef.current = decodedText;
-
-		// 3. UI Feedback - Processing
 		setLastResult({ type: "processing", message: "Verifying..." });
 
+		// Process the QR code
+		await processQRCode(decodedText);
+	};
+
+	const onScanFailure = (error) => {
+		// Quiet failure for frame-by-frame errors
+	};
+
+	// Handle file upload for QR scanning
+	const handleFileUpload = async (event) => {
+		const file = event.target.files?.[0];
+		if (!file) return;
+
+		// Check locks
+		if (isProcessingRef.current) {
+			setLastResult({
+				type: "error",
+				message: "Please wait, processing previous scan...",
+			});
+			return;
+		}
+
+		isProcessingRef.current = true;
+		setLastResult({ type: "processing", message: "Scanning QR code..." });
+
 		try {
-			const response = await scanParticipantQRCode(decodedText);
+			if (!html5QrCodeRef.current) {
+				throw new Error("Scanner not initialized");
+			}
+
+			// Scan the uploaded file
+			const decodedText = await html5QrCodeRef.current.scanFile(file, false);
+
+			// Process the scanned QR code
+			await processQRCode(decodedText);
+		} catch (error) {
+			console.error("File scan error:", error);
+			setLastResult({
+				type: "error",
+				message: error.message || "Failed to scan QR code from image",
+			});
+
+			setTimeout(() => {
+				isProcessingRef.current = false;
+				setLastResult(null);
+			}, 2500);
+		}
+
+		// Reset file input
+		if (fileInputRef.current) {
+			fileInputRef.current.value = "";
+		}
+	};
+
+	// Process QR code data (shared between camera and file upload)
+	const processQRCode = async (decodedText) => {
+		// Check if already processed
+		if (lastScannedCodeRef.current === decodedText) {
+			setLastResult({
+				type: "error",
+				message: "This QR code was just scanned",
+			});
+			setTimeout(() => {
+				isProcessingRef.current = false;
+				setLastResult(null);
+			}, 2500);
+			return;
+		}
+
+		lastScannedCodeRef.current = decodedText;
+
+		try {
+			// Parse QR code data
+			let participantData;
+			try {
+				participantData = JSON.parse(decodedText);
+			} catch (e) {
+				// If not JSON, assume it's just the participant ID
+				participantData = { id: decodedText };
+			}
+
+			const participantId = participantData.id;
+			if (!participantId) {
+				throw new Error("Invalid QR code: No participant ID found");
+			}
+
+			// Call API to mark attendance
+			const response = await scanParticipantQRCode(participantId);
 
 			if (response.success) {
 				// Success Logic
@@ -91,12 +153,12 @@ const AdminScanner = () => {
 					id: Date.now(),
 					participantName: response.data.name,
 					participantId: response.data.id,
-					category: response.data.category, // Assuming this comes back
+					category: response.data.category,
 					timestamp: new Date().toLocaleTimeString(),
 					status: "success",
 				};
 
-				setScanHistory((prev) => [newScan, ...prev].slice(0, 20)); // Keep last 20
+				setScanHistory((prev) => [newScan, ...prev].slice(0, 20));
 				setLastResult({
 					type: "success",
 					message: `Marked Present: ${response.data.name}`,
@@ -106,29 +168,23 @@ const AdminScanner = () => {
 				throw new Error(response.message || "Failed to mark attendance");
 			}
 		} catch (err) {
-			// Error Logic
-			console.error("Scan error:", err);
+			console.error("QR processing error:", err);
 			setLastResult({
 				type: "error",
-				message: err.message || "Invalid Code or Server Error",
+				message: err.message || "Invalid QR Code or Server Error",
 			});
 		} finally {
-			// 4. Release locks
-			// Allow next scan processing after 2.5 seconds
+			// Release locks
 			setTimeout(() => {
 				isProcessingRef.current = false;
-				setLastResult(null); // Clear the big banner result to show "Ready"
+				setLastResult(null);
 			}, 2500);
 
-			// Allow RE-SCANNING the SAME code after 5 seconds (in case of accidental double scan prevention)
+			// Allow re-scanning same code after 5 seconds
 			setTimeout(() => {
 				lastScannedCodeRef.current = null;
 			}, 5000);
 		}
-	};
-
-	const onScanFailure = (error) => {
-		// Quiet failure for frame-by-frame errors
 	};
 
 	return (
@@ -145,9 +201,41 @@ const AdminScanner = () => {
 				</div>
 
 				<div className="scanner-viewport-wrapper">
-					<div id="reader" className="scanner-viewport"></div>
-					{!isScannerReady && <div className="loading-text">Initializing Camera...</div>}
-					
+					<div id="reader" className="scanner-viewport">
+						{/* File Upload UI */}
+						<div className="file-upload-container">
+							<input
+								type="file"
+								ref={fileInputRef}
+								onChange={handleFileUpload}
+								accept="image/*"
+								style={{ display: "none" }}
+							/>
+							<button
+								onClick={() => fileInputRef.current?.click()}
+								className="upload-button"
+								disabled={isProcessingRef.current}
+							>
+								<svg
+									width="48"
+									height="48"
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke="currentColor"
+									strokeWidth="2"
+								>
+									<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+									<polyline points="17 8 12 3 7 8" />
+									<line x1="12" y1="3" x2="12" y2="15" />
+								</svg>
+								<span>Upload QR Code Image</span>
+							</button>
+							<p className="upload-hint">
+								Click to select a QR code image from your device
+							</p>
+						</div>
+					</div>
+
 					{/* Status Overlay */}
 					{lastResult && (
 						<div className={`scanner-overlay ${lastResult.type}`}>
@@ -167,9 +255,9 @@ const AdminScanner = () => {
 					)}
 				</div>
 
-                <div className="scanner-instructions">
-                    <p>Camera is active. Point at a QR code to scan automatically.</p>
-                </div>
+				<div className="scanner-instructions">
+					<p>Upload a QR code image to mark participant attendance.</p>
+				</div>
 			</div>
 
 			<div className="scanner-sidebar">
@@ -185,7 +273,7 @@ const AdminScanner = () => {
 									<span className="history-name">{scan.participantName}</span>
 									{/* <span className="history-id">{scan.participantId}</span> */}
 								</div>
-                                <div className="history-status">Present</div>
+								<div className="history-status">Present</div>
 							</div>
 						))
 					)}

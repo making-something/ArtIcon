@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
+import useEventStatus from "@/hooks/useEventStatus";
 import "./registration.css";
 import { registerParticipant, login, forgotPassword } from "@/services/api";
 
@@ -20,6 +21,9 @@ const Register = () => {
 	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 	const [showLoginPassword, setShowLoginPassword] = useState(false);
 	const [successMessage, setSuccessMessage] = useState("");
+
+	// Use event status hook (handles winner redirect via Socket.IO)
+	useEventStatus(true);
 
 	const [formData, setFormData] = useState({
 		fullName: "",
@@ -261,7 +265,7 @@ const Register = () => {
 			if (!formData.portfolioFile) {
 				let trimmedValue = value.trim();
 				if (!trimmedValue.match(/^https?:\/\//)) {
-					trimmedValue = 'https://' + trimmedValue;
+					trimmedValue = "https://" + trimmedValue;
 				}
 				try {
 					new URL(trimmedValue);
@@ -313,7 +317,10 @@ const Register = () => {
 
 		// Auto-progress phone on 10 digits (iPhone fix)
 		if (field === "phone" && value.length === 10) {
-			const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+			const isMobile =
+				/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+					navigator.userAgent
+				);
 			if (isMobile && validateField(field, value)) {
 				if (index < currentSteps.length - 1) {
 					setStep(index + 1);
@@ -404,7 +411,10 @@ const Register = () => {
 
 	const handleKeyDown = (e, index) => {
 		if (e.key === "Enter" || e.keyCode === 13) {
-			const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+			const isMobile =
+				/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+					navigator.userAgent
+				);
 			if (!isMobile) {
 				e.preventDefault();
 				e.stopPropagation();
@@ -451,29 +461,32 @@ const Register = () => {
 	};
 
 	const handleAutoNext = (index) => {
-	  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-	  if (!isMobile) return;
-	  const item = currentSteps[index];
-	  const value = formData[item.field]?.trim();
+		const isMobile =
+			/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+				navigator.userAgent
+			);
+		if (!isMobile) return;
+		const item = currentSteps[index];
+		const value = formData[item.field]?.trim();
 
-	  if (!value) return;
-	  if (!validateField(item.field, value)) return;
+		if (!value) return;
+		if (!validateField(item.field, value)) return;
 
-	  if (index < currentSteps.length - 1) {
-	    setStep(index + 1);
-	    setTimeout(() => {
-	      const nextEl = inputRefs.current[index + 1];
-	      nextEl?.focus();
-	      nextEl?.scrollIntoView({ behavior: "smooth", block: "center" });
-	    }, 100);
-	  } else {
-	    gsap.to(submitRef.current, {
-	      opacity: 1,
-	      y: 0,
-	      duration: 0.5,
-	      pointerEvents: "auto",
-	    });
-	  }
+		if (index < currentSteps.length - 1) {
+			setStep(index + 1);
+			setTimeout(() => {
+				const nextEl = inputRefs.current[index + 1];
+				nextEl?.focus();
+				nextEl?.scrollIntoView({ behavior: "smooth", block: "center" });
+			}, 100);
+		} else {
+			gsap.to(submitRef.current, {
+				opacity: 1,
+				y: 0,
+				duration: 0.5,
+				pointerEvents: "auto",
+			});
+		}
 	};
 
 	// Updated Phase Transition to handle "Go Back"
@@ -937,7 +950,9 @@ const Register = () => {
 																? "email"
 																: "text"
 														}
-														enterKeyHint={item.field !== "phone" ? "next" : undefined}
+														enterKeyHint={
+															item.field !== "phone" ? "next" : undefined
+														}
 														required
 													/>
 												)}

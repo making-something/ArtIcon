@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { getCurrentParticipant, isAuthenticated, logout } from "@/services/api";
 import LiveUpdates from "@/components/LiveUpdates/LiveUpdates";
+import useEventStatus from "@/hooks/useEventStatus";
 import "./event.css";
 
 // Category display names
@@ -14,25 +15,38 @@ const CATEGORY_LABELS = {
 	all: "All Categories",
 };
 
+// PDF paths for each category with viewer settings
+// Parameters:
+// - view=FitH - Fit to width
+// - zoom=50 - Set zoom to 50%
+// - pagemode=none - Hide sidebar/thumbnails
+// - toolbar=0 - Hide toolbar (not supported in all browsers)
+const TASK_PDFS = {
+	ui_ux: "/UI-UX Designing Task ARTICON.pdf#view=FitH&zoom=50&pagemode=none",
+	graphics:
+		"/Graphic Designer Task ARTICON.pdf#view=FitH&zoom=50&pagemode=none",
+	video: "/Video Editing Task ARTICON.pdf#view=FitH&zoom=50&pagemode=none",
+};
+
 // Dummy tasks for each category
 const DUMMY_TASKS = {
 	ui_ux: {
 		title: "UI/UX Design Task",
-		description:
-			"Create a modern and intuitive mobile app interface for a food delivery application. Focus on user experience, visual hierarchy, and accessibility. Include at least 5 screens: Home, Menu, Cart, Checkout, and Order Tracking.",
-		duration: "7 hours",
+		description: "",
+		duration: "5 hours",
+		pdfUrl: TASK_PDFS.ui_ux,
 	},
 	graphics: {
 		title: "Graphics Design Task",
-		description:
-			"Design a complete brand identity for an eco-friendly startup. Include logo variations (primary, secondary, icon), color palette, typography guide, and 3 social media post templates. The design should convey sustainability and innovation.",
-		duration: "7 hours",
+		description: "",
+		duration: "5 hours",
+		pdfUrl: TASK_PDFS.graphics,
 	},
 	video: {
 		title: "Video Editing Task",
-		description:
-			"Create a 60-second promotional video for a tech product launch. Include motion graphics, smooth transitions, background music, and text overlays. The video should be engaging and suitable for social media platforms.",
-		duration: "7 hours",
+		description: "",
+		duration: "5 hours",
+		pdfUrl: TASK_PDFS.video,
 	},
 };
 
@@ -63,6 +77,9 @@ const EventDashboard = () => {
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [hasSubmitted, setHasSubmitted] = useState(false);
 	const fileInputRef = useRef(null);
+
+	// Use event status hook (handles winner redirect and submission status via Socket.IO)
+	const { submissionsClosed } = useEventStatus(true);
 	const gridRef = useRef(null);
 	const gridBlocksRef = useRef([]);
 	const mouseRef = useRef({
@@ -92,17 +109,19 @@ const EventDashboard = () => {
 	// Timer countdown effect
 	useEffect(() => {
 		const eventEndTime = getEventEndTime();
-		const taskStartTime = getTaskStartTime();
+		// const taskStartTime = getTaskStartTime();
 
 		const updateTimer = () => {
 			const now = new Date();
-			
+
 			// Check if tasks should be visible
-			if (now >= taskStartTime) {
-				setAreTasksVisible(true);
-			} else {
-				setAreTasksVisible(false);
-			}
+			// TESTING: Tasks always visible
+			setAreTasksVisible(true);
+			// if (now >= taskStartTime) {
+			// 	setAreTasksVisible(true);
+			// } else {
+			// 	setAreTasksVisible(false);
+			// }
 
 			const diff = eventEndTime - now;
 
@@ -329,9 +348,11 @@ const EventDashboard = () => {
 				{/* Title Section */}
 				<section className="event-welcome">
 					<h1 className="event-title">
-						Welcome to <span className="accent">ArtIcon</span>
+						Hey <span className="accent">Artist!</span>
 					</h1>
-					<p className="event-subtitle">Innovation Meets Creativity</p>
+					<p className="event-subtitle">
+						You're officially inside Gujarat's AI-powered creative competition.
+					</p>
 				</section>
 
 				{/* Tasks & Live Updates Grid */}
@@ -348,7 +369,8 @@ const EventDashboard = () => {
 						<div className="tasks-list">
 							{!areTasksVisible ? (
 								<div className="empty-state">
-									Tasks will be revealed at 10:00 AM on 7th December 2025.
+									<p>Your assigned task will unlock at 10:00 AM.</p>
+									<p>Till then, keep your imagination loaded!</p>
 								</div>
 							) : participant?.category === "all" ? (
 								<>
@@ -369,7 +391,15 @@ const EventDashboard = () => {
 														</span>
 													</div>
 													<h3 className="task-title">{task.title}</h3>
-													<p className="task-description">{task.description}</p>
+													{task.pdfUrl && (
+														<div className="task-pdf-viewer">
+															<iframe
+																src={task.pdfUrl}
+																title={`${task.title} PDF`}
+																className="pdf-frame"
+															/>
+														</div>
+													)}
 												</div>
 											</div>
 										);
@@ -390,8 +420,17 @@ const EventDashboard = () => {
 												<span className="task-status-badge active">Live</span>
 												<span className="task-duration">{task.duration}</span>
 											</div>
-											<h3 className="task-title">{task.title}</h3>
-											<p className="task-description">{task.description}</p>
+											{task.pdfUrl && (
+												<div className="task-pdf-viewer">
+													<iframe
+														src={task.pdfUrl}
+														title={`${
+															CATEGORY_LABELS[participant?.category]
+														} Task PDF`}
+														className="pdf-frame"
+													/>
+												</div>
+											)}
 										</div>
 									);
 								})()
@@ -440,7 +479,13 @@ const EventDashboard = () => {
 						<div className="panel-header">
 							<h2 className="panel-title">Submit Your Work</h2>
 						</div>
-						{hasSubmitted ? (
+						{submissionsClosed ? (
+							<div className="submissions-closed">
+								<span className="closed-icon">🔒</span>
+								<h3>Submissions Closed</h3>
+								<p>The submission window has been closed by the organizers.</p>
+							</div>
+						) : hasSubmitted ? (
 							<div className="submission-success">
 								<span className="success-icon"></span>
 								<h3>Submission Received!</h3>
@@ -487,7 +532,6 @@ const EventDashboard = () => {
 						)}
 					</div>
 				</section>
-
 			</main>
 		</div>
 	);

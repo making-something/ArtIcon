@@ -560,7 +560,10 @@ export class AdminController {
 			const { id } = req.params;
 			const { approval_status, admin_notes }: ApprovalUpdatePayload = req.body;
 
-			if (!approval_status || !["approved", "rejected", "pending"].includes(approval_status)) {
+			if (
+				!approval_status ||
+				!["approved", "rejected", "pending"].includes(approval_status)
+			) {
 				res.status(400).json({
 					success: false,
 					message: "approval_status must be approved, rejected, or pending",
@@ -570,7 +573,9 @@ export class AdminController {
 
 			const participant = await databaseService.getParticipantById(id);
 			if (!participant) {
-				res.status(404).json({ success: false, message: "Participant not found" });
+				res
+					.status(404)
+					.json({ success: false, message: "Participant not found" });
 				return;
 			}
 
@@ -592,7 +597,9 @@ export class AdminController {
 
 			const updated = await databaseService.updateParticipant(id, updateData);
 			if (!updated) {
-				res.status(500).json({ success: false, message: "Failed to update participant" });
+				res
+					.status(500)
+					.json({ success: false, message: "Failed to update participant" });
 				return;
 			}
 
@@ -603,7 +610,9 @@ export class AdminController {
 			});
 		} catch (error) {
 			console.error("Error in updateParticipantStatus:", error);
-			res.status(500).json({ success: false, message: "Internal server error" });
+			res
+				.status(500)
+				.json({ success: false, message: "Internal server error" });
 		}
 	}
 
@@ -616,14 +625,18 @@ export class AdminController {
 			const success = await databaseService.deleteParticipant(id);
 
 			if (!success) {
-				res.status(404).json({ success: false, message: "Participant not found" });
+				res
+					.status(404)
+					.json({ success: false, message: "Participant not found" });
 				return;
 			}
 
 			res.status(200).json({ success: true, message: "Participant deleted" });
 		} catch (error) {
 			console.error("Error in deleteParticipant:", error);
-			res.status(500).json({ success: false, message: "Internal server error" });
+			res
+				.status(500)
+				.json({ success: false, message: "Internal server error" });
 		}
 	}
 
@@ -972,6 +985,116 @@ export class AdminController {
 			});
 		} catch (error) {
 			console.error("Error sending update:", error);
+			res.status(500).json({
+				success: false,
+				message: "Internal server error",
+			});
+		}
+	}
+
+	/**
+	 * Update event controls (task times, submission status, etc.)
+	 */
+	async updateEventControls(req: Request, res: Response): Promise<void> {
+		try {
+			const { taskShowTime, taskDurations, submissionsClosed } = req.body;
+
+			// Update task show time if provided
+			if (taskShowTime) {
+				await databaseService.updateEventSetting(
+					"task_show_time",
+					taskShowTime
+				);
+			}
+
+			// Update task durations if provided (JSON string)
+			if (taskDurations) {
+				await databaseService.updateEventSetting(
+					"task_durations",
+					JSON.stringify(taskDurations)
+				);
+			}
+
+			// Update submissions closed status if provided
+			if (submissionsClosed !== undefined) {
+				await databaseService.updateEventSetting(
+					"submissions_closed",
+					String(submissionsClosed)
+				);
+			}
+
+			// Emit socket event for real-time updates
+			(req as any).io.emit("event-status-update", {
+				winnersAnnounced: false,
+				submissionsClosed: submissionsClosed || false,
+			});
+
+			res.status(200).json({
+				success: true,
+				message: "Event controls updated successfully",
+			});
+		} catch (error) {
+			console.error("Error updating event controls:", error);
+			res.status(500).json({
+				success: false,
+				message: "Internal server error",
+			});
+		}
+	}
+
+	/**
+	 * Get event controls
+	 */
+	async getEventControls(_req: Request, res: Response): Promise<void> {
+		try {
+			const settings = await databaseService.getEventSettings();
+
+			const controls = {
+				taskShowTime: settings.task_show_time || "2025-12-07T10:00:00",
+				taskDurations: settings.task_durations
+					? JSON.parse(settings.task_durations)
+					: {
+							ui_ux: "7 hours",
+							graphics: "7 hours",
+							video: "7 hours",
+					  },
+				submissionsClosed: settings.submissions_closed === "true",
+			};
+
+			res.status(200).json({
+				success: true,
+				data: controls,
+			});
+		} catch (error) {
+			console.error("Error getting event controls:", error);
+			res.status(500).json({
+				success: false,
+				message: "Internal server error",
+			});
+		}
+	}
+
+	/**
+	 * Announce winners and redirect all users
+	 */
+	async announceWinners(req: Request, res: Response): Promise<void> {
+		try {
+			// Set winner announcement flag
+			await databaseService.updateEventSetting("winners_announced", "true");
+
+			// Emit socket event to redirect all users immediately
+			(req as any).io.emit("event-status-update", {
+				winnersAnnounced: true,
+				submissionsClosed: true,
+			});
+
+			res.status(200).json({
+				success: true,
+				message:
+					"Winners announced successfully. All users will be redirected.",
+			});
+		} catch (error) {
+			console.error("Error announcing winners:", error);
 			res.status(500).json({
 				success: false,
 				message: "Internal server error",
