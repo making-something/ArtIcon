@@ -2,7 +2,7 @@
 .winners-section {
 	position: relative;
 	height: 100vh;
-	width: 100vw;
+	width: 100%;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -63,7 +63,7 @@
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	gap: 4vh;
+	gap: 2rem;
 	z-index: 1;
 }
 
@@ -75,13 +75,14 @@
 	justify-content: center;
 	align-items: center;
 	gap: 1rem;
+	margin-top: 8vh;
 }
 
 .image-row {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	gap: 0.5rem;
+	gap: 2rem;
 }
 
 .img {
@@ -92,13 +93,13 @@
 }
 
 .img-large {
-	width: 120px;
-	height: 120px;
+	width: 150px;
+	height: 150px;
 }
 
 .img-small {
-	width: 70px;
-	height: 70px;
+	width: 80px;
+	height: 80px;
 }
 
 .img img {
@@ -112,20 +113,45 @@
 .profile-names {
 	position: relative;
 	width: 100%;
-	height: 15vw;
+	height: 30vw;
+	min-height: 120px;
 	clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
 	overflow: hidden;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 .name {
 	position: absolute;
 	width: 100%;
-	left: 0;
+	height: 100%;
 	top: 0;
+	left: 0;
 	display: flex;
+	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	height: 100%;
+}
+
+.category {
+	position: relative;
+	font-family: "Barlow Condensed", sans-serif;
+	font-size: 2.5vw;
+	font-weight: 500;
+	text-transform: uppercase;
+	letter-spacing: 0.2em;
+	color: #f2eeda;
+	margin-top: 1vw;
+	overflow: visible;
+	will-change: transform, opacity;
+}
+
+@media (max-width: 899px) {
+	.category {
+		font-size: 4vw;
+		margin-top: 0.5rem;
+	}
 }
 
 .name h1 {
@@ -141,22 +167,25 @@
 	color: #ee6436;
 	user-select: none;
 	margin: 0;
-	transform: translateY(100%);
 }
 
 .name.default h1 {
 	color: #f2eeda;
-	transform: translateY(-100%);
 }
 
 .name h1 .letter {
 	display: inline-block;
-	transform: translateY(0%);
+	transform: translateY(100%);
 	will-change: transform;
 }
 
+.name.default h1 .letter {
+	transform: translateY(0%);
+}
+
+
 /* Mobile Responsiveness */
-@media (max-width: 768px) {
+@media (max-width: 899px) {
 	.winners-section {
 		padding: 1rem;
 	}
@@ -164,39 +193,60 @@
 	.winners-box {
 		top: 1rem;
 		max-width: calc(100vw - 2rem);
-		height: calc(100vh - 2rem);
+		height: 90vh; /* Fallback */
+		height: 90svh;
+		height: calc(100svh - 2rem);
 	}
 
 	.winners-content {
 		flex-direction: column-reverse;
+		gap: 1rem;
+		justify-content: space-evenly;
 	}
 
 	.profile-images {
-		max-width: 90%;
+		max-width: 100%;
+		margin-top: 0;
 	}
 
 	.image-row {
-		gap: 0.3rem;
+		gap: 0.75rem;
 	}
 
 	.img-large {
-		width: 90px;
-		height: 90px;
+		width: 28vw;
+		height: 28vw;
 		padding: 2.5px;
 	}
 
 	.img-small {
-		width: 60px;
-		height: 60px;
+		width: 20vw;
+		height: 20vw;
 		padding: 2.5px;
 	}
 
 	.profile-names {
-		height: 4rem;
+		height: 35vh;
+		min-height: auto;
 	}
 
 	.name h1 {
-		font-size: 4rem;
+		font-size: 15vw;
 		letter-spacing: 0;
 	}
+}
+
+.name h1 {
+    overflow: hidden;
+}
+
+/* Laptop/Desktop: push only the images downward */
+@media (min-width: 900px) {
+  .profile-images {
+    margin-top: 14vh; /* previously 8vh, now lower */
+  }
+
+  .profile-names {
+    margin-top: -4vh; /* gives more gap between images and text */
+  }
 }
