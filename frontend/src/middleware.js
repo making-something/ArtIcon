@@ -19,9 +19,9 @@
 // 	const { pathname } = request.nextUrl;
 // 	const normalizedPath = pathname.replace(/\/+$/, "") || "/";
 
-// 	if (normalizedPath === "/winner" || isInternalPath(pathname) || isAssetRequest(pathname)) {
-// 		return NextResponse.next();
-// 	}
+	if (normalizedPath === "/winner" || isInternalPath(pathname) || isAssetRequest(pathname)) {
+		return NextResponse.next();
+	}
 
 // 	return NextResponse.redirect(new URL("/winner", request.url));
 // }
