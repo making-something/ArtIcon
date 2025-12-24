@@ -1,31 +1,31 @@
-import { NextResponse } from "next/server";
+// import { NextResponse } from "next/server";
 
-const isInternalPath = (pathname) =>
-	pathname.startsWith("/_next") ||
-	pathname.startsWith("/api") ||
-	pathname.startsWith("/static") ||
-	pathname.startsWith("/public") ||
-	pathname.startsWith("/favicon.ico") ||
-	pathname.startsWith("/fonts") ||
-	pathname.startsWith("/images") ||
-	pathname.startsWith("/manifest") ||
-	pathname.startsWith("/robots.txt") ||
-	pathname.startsWith("/sitemap") ||
-	pathname.startsWith("/_vercel");
+// const isInternalPath = (pathname) =>
+// 	pathname.startsWith("/_next") ||
+// 	pathname.startsWith("/api") ||
+// 	pathname.startsWith("/static") ||
+// 	pathname.startsWith("/public") ||
+// 	pathname.startsWith("/favicon.ico") ||
+// 	pathname.startsWith("/fonts") ||
+// 	pathname.startsWith("/images") ||
+// 	pathname.startsWith("/manifest") ||
+// 	pathname.startsWith("/robots.txt") ||
+// 	pathname.startsWith("/sitemap") ||
+// 	pathname.startsWith("/_vercel");
 
-const isAssetRequest = (pathname) => /\.[^/]+$/.test(pathname);
+// const isAssetRequest = (pathname) => /\.[^/]+$/.test(pathname);
 
-export function middleware(request) {
-	const { pathname } = request.nextUrl;
-	const normalizedPath = pathname.replace(/\/+$/, "") || "/";
+// export function middleware(request) {
+// 	const { pathname } = request.nextUrl;
+// 	const normalizedPath = pathname.replace(/\/+$/, "") || "/";
 
-	if (normalizedPath === "/winner" || isInternalPath(pathname) || isAssetRequest(pathname)) {
-		return NextResponse.next();
-	}
+// 	if (normalizedPath === "/winner" || isInternalPath(pathname) || isAssetRequest(pathname)) {
+// 		return NextResponse.next();
+// 	}
 
-	return NextResponse.redirect(new URL("/winner", request.url));
-}
+// 	return NextResponse.redirect(new URL("/winner", request.url));
+// }
 
-export const config = {
-	matcher: "/:path*",
-};
+// export const config = {
+// 	matcher: "/:path*",
+// };
