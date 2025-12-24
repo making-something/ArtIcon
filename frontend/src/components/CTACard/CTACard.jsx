@@ -34,7 +34,7 @@ const CTACard = () => {
 				</div>
 
 				<div className="contact-pill-btn">
-					<a href="/register"></a>
+					<a href="/registration"></a>
 					<div className="contact-text-large">
 						<h1>Register Now</h1>
 					</div>

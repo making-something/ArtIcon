@@ -33,8 +33,8 @@ const Menu = () => {
 
 	const handleRegisterClick = () => {
 		// Use your transition hook
-		navigateWithTransition("/register");
-		// OR if standard: router.push("/register");
+		navigateWithTransition("/registration");
+		// OR if standard: router.push("/registration");
 	};
 
 	const hiddenClass = isAtTop ? "" : "nav-scroll-hidden";

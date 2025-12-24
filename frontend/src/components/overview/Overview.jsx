@@ -468,7 +468,7 @@ const Overview = () => {
 			{/* CTA */}
 			{/* <div className="about-contact">
 				<div className="contact-pill-btn">
-					<a href="/register"></a>
+					<a href="/registration"></a>
 					<div className="contact-text-small">
 						<p>Collabs, or cosmic brainstorms welcome</p>
 					</div>
